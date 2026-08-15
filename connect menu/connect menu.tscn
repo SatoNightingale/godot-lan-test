@@ -1,0 +1,74 @@
+[gd_scene format=3 uid="uid://c2v5vbgwiocso"]
+
+[ext_resource type="Script" uid="uid://bbto47c3cb7gd" path="res://connect menu/connect_menu.gd" id="1_6fgbw"]
+
+[node name="Connect menu" type="Control" unique_id=489122455]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_6fgbw")
+
+[node name="center" type="CenterContainer" parent="." unique_id=729244737]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="center" unique_id=1541769856]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="center/VBoxContainer" unique_id=276849597]
+layout_mode = 2
+text = "Conectarse a juego"
+horizontal_alignment = 1
+
+[node name="GridContainer" type="GridContainer" parent="center/VBoxContainer" unique_id=1506442527]
+layout_mode = 2
+columns = 2
+
+[node name="Label" type="Label" parent="center/VBoxContainer/GridContainer" unique_id=473291558]
+layout_mode = 2
+text = "ip: "
+
+[node name="ipedit" type="LineEdit" parent="center/VBoxContainer/GridContainer" unique_id=1506366592]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(120, 0)
+layout_mode = 2
+
+[node name="Label2" type="Label" parent="center/VBoxContainer/GridContainer" unique_id=1645418840]
+layout_mode = 2
+text = "puerto: "
+
+[node name="portedit" type="LineEdit" parent="center/VBoxContainer/GridContainer" unique_id=2132371533]
+unique_name_in_owner = true
+layout_mode = 2
+text = "4242"
+alignment = 2
+
+[node name="Label3" type="Label" parent="center/VBoxContainer/GridContainer" unique_id=143468218]
+layout_mode = 2
+text = "nombre: "
+
+[node name="nameedit" type="LineEdit" parent="center/VBoxContainer/GridContainer" unique_id=405432227]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Player"
+alignment = 2
+
+[node name="Join" type="Button" parent="center/VBoxContainer" unique_id=301701912]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Unirse"
+
+[node name="Host" type="Button" parent="center/VBoxContainer" unique_id=1104224283]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Crear"
+
+[connection signal="pressed" from="center/VBoxContainer/Join" to="." method="_on_connect_pressed"]
+[connection signal="pressed" from="center/VBoxContainer/Host" to="." method="_on_host_pressed"]

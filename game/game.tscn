@@ -1,0 +1,40 @@
+[gd_scene format=3 uid="uid://dq7wfc650tyex"]
+
+[ext_resource type="Script" uid="uid://g7x8hby3std5" path="res://game/game.gd" id="1_7mycd"]
+[ext_resource type="PackedScene" uid="uid://c2t6r04ag1ftr" path="res://maps/map_2.tscn" id="2_l8g03"]
+[ext_resource type="PackedScene" uid="uid://cmcwg28s1fsot" path="res://game/ui/ui.tscn" id="3_h7iqs"]
+
+[node name="Game" type="Node2D" unique_id=163096156]
+y_sort_enabled = true
+script = ExtResource("1_7mycd")
+
+[node name="Map2" parent="." unique_id=274028217 instance=ExtResource("2_l8g03")]
+metadata/_edit_lock_ = true
+
+[node name="UI" parent="." unique_id=845416013 instance=ExtResource("3_h7iqs")]
+unique_name_in_owner = true
+
+[node name="start_points" type="Node" parent="." unique_id=298577625]
+unique_name_in_owner = true
+
+[node name="1" type="Marker2D" parent="start_points" unique_id=857156884 groups=["start_points"]]
+position = Vector2(923, 433)
+
+[node name="2" type="Marker2D" parent="start_points" unique_id=1882345618 groups=["start_points"]]
+position = Vector2(1135, 1415)
+
+[node name="3" type="Marker2D" parent="start_points" unique_id=1280797009 groups=["start_points"]]
+position = Vector2(-487, 2032)
+
+[node name="4" type="Marker2D" parent="start_points" unique_id=1034255195 groups=["start_points"]]
+position = Vector2(-381, 1077)
+
+[node name="PlayerSpawner" type="MultiplayerSpawner" parent="." unique_id=687198779]
+unique_name_in_owner = true
+_spawnable_scenes = PackedStringArray("uid://cubxtvqqbnv2v")
+spawn_path = NodePath("..")
+
+[node name="BulletSpawner" type="MultiplayerSpawner" parent="." unique_id=783256816]
+unique_name_in_owner = true
+_spawnable_scenes = PackedStringArray("uid://b16301nsg01q4")
+spawn_path = NodePath("..")

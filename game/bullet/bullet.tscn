@@ -1,0 +1,23 @@
+[gd_scene format=3 uid="uid://b16301nsg01q4"]
+
+[ext_resource type="Script" uid="uid://bl1c5ajcq2ml1" path="res://game/bullet/bullet.gd" id="1_ckyol"]
+[ext_resource type="Texture2D" uid="uid://enp13pcr88qu" path="res://game/bullet/bullet.png" id="2_toeda"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_nex8d"]
+radius = 4.12311
+
+[node name="bullet" type="RigidBody2D" unique_id=1083220788]
+mass = 0.1
+gravity_scale = 0.0
+contact_monitor = true
+max_contacts_reported = 1
+script = ExtResource("1_ckyol")
+
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=1181533782]
+texture = ExtResource("2_toeda")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=455939743]
+shape = SubResource("CircleShape2D_nex8d")
+
+[connection signal="body_entered" from="." to="." method="_on_body_entered"]
+[connection signal="body_shape_entered" from="." to="." method="_on_body_shape_entered"]

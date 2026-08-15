@@ -1,0 +1,55 @@
+[gd_scene load_steps=8 format=3 uid="uid://cubxtvqqbnv2v"]
+
+[ext_resource type="Script" path="res://player.gd" id="1_iidce"]
+[ext_resource type="PackedScene" uid="uid://b16301nsg01q4" path="res://bullet.tscn" id="2_ld5o1"]
+[ext_resource type="Texture2D" uid="uid://vgpf56ms04xk" path="res://p1.png" id="3_u3pah"]
+[ext_resource type="Texture2D" uid="uid://cnja24ib2t0sl" path="res://p2.png" id="4_ekjji"]
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_esygj"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("3_u3pah")
+}],
+"loop": true,
+"name": &"p1",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("4_ekjji")
+}],
+"loop": true,
+"name": &"p2",
+"speed": 5.0
+}]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_mcg86"]
+size = Vector2(36, 30)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_1p2dh"]
+size = Vector2(52, 43)
+
+[node name="p1" type="CharacterBody2D" groups=["players"]]
+script = ExtResource("1_iidce")
+bullet = ExtResource("2_ld5o1")
+metadata/_edit_group_ = true
+
+[node name="sprite" type="AnimatedSprite2D" parent="."]
+sprite_frames = SubResource("SpriteFrames_esygj")
+animation = &"p2"
+
+[node name="shape" type="CollisionShape2D" parent="."]
+position = Vector2(-7, 0)
+shape = SubResource("RectangleShape2D_mcg86")
+
+[node name="hitbox" type="Area2D" parent="."]
+position = Vector2(-7, -0.5)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="hitbox"]
+shape = SubResource("RectangleShape2D_1p2dh")
+
+[node name="cannon" type="Marker2D" parent="."]
+position = Vector2(33, 0)
+
+[connection signal="body_entered" from="hitbox" to="." method="_on_hitbox_body_entered"]
