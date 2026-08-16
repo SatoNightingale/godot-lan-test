@@ -5,13 +5,6 @@ extends CanvasLayer
 var respawn_timer: Timer
 
 
-#func _ready():
-	#print("revisando UI.player_data")
-	#player_data["_test"] = "1"
-	#print(get_parent().player_data.has("_test"))
-	#print(get_parent().player_data["_test"])
-	#print("--revisando UI.player_data")
-
 # la UI completamente acoplada al player, y la UI no es del player...
 func configure_ui(player: Player):
 	respawn_timer = player.get_node("%respawn_timer")

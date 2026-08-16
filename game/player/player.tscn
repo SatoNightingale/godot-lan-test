@@ -91,7 +91,7 @@ unique_name_in_owner = true
 wait_time = 3.0
 one_shot = true
 
-[node name="camera_timer" type="Timer" parent="." unique_id=1260940068]
+[node name="aim_timer" type="Timer" parent="." unique_id=1260940068]
 unique_name_in_owner = true
 wait_time = 0.5
 one_shot = true
