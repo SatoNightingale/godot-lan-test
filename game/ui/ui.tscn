@@ -26,15 +26,37 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="VirtualJoystick" type="Control" parent="screen_controls" unique_id=1550046780]
+[node name="Control" type="Control" parent="screen_controls" unique_id=939597875]
 layout_mode = 1
-anchor_top = 0.50625
-anchor_right = 0.3578125
-anchor_bottom = 1.0000001
-offset_right = 152.66666
-offset_bottom = 157.99994
+anchor_top = 0.27083334
+anchor_right = 0.375
+anchor_bottom = 1.0
 grow_vertical = 0
+metadata/_edit_use_anchors_ = true
+
+[node name="shoot_button1" type="TouchScreenButton" parent="screen_controls/Control" unique_id=1611714882]
+unique_name_in_owner = true
+modulate = Color(1, 1, 1, 0.76862746)
+position = Vector2(50, 35)
+scale = Vector2(0.35642844, 0.35642844)
+texture_normal = ExtResource("4_dlhb6")
+shape = SubResource("CircleShape2D_7mycd")
+shape_visible = false
+action = "shoot"
+script = ExtResource("5_rmo86")
+
+[node name="MovementJoystick" type="Control" parent="screen_controls/Control" unique_id=1550046780]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = 130.0
+offset_right = 153.0
+offset_bottom = 143.0
+grow_horizontal = 2
+grow_vertical = 2
 scale = Vector2(0.6, 0.6)
+size_flags_vertical = 3
 script = ExtResource("1_citti")
 pressed_color = Color(0.61608464, 0.76807827, 0.87981236, 1)
 joystick_mode = 1
@@ -44,9 +66,8 @@ action_up = "move_up"
 action_down = "move_down"
 metadata/_custom_type_script = "uid://djnc8xw3lwy4t"
 metadata/_edit_group_ = true
-metadata/_edit_use_anchors_ = true
 
-[node name="Base" type="TextureRect" parent="screen_controls/VirtualJoystick" unique_id=709578535]
+[node name="Base" type="TextureRect" parent="screen_controls/Control/MovementJoystick" unique_id=709578535]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -64,7 +85,7 @@ mouse_force_pass_scroll_events = false
 texture = ExtResource("2_nancp")
 stretch_mode = 5
 
-[node name="Tip" type="TextureRect" parent="screen_controls/VirtualJoystick/Base" unique_id=1165260111]
+[node name="Tip" type="TextureRect" parent="screen_controls/Control/MovementJoystick/Base" unique_id=1165260111]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -81,33 +102,20 @@ pivot_offset = Vector2(50, 50)
 texture = ExtResource("3_u6kf3")
 stretch_mode = 5
 
-[node name="ammo" type="MarginContainer" parent="screen_controls" unique_id=222303568]
-visible = false
+[node name="Control2" type="Control" parent="screen_controls" unique_id=1658693821]
 layout_mode = 1
-anchors_preset = 1
-anchor_left = 1.0
-anchor_right = 1.0
-offset_left = -134.0
-offset_bottom = 54.0
-grow_horizontal = 0
-theme_override_constants/margin_top = 20
-theme_override_constants/margin_right = 20
-
-[node name="MarginContainer" type="MarginContainer" parent="screen_controls" unique_id=664085938]
-layout_mode = 1
-anchors_preset = -1
-anchor_left = 0.6828125
-anchor_top = 0.43541667
+anchor_left = 0.625
+anchor_top = 0.27083334
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 0
 grow_vertical = 0
 metadata/_edit_use_anchors_ = true
 
-[node name="shoot_button" type="TouchScreenButton" parent="screen_controls/MarginContainer" unique_id=1611714882]
+[node name="shoot_button2" type="TouchScreenButton" parent="screen_controls/Control2" unique_id=1059910518]
 unique_name_in_owner = true
 modulate = Color(1, 1, 1, 0.76862746)
-position = Vector2(46.00003, 140.00003)
+position = Vector2(110, 35)
 scale = Vector2(0.35642844, 0.35642844)
 texture_normal = ExtResource("4_dlhb6")
 shape = SubResource("CircleShape2D_7mycd")
@@ -115,10 +123,68 @@ shape_visible = false
 action = "shoot"
 script = ExtResource("5_rmo86")
 
-[node name="reload_button" type="TouchScreenButton" parent="screen_controls/MarginContainer" unique_id=917922984]
+[node name="CameraJoystick" type="Control" parent="screen_controls/Control2" unique_id=73359640]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = 130.0
+offset_right = 153.0
+offset_bottom = 143.0
+grow_horizontal = 2
+grow_vertical = 2
+scale = Vector2(0.6, 0.6)
+size_flags_vertical = 3
+script = ExtResource("1_citti")
+pressed_color = Color(0.61608464, 0.76807827, 0.87981236, 1)
+joystick_mode = 1
+visibility_mode = 2
+action_left = "look_left"
+action_right = "look_right"
+action_up = "look_up"
+action_down = "look_down"
+metadata/_custom_type_script = "uid://djnc8xw3lwy4t"
+metadata/_edit_group_ = true
+
+[node name="Base" type="TextureRect" parent="screen_controls/Control2/CameraJoystick" unique_id=599098884]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -100.0
+offset_top = -100.0
+offset_right = 100.0
+offset_bottom = 100.0
+grow_horizontal = 2
+grow_vertical = 2
+pivot_offset = Vector2(100, 100)
+mouse_force_pass_scroll_events = false
+texture = ExtResource("2_nancp")
+stretch_mode = 5
+
+[node name="Tip" type="TextureRect" parent="screen_controls/Control2/CameraJoystick/Base" unique_id=2074270739]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -50.0
+offset_top = -50.0
+offset_right = 50.0
+offset_bottom = 50.0
+grow_horizontal = 2
+grow_vertical = 2
+pivot_offset = Vector2(50, 50)
+texture = ExtResource("3_u6kf3")
+stretch_mode = 5
+
+[node name="reload_button" type="TouchScreenButton" parent="screen_controls" unique_id=917922984]
 unique_name_in_owner = true
 self_modulate = Color(1, 1, 1, 0.76862746)
-position = Vector2(121, 38)
+position = Vector2(290, 390)
 scale = Vector2(0.28095198, 0.280952)
 texture_normal = ExtResource("6_3l31w")
 shape = SubResource("CircleShape2D_272bh")
@@ -127,7 +193,7 @@ action = "reload"
 script = ExtResource("5_rmo86")
 metadata/_edit_group_ = true
 
-[node name="AmmoLabel" type="Label" parent="screen_controls/MarginContainer/reload_button" unique_id=1960840209]
+[node name="AmmoLabel" type="Label" parent="screen_controls/reload_button" unique_id=1960840209]
 unique_name_in_owner = true
 anchors_preset = 15
 anchor_right = 1.0

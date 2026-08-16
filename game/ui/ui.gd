@@ -17,7 +17,8 @@ func configure_ui(player: Player):
 	respawn_timer = player.get_node("%respawn_timer")
 	respawn_timer.timeout.connect(set_game_screen)
 	player.update_ammo.connect(_on_update_ammo)
-	%shoot_button.setup(player.get_node("shoot_cooldown"), player.bullet_fired)
+	%shoot_button1.setup(player.get_node("shoot_cooldown"), player.bullet_fired)
+	%shoot_button2.setup(player.get_node("shoot_cooldown"), player.bullet_fired)
 	%reload_button.setup(player.get_node("reload_cooldown"), player.reloading)
 
 
@@ -46,12 +47,6 @@ func on_player_killed(killer_id: int, dead_id: int):
 		set_dead_screen(player_data[killer_id].name)
 		%muertes.text = "Muertes: " + str(player_data[dead_id].deaths)
 
-
-#func update_deaths_counter(deaths: int):
-	#%muertes.text = "Muertes: " + str(deaths)
-
-#func update_kills_counter(kills: int):
-	#%bajas.text = "Bajas: " + str(kills)
 
 func _on_update_ammo(new_ammo: int):
 	%AmmoLabel.text = str(new_ammo)

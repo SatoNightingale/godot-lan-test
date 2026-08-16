@@ -4,21 +4,6 @@ extends Control
 @export var max_players = 4
 
 
-#func _ready() -> void:
-	#print(OS.get_cmdline_args())
-	#if "host" in OS.get_cmdline_args():
-		#%nameedit.text = "Server"
-	#if "p1" in OS.get_cmdline_args():
-		#%nameedit.text = "Player1"
-		#%ipedit.text = "localhost"
-	#if "p2" in OS.get_cmdline_args():
-		#%nameedit.text = "Player2"
-		#%ipedit.text = "localhost"
-	#if "p3" in OS.get_cmdline_args():
-		#%nameedit.text = "Player3"
-		#%ipedit.text = "localhost"
-
-
 func _on_host_pressed() -> void:
 	if %nameedit.text == "":
 		get_parent().error_popup("Error: nombre vacio")
@@ -48,3 +33,25 @@ func _on_connect_pressed() -> void:
 		multiplayer.multiplayer_peer = peer
 		get_parent().player_name = %nameedit.text
 		get_parent().change_scene("res://waiting room/waiting_room.tscn")
+
+
+func _on_nameedit_editing_toggled(toggled_on: bool) -> void:
+	if not DisplayServer.has_hardware_keyboard():
+		if toggled_on:
+			DisplayServer.virtual_keyboard_show(%nameedit.text)
+		else:
+			DisplayServer.virtual_keyboard_hide()
+
+func _on_portedit_editing_toggled(toggled_on: bool) -> void:
+	if not DisplayServer.has_hardware_keyboard():
+		if toggled_on:
+			DisplayServer.virtual_keyboard_show(%portedit.text)
+		else:
+			DisplayServer.virtual_keyboard_hide()
+
+func _on_ipedit_editing_toggled(toggled_on: bool) -> void:
+	if not DisplayServer.has_hardware_keyboard():
+		if toggled_on:
+			DisplayServer.virtual_keyboard_show(%ipedit.text)
+		else:
+			DisplayServer.virtual_keyboard_hide()

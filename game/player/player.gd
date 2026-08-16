@@ -2,7 +2,9 @@ extends CharacterBody2D
 class_name Player
 
 
-const SPEED = 300.0
+@export var SPEED = 250.0
+
+@export var aim_offset = 100
 
 @onready var respawn_timer := %respawn_timer
 @onready var initpos = position
@@ -26,7 +28,18 @@ var ammo := 3:
 		update_ammo.emit(value)
 
 var _recharging := false
-var angle2 := 0.0
+var reload_graph_angle := 0.0
+
+var camera_aim_angle : Vector2
+var aim_mode := false: 
+	set(value):
+		if value != aim_mode:
+			aim_mode = value
+			%camara.position_smoothing_enabled = aim_mode
+			var tween = %camara.create_tween()
+			var anim_end = direction * aim_offset if aim_mode else Vector2.ZERO
+			tween.tween_property(%camara, "offset", anim_end, 0.2)
+		if not aim_mode: camera_aim_angle = Vector2.ZERO
 
 
 func _enter_tree() -> void:
@@ -41,7 +54,8 @@ func _enter_tree() -> void:
 func _ready():
 	initialize(position)
 	if local_player:
-		$camara.make_current()
+		%camara.make_current()
+		%camera_timer.timeout.connect(set.bind("aim_mode", true))
 
 
 @rpc("any_peer", "call_local")
@@ -55,7 +69,7 @@ func initialize(pos):
 	rotation = 0.0
 	direction = Vector2.from_angle(rotation)
 	_recharging = false
-	angle2 = 0.0
+	reload_graph_angle = 0.0
 	$shape.set_deferred("disabled", false)
 	$hitbox.set_deferred("monitoring", true)
 	match player_number:
@@ -65,43 +79,51 @@ func initialize(pos):
 		3: $sprite.self_modulate = Color.YELLOW
 
 
-func mode_angle(delta):
-	var var_angle = Input.get_axis("turn_left", "turn_right")
-	var avz = Input.get_axis("decelerate", "acelerate")
-	if var_angle != 0:
-		rotation += var_angle * 5 * delta
-		direction = Vector2.from_angle(rotation)
-	velocity = avz * direction * SPEED
+func control_movement(move_dir: Vector2, _camera_dir: Vector2):
+	velocity = move_dir.normalized() * SPEED \
+		if move_dir != Vector2.ZERO \
+		else Vector2.ZERO
 
 
-func mode_direction(_delta):
-	var dir = Input.get_vector("move_left", "move_right", "move_up", "move_down")
-	if dir.length_squared() > 0:
-		velocity = dir.normalized() * SPEED
-		rotation = dir.angle()
-		direction = dir
+func control_camera(camera_dir: Vector2, move_dir: Vector2):
+	if camera_dir != Vector2.ZERO:
+		rotation = camera_dir.angle()
+		direction = camera_dir
+		if not %camera_timer.is_stopped() and camera_dir.dot(camera_aim_angle) < 0.98:
+			%camera_timer.stop()
+		if move_dir == Vector2.ZERO and %camera_timer.is_stopped() and not aim_mode:
+			%camera_timer.start()
+			camera_aim_angle = camera_dir
 	else:
-		velocity = Vector2.ZERO
+		aim_mode = false
+		if not %camera_timer.is_stopped():
+			%camera_timer.stop()
+		if move_dir != Vector2.ZERO:
+			rotation = move_dir.angle()
+			direction = move_dir
+	if move_dir != Vector2.ZERO:
+		aim_mode = false
+	if aim_mode:
+		%camara.offset = direction * aim_offset
 
 
-func _physics_process(delta):
+func _physics_process(_delta):
 	if not is_multiplayer_authority():
 		return
 	if not alive:
 		return
-	mode_direction(delta)
-	move_and_slide()
-
-
-func _input(event):
-	if not is_multiplayer_authority():
-		return
-	if event.is_action_pressed("shoot"):
-		if alive and can_shoot and ammo > 0:
-			shoot.rpc_id(1)
-			$shoot_cooldown.start()
-	if event.is_action_pressed("reload"):
+	var move_dir = Input.get_vector("move_left", "move_right", "move_up", "move_down")
+	var camera_dir = Input.get_vector("look_left", "look_right", "look_up", "look_down")
+	control_movement(move_dir, camera_dir)
+	control_camera(camera_dir, move_dir)
+	# is_action_just_pressed para tiro a tiro
+	# is_action_pressed para rafaga mientras este siendo presionado
+	if Input.is_action_just_pressed("shoot"):
+		shoot.rpc_id(1)
+		$shoot_cooldown.start()
+	if Input.is_action_just_pressed("reload"):
 		reload.rpc()
+	move_and_slide()
 
 
 @rpc("any_peer", "call_local")
@@ -144,14 +166,14 @@ func die():
 
 func _process(_delta):
 	if _recharging:
-		angle2 = TAU - TAU * $reload_cooldown.time_left / $reload_cooldown.wait_time
+		reload_graph_angle = TAU - TAU * $reload_cooldown.time_left / $reload_cooldown.wait_time
 		queue_redraw()
 
 
 func _draw():
 	if _recharging:
 		var pos = (Vector2.RIGHT + Vector2.UP) * 20
-		draw_arc(pos, 3, 0, angle2, 10, Color.AQUA, 6, true)
+		draw_arc(pos, 3, 0, reload_graph_angle, 10, Color.AQUA, 6, true)
 
 
 func _on_shoot_cooldown_timeout():

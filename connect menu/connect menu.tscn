@@ -70,5 +70,8 @@ unique_name_in_owner = true
 layout_mode = 2
 text = "Crear"
 
+[connection signal="editing_toggled" from="center/VBoxContainer/GridContainer/ipedit" to="." method="_on_ipedit_editing_toggled"]
+[connection signal="editing_toggled" from="center/VBoxContainer/GridContainer/portedit" to="." method="_on_portedit_editing_toggled"]
+[connection signal="editing_toggled" from="center/VBoxContainer/GridContainer/nameedit" to="." method="_on_nameedit_editing_toggled"]
 [connection signal="pressed" from="center/VBoxContainer/Join" to="." method="_on_connect_pressed"]
 [connection signal="pressed" from="center/VBoxContainer/Host" to="." method="_on_host_pressed"]

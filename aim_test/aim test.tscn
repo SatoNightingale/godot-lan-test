@@ -1,11 +1,11 @@
 [gd_scene format=3 uid="uid://dxgoqejxtky7t"]
 
+[ext_resource type="Texture2D" uid="uid://cqu1irl2s26n0" path="res://game/ui/icons/slice37.svg" id="1_8y5tt"]
 [ext_resource type="Script" uid="uid://djnc8xw3lwy4t" path="res://addons/virtual_joystick/virtual_joystick.gd" id="1_qaoco"]
 [ext_resource type="Texture2D" uid="uid://bm30au8mjfc2f" path="res://addons/virtual_joystick/textures/joystick_base_outline.png" id="2_kqk38"]
 [ext_resource type="Texture2D" uid="uid://dt13r06u87fib" path="res://addons/virtual_joystick/textures/joystick_tip_arrows.png" id="3_a12y2"]
 [ext_resource type="Texture2D" uid="uid://bh0gct150p4n3" path="res://game/ui/icons/slice37.png" id="4_a12y2"]
 [ext_resource type="PackedScene" uid="uid://cubxtvqqbnv2v" path="res://game/player/player.tscn" id="4_wkxs8"]
-[ext_resource type="Script" uid="uid://gk3a8epwfsjm" path="res://aim_test/player new.gd" id="5_8y5tt"]
 [ext_resource type="Script" uid="uid://v7kukw1f6alt" path="res://game/ui/cooldown_button.gd" id="5_wkxs8"]
 [ext_resource type="Texture2D" uid="uid://4kfshn5i2fq1" path="res://game/ui/icons/slice34.png" id="6_errsq"]
 [ext_resource type="Texture2D" uid="uid://cal3fbg82lqcu" path="res://game/ui/icons/slice34.svg" id="6_wkxs8"]
@@ -20,13 +20,54 @@ radius = 115.0
 
 [node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=1308165944]
 
-[node name="VirtualJoystick" type="Control" parent="CanvasLayer" unique_id=1371249181]
+[node name="Control" type="Control" parent="CanvasLayer" unique_id=85596805]
 layout_mode = 3
-anchors_preset = 0
-offset_left = 33.0
-offset_top = 306.0
-offset_right = 281.3333
-offset_bottom = 546.0
+anchor_top = 0.35833332
+anchor_right = 0.378125
+anchor_bottom = 0.99791664
+metadata/_edit_use_anchors_ = true
+
+[node name="VBoxContainer" type="VBoxContainer" parent="CanvasLayer/Control" unique_id=158520666]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+alignment = 1
+
+[node name="Control" type="Control" parent="CanvasLayer/Control/VBoxContainer" unique_id=1249156729]
+custom_minimum_size = Vector2(210, 240)
+layout_mode = 2
+
+[node name="TextureButton" type="TextureButton" parent="CanvasLayer/Control/VBoxContainer/Control" unique_id=580002719]
+modulate = Color(1, 1, 1, 0.76862746)
+layout_mode = 1
+anchors_preset = -1
+anchor_right = 0.6
+anchor_bottom = 0.6
+offset_right = 96.79999
+offset_bottom = 96.0
+grow_horizontal = 2
+grow_vertical = 2
+scale = Vector2(0.6, 0.6)
+action_mode = 0
+texture_normal = ExtResource("1_8y5tt")
+metadata/_edit_use_anchors_ = true
+
+[node name="Control2" type="Control" parent="CanvasLayer/Control/VBoxContainer" unique_id=1436782230]
+custom_minimum_size = Vector2(240, 300)
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="VirtualJoystick" type="Control" parent="CanvasLayer/Control/VBoxContainer/Control2" unique_id=1371249181]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_bottom = 240.0
+grow_horizontal = 2
+grow_vertical = 2
 scale = Vector2(0.6, 0.6)
 script = ExtResource("1_qaoco")
 pressed_color = Color(0.61608464, 0.76807827, 0.87981236, 1)
@@ -38,7 +79,7 @@ action_down = "move_down"
 metadata/_custom_type_script = "uid://djnc8xw3lwy4t"
 metadata/_edit_group_ = true
 
-[node name="Base" type="TextureRect" parent="CanvasLayer/VirtualJoystick" unique_id=725069448]
+[node name="Base" type="TextureRect" parent="CanvasLayer/Control/VBoxContainer/Control2/VirtualJoystick" unique_id=725069448]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -56,7 +97,7 @@ mouse_force_pass_scroll_events = false
 texture = ExtResource("2_kqk38")
 stretch_mode = 5
 
-[node name="Tip" type="TextureRect" parent="CanvasLayer/VirtualJoystick/Base" unique_id=41187351]
+[node name="Tip" type="TextureRect" parent="CanvasLayer/Control/VBoxContainer/Control2/VirtualJoystick/Base" unique_id=41187351]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -75,6 +116,7 @@ stretch_mode = 5
 
 [node name="shoot_button" type="TouchScreenButton" parent="CanvasLayer" unique_id=1494395258]
 unique_name_in_owner = true
+visible = false
 modulate = Color(1, 1, 1, 0.76862746)
 position = Vector2(498.00003, 174.00002)
 scale = Vector2(0.35642844, 0.35642844)
@@ -86,6 +128,7 @@ script = ExtResource("5_wkxs8")
 
 [node name="shoot_button2" type="TouchScreenButton" parent="CanvasLayer" unique_id=732571454]
 unique_name_in_owner = true
+visible = false
 modulate = Color(1, 1, 1, 0.76862746)
 position = Vector2(67, 175)
 scale = Vector2(0.35642844, 0.35642844)
@@ -183,10 +226,8 @@ vertical_alignment = 1
 
 [node name="player" parent="." unique_id=1954339528 instance=ExtResource("4_wkxs8")]
 position = Vector2(310, 244)
-script = ExtResource("5_8y5tt")
-camera_offset = 100
 
 [node name="Slice34" type="Sprite2D" parent="." unique_id=1880608716]
-position = Vector2(172, 134)
+position = Vector2(327, 126)
 scale = Vector2(0.51428574, 0.525)
 texture = ExtResource("6_errsq")
