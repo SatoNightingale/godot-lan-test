@@ -18,6 +18,10 @@ boot_splash/stretch_mode=0
 boot_splash/use_filter=false
 config/icon="res://icon.svg"
 
+[autoload]
+
+PatchSystem="*uid://7w37r2vsmrjn"
+
 [display]
 
 window/size/viewport_width=640
@@ -90,6 +94,10 @@ look_right={
 [input_devices]
 
 pointing/emulate_touch_from_mouse=true
+
+[layer_names]
+
+2d_physics/layer_2="1-agua"
 
 [physics]
 

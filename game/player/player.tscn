@@ -2,6 +2,7 @@
 
 [ext_resource type="Script" uid="uid://byhjvhlcdawq8" path="res://game/player/player.gd" id="1_iidce"]
 [ext_resource type="AudioStream" uid="uid://d3iaupxjkdw84" path="res://game/bullet/pistol.wav" id="3_8soms"]
+[ext_resource type="PackedScene" uid="uid://ckhehsw51wwr1" path="res://game/weapon/weapon.tscn" id="3_a4w0n"]
 [ext_resource type="Texture2D" uid="uid://dfqg7otvis5w5" path="res://game/player/player.png" id="3_em8ak"]
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_esygj"]
@@ -36,20 +37,16 @@ properties/2/replication_mode = 1
 properties/0/path = NodePath(".:alive")
 properties/0/spawn = true
 properties/0/replication_mode = 2
-properties/1/path = NodePath(".:ammo")
+properties/1/path = NodePath(".:player_number")
 properties/1/spawn = true
 properties/1/replication_mode = 2
-properties/2/path = NodePath(".:can_shoot")
-properties/2/spawn = true
-properties/2/replication_mode = 2
-properties/3/path = NodePath(".:player_number")
-properties/3/spawn = true
-properties/3/replication_mode = 2
 
-[node name="player" type="CharacterBody2D" unique_id=1954339528 groups=["players"]]
+[node name="player" type="CharacterBody2D" unique_id=1954339528 node_paths=PackedStringArray("weapon", "respawn_timer") groups=["players"]]
 collision_mask = 3
 motion_mode = 1
 script = ExtResource("1_iidce")
+weapon = NodePath("weapon")
+respawn_timer = NodePath("respawn_timer")
 
 [node name="sprite" type="AnimatedSprite2D" parent="." unique_id=829708582]
 texture_filter = 4
@@ -69,7 +66,10 @@ position = Vector2(-7, -0.5)
 position = Vector2(7, 0.5)
 shape = SubResource("CircleShape2D_sxto4")
 
+[node name="weapon" parent="." unique_id=693644199 instance=ExtResource("3_a4w0n")]
+
 [node name="cannon" type="Marker2D" parent="." unique_id=36865486]
+visible = false
 position = Vector2(40, 0)
 
 [node name="camara" type="Camera2D" parent="." unique_id=1293068465]

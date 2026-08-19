@@ -1,18 +1,28 @@
 extends CanvasLayer
 
 
-@onready var player_data = get_parent().player_data
+var player_data
+
+var player : Player
 var respawn_timer: Timer
 
 
-# la UI completamente acoplada al player, y la UI no es del player...
-func configure_ui(player: Player):
-	respawn_timer = player.get_node("%respawn_timer")
+func configure_ui(_player: Player):
+	player = _player
+	player.weapon_changed.connect(_on_player_weapon_changed)
+	if player.weapon != null:
+		_on_player_weapon_changed(player.weapon)
+	respawn_timer = player.respawn_timer
 	respawn_timer.timeout.connect(set_game_screen)
-	player.update_ammo.connect(_on_update_ammo)
-	%shoot_button1.setup(player.get_node("shoot_cooldown"), player.bullet_fired)
-	%shoot_button2.setup(player.get_node("shoot_cooldown"), player.bullet_fired)
-	%reload_button.setup(player.get_node("reload_cooldown"), player.reloading)
+
+
+func _on_player_weapon_changed(weapon: Weapon):
+	if "shoot_cooldown" in weapon:
+		%shoot_button1.setup(weapon.shoot_cooldown, weapon.bullet_fired)
+		%shoot_button2.setup(weapon.shoot_cooldown, weapon.bullet_fired)
+	if "reload_cooldown" in weapon:
+		%reload_button.setup(weapon.reload_cooldown, weapon.reloading)
+	weapon.update_ammo.connect(_on_update_ammo)
 
 
 func _process(_delta: float) -> void:

@@ -26,33 +26,48 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="Control" type="Control" parent="screen_controls" unique_id=939597875]
+[node name="Control1" type="Control" parent="screen_controls" unique_id=1374133106]
+custom_minimum_size = Vector2(240, 0)
 layout_mode = 1
-anchor_top = 0.27083334
-anchor_right = 0.375
+anchors_preset = 9
 anchor_bottom = 1.0
-grow_vertical = 0
-metadata/_edit_use_anchors_ = true
+grow_vertical = 2
 
-[node name="shoot_button1" type="TouchScreenButton" parent="screen_controls/Control" unique_id=1611714882]
+[node name="Control2" type="Control" parent="screen_controls/Control1" unique_id=1591073033]
+layout_mode = 1
+anchor_left = 0.4
+anchor_top = 0.2
+anchor_right = 0.6
+anchor_bottom = 0.2
+offset_left = -38.0
+offset_right = -11.0
+offset_bottom = 85.0
+
+[node name="shoot_button2" type="TouchScreenButton" parent="screen_controls/Control1/Control2" unique_id=1162450557]
 unique_name_in_owner = true
 modulate = Color(1, 1, 1, 0.76862746)
-position = Vector2(50, 35)
-scale = Vector2(0.35642844, 0.35642844)
+scale = Vector2(0.356, 0.356)
 texture_normal = ExtResource("4_dlhb6")
 shape = SubResource("CircleShape2D_7mycd")
 shape_visible = false
 action = "shoot"
 script = ExtResource("5_rmo86")
 
-[node name="MovementJoystick" type="Control" parent="screen_controls/Control" unique_id=1550046780]
+[node name="Control" type="Control" parent="screen_controls/Control1" unique_id=1193976483]
+layout_mode = 1
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_top = -264.0
+offset_right = 240.0
+
+[node name="CameraJoystick" type="Control" parent="screen_controls/Control1/Control" unique_id=1045949482]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_top = 130.0
-offset_right = 153.0
-offset_bottom = 143.0
+offset_right = 160.0
+offset_bottom = 176.0
 grow_horizontal = 2
 grow_vertical = 2
 scale = Vector2(0.6, 0.6)
@@ -67,7 +82,7 @@ action_down = "move_down"
 metadata/_custom_type_script = "uid://djnc8xw3lwy4t"
 metadata/_edit_group_ = true
 
-[node name="Base" type="TextureRect" parent="screen_controls/Control/MovementJoystick" unique_id=709578535]
+[node name="Base" type="TextureRect" parent="screen_controls/Control1/Control/CameraJoystick" unique_id=122078609]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -85,7 +100,7 @@ mouse_force_pass_scroll_events = false
 texture = ExtResource("2_nancp")
 stretch_mode = 5
 
-[node name="Tip" type="TextureRect" parent="screen_controls/Control/MovementJoystick/Base" unique_id=1165260111]
+[node name="Tip" type="TextureRect" parent="screen_controls/Control1/Control/CameraJoystick/Base" unique_id=567289899]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -102,35 +117,52 @@ pivot_offset = Vector2(50, 50)
 texture = ExtResource("3_u6kf3")
 stretch_mode = 5
 
-[node name="Control2" type="Control" parent="screen_controls" unique_id=1658693821]
+[node name="Control2" type="Control" parent="screen_controls" unique_id=202642603]
+custom_minimum_size = Vector2(240, 0)
 layout_mode = 1
-anchor_left = 0.625
-anchor_top = 0.27083334
+anchors_preset = 11
+anchor_left = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 0
-grow_vertical = 0
-metadata/_edit_use_anchors_ = true
+grow_vertical = 2
 
-[node name="shoot_button2" type="TouchScreenButton" parent="screen_controls/Control2" unique_id=1059910518]
+[node name="Control2" type="Control" parent="screen_controls/Control2" unique_id=1488777227]
+layout_mode = 1
+anchor_left = 0.6
+anchor_top = 0.2
+anchor_right = 0.6
+anchor_bottom = 0.2
+offset_left = -38.0
+offset_right = 37.0
+offset_bottom = 85.0
+grow_horizontal = 0
+
+[node name="shoot_button1" type="TouchScreenButton" parent="screen_controls/Control2/Control2" unique_id=2141419908]
 unique_name_in_owner = true
 modulate = Color(1, 1, 1, 0.76862746)
-position = Vector2(110, 35)
-scale = Vector2(0.35642844, 0.35642844)
+scale = Vector2(0.356, 0.356)
 texture_normal = ExtResource("4_dlhb6")
 shape = SubResource("CircleShape2D_7mycd")
 shape_visible = false
 action = "shoot"
 script = ExtResource("5_rmo86")
 
-[node name="CameraJoystick" type="Control" parent="screen_controls/Control2" unique_id=73359640]
+[node name="Control" type="Control" parent="screen_controls/Control2" unique_id=2078470175]
+layout_mode = 1
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_top = -264.0
+offset_right = 240.0
+
+[node name="CameraJoystick" type="Control" parent="screen_controls/Control2/Control" unique_id=418510836]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_top = 130.0
-offset_right = 153.0
-offset_bottom = 143.0
+offset_right = 160.0
+offset_bottom = 176.0
 grow_horizontal = 2
 grow_vertical = 2
 scale = Vector2(0.6, 0.6)
@@ -138,7 +170,6 @@ size_flags_vertical = 3
 script = ExtResource("1_citti")
 pressed_color = Color(0.61608464, 0.76807827, 0.87981236, 1)
 joystick_mode = 1
-visibility_mode = 2
 action_left = "look_left"
 action_right = "look_right"
 action_up = "look_up"
@@ -146,7 +177,7 @@ action_down = "look_down"
 metadata/_custom_type_script = "uid://djnc8xw3lwy4t"
 metadata/_edit_group_ = true
 
-[node name="Base" type="TextureRect" parent="screen_controls/Control2/CameraJoystick" unique_id=599098884]
+[node name="Base" type="TextureRect" parent="screen_controls/Control2/Control/CameraJoystick" unique_id=269962991]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -164,7 +195,7 @@ mouse_force_pass_scroll_events = false
 texture = ExtResource("2_nancp")
 stretch_mode = 5
 
-[node name="Tip" type="TextureRect" parent="screen_controls/Control2/CameraJoystick/Base" unique_id=2074270739]
+[node name="Tip" type="TextureRect" parent="screen_controls/Control2/Control/CameraJoystick/Base" unique_id=125392406]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -181,10 +212,22 @@ pivot_offset = Vector2(50, 50)
 texture = ExtResource("3_u6kf3")
 stretch_mode = 5
 
-[node name="reload_button" type="TouchScreenButton" parent="screen_controls" unique_id=917922984]
+[node name="Control3" type="Control" parent="screen_controls" unique_id=830718757]
+layout_mode = 1
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -29.0
+offset_top = -107.0
+offset_right = 30.0
+offset_bottom = -40.0
+grow_horizontal = 2
+grow_vertical = 0
+
+[node name="reload_button" type="TouchScreenButton" parent="screen_controls/Control3" unique_id=917922984]
 unique_name_in_owner = true
 self_modulate = Color(1, 1, 1, 0.76862746)
-position = Vector2(290, 390)
 scale = Vector2(0.28095198, 0.280952)
 texture_normal = ExtResource("6_3l31w")
 shape = SubResource("CircleShape2D_272bh")
@@ -193,7 +236,7 @@ action = "reload"
 script = ExtResource("5_rmo86")
 metadata/_edit_group_ = true
 
-[node name="AmmoLabel" type="Label" parent="screen_controls/reload_button" unique_id=1960840209]
+[node name="AmmoLabel" type="Label" parent="screen_controls/Control3/reload_button" unique_id=1960840209]
 unique_name_in_owner = true
 anchors_preset = 15
 anchor_right = 1.0

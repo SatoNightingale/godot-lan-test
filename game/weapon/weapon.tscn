@@ -1,0 +1,42 @@
+[gd_scene format=3 uid="uid://ckhehsw51wwr1"]
+
+[ext_resource type="AudioStream" uid="uid://d3iaupxjkdw84" path="res://game/bullet/pistol.wav" id="1_dp26m"]
+[ext_resource type="Script" uid="uid://bynqbjpj64g4u" path="res://game/weapon/weapon.gd" id="1_xo5fp"]
+
+[sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_xo5fp"]
+properties/0/path = NodePath(".:ammo")
+properties/0/spawn = true
+properties/0/replication_mode = 2
+properties/1/path = NodePath(".:can_shoot")
+properties/1/spawn = true
+properties/1/replication_mode = 2
+
+[node name="weapon" type="Node2D" unique_id=693644199 node_paths=PackedStringArray("cannon", "shoot_cooldown", "reload_cooldown", "aim_timer")]
+script = ExtResource("1_xo5fp")
+cannon = NodePath("cannon")
+shoot_cooldown = NodePath("shoot_cooldown")
+reload_cooldown = NodePath("reload_cooldown")
+aim_timer = NodePath("aim_timer")
+
+[node name="cannon" type="Marker2D" parent="." unique_id=1327984822]
+position = Vector2(40, 0)
+
+[node name="shot_sound" type="AudioStreamPlayer2D" parent="." unique_id=698549251]
+stream = ExtResource("1_dp26m")
+
+[node name="shoot_cooldown" type="Timer" parent="." unique_id=1280501987]
+one_shot = true
+
+[node name="reload_cooldown" type="Timer" parent="." unique_id=2006074738]
+wait_time = 3.0
+one_shot = true
+
+[node name="aim_timer" type="Timer" parent="." unique_id=856150892]
+wait_time = 0.5
+one_shot = true
+
+[node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="." unique_id=1893211714]
+replication_config = SubResource("SceneReplicationConfig_xo5fp")
+
+[connection signal="timeout" from="shoot_cooldown" to="." method="_on_shoot_cooldown_timeout"]
+[connection signal="timeout" from="reload_cooldown" to="." method="_on_reload_cooldown_timeout"]

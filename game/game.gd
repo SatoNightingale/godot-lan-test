@@ -3,7 +3,7 @@ extends Node2D
 @export var player_scene = preload("res://game/player/player.tscn")
 @export var bullet_scene = preload("res://game/bullet/bullet.tscn")
 
-@onready var player_name : String = get_parent().player_name
+#@onready var player_name : String = get_parent().player_name
 
 var player_data : Dictionary
 
@@ -16,13 +16,10 @@ func _ready():
 	%PlayerSpawner.spawn_function = spawn_player
 	%BulletSpawner.spawn_function = spawn_bullet
 	player_killed.connect(%UI.on_player_killed)
-	#player_data.merge(get_parent().player_data)
-	#%playagain_button.disabled = not multiplayer.is_server()
-	print(player_name, " ready!")
 
 
 func server_initialize():
-	print(player_name, " init")
+	#print(player_name, " init")
 	#show_tree.rpc()
 	var starting_positions = %start_points.get_children()
 	var player_number = 0
@@ -42,9 +39,8 @@ func server_initialize():
 func spawn_player(data) -> Node:
 	# instanciar el player
 	var player : Player = preload("res://game/player/player.tscn").instantiate()
-	# registrar el nodo en el servidor
+	# registrar datos del player
 	player_data[data.id]["node"] = player
-	#player_data[data.id]["respawn_timer"] = player.get_node("%respawn_timer")
 	player_data[data.id]["deaths"] = 0
 	player_data[data.id]["kills"] = 0
 	# ponerle sus datos
@@ -56,8 +52,9 @@ func spawn_player(data) -> Node:
 	player.player_number = data["number"]
 	# conectar señales del juego
 	if multiplayer.is_server(): # solo se ejecutan en el servidor
-		player.bullet_fired.connect(
-			%BulletSpawner.spawn.bind(data.id))
+		player.weapon_changed.connect(_on_player_weapon_changed)
+		if player.weapon != null:
+			_on_player_weapon_changed(player.weapon, data.id)
 		player.shot.connect(_on_player_shot.bind(data.id))
 		player.ready.connect(func():
 			player.respawn_timer.timeout.connect(respawn_player.bind(data.id)),
@@ -66,14 +63,15 @@ func spawn_player(data) -> Node:
 	# configurar la UI con el jugador actual
 	if data.id == multiplayer.get_unique_id():
 		#client_player = player
+		%UI.player_data = player_data
 		%UI.configure_ui(player)
 	return player
 
 
 func spawn_bullet(shooter_id) -> Node:
 	var bala = bullet_scene.instantiate()
-	var shooter = player_data[shooter_id]["node"]
-	bala.position = shooter.get_node("cannon").get_global_position()
+	var shooter = player_data[shooter_id]["node"] as Player
+	bala.position = shooter.weapon.cannon.get_global_position()
 	bala.shoot(shooter.direction, shooter_id)
 	return bala
 
@@ -88,6 +86,10 @@ func respawn_player(id: int):
 
 func _on_player_shot(killer_id, dead_id):
 	on_player_killed.rpc(killer_id, dead_id)
+
+
+func _on_player_weapon_changed(weapon: Weapon, player_id: int):
+	weapon.bullet_fired.connect(%BulletSpawner.spawn.bind(player_id))
 
 
 @rpc("call_local")

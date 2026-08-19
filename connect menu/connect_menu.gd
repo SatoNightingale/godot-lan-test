@@ -1,57 +1,74 @@
 extends Control
 
+signal hosted(name: String)
+signal connected(name: String, address: String)
+signal error(message: String)
+
 @export var default_port = 4242
 @export var max_players = 4
+
+var player_name := "Player"
+
+
+func _ready() -> void:
+	%nameedit.text = player_name
+	if not DisplayServer.has_hardware_keyboard():
+		setup_virtual_keyboard_elevation()
+
+
+func setup_virtual_keyboard_elevation():
+	%ipedit.editing_toggled.connect(_on_field_editing_toggled.bind(%ipedit))
+	%portedit.editing_toggled.connect(_on_field_editing_toggled.bind(%portedit))
+	%nameedit.editing_toggled.connect(_on_field_editing_toggled.bind(%nameedit))
+	#var margin_restart_callable = %margin.add_theme_constant_override.bind("margin_bottom", 0)
+	#%ipedit.focus_entered.connect(_on_field_focused.bind(%ipedit))
+	#%portedit.focus_entered.connect(_on_field_focused.bind(%portedit))
+	#%nameedit.focus_entered.connect(_on_field_focused.bind(%nameedit))
+	#%ipedit.focus_exited.connect(margin_restart_callable)
+	#%portedit.focus_exited.connect(margin_restart_callable)
+	#%nameedit.focus_exited.connect(margin_restart_callable)
 
 
 func _on_host_pressed() -> void:
 	if %nameedit.text == "":
-		get_parent().error_popup("Error: nombre vacio")
+		error.emit("Error: nombre vacio")
 		return
 	if %portedit.text == "":
-		get_parent().error_popup("Error: puerto vacio")
+		error.emit("Error: puerto vacio")
 		return
 	var peer = ENetMultiplayerPeer.new()
-	if peer.create_server(int(%portedit.text), max_players) == OK:
+	var errcod = peer.create_server(int(%portedit.text), max_players)
+	if errcod == OK:
 		multiplayer.multiplayer_peer = peer
-		get_parent().player_name = %nameedit.text
-		get_parent().change_scene("res://waiting room/waiting_room.tscn")
+		hosted.emit(%nameedit.text)
+	else:
+		error.emit("Error al crear servidor: " + str(errcod))
 
 
 func _on_connect_pressed() -> void:
 	if %nameedit.text == "":
-		get_parent().error_popup("Error: nombre vacio")
+		error.emit("Error: nombre vacio")
 		return
 	if %portedit.text == "":
-		get_parent().error_popup("Error: puerto vacio")
+		error.emit("Error: puerto vacio")
 		return
 	if %ipedit.text == "":
-		get_parent().error_popup("Error: direccion ip vacia")
+		error.emit("Error: direccion ip vacia")
 		return
 	var peer = ENetMultiplayerPeer.new()
-	if peer.create_client(%ipedit.text, int(%portedit.text)) == OK:
+	var errcod = peer.create_client(%ipedit.text, int(%portedit.text))
+	if errcod == OK:
 		multiplayer.multiplayer_peer = peer
-		get_parent().player_name = %nameedit.text
-		get_parent().change_scene("res://waiting room/waiting_room.tscn")
+		connected.emit(%nameedit.text, %ipedit.text)
+	else:
+		error.emit("Error al conectar: " + str(errcod))
 
 
-func _on_nameedit_editing_toggled(toggled_on: bool) -> void:
-	if not DisplayServer.has_hardware_keyboard():
-		if toggled_on:
-			DisplayServer.virtual_keyboard_show(%nameedit.text)
-		else:
-			DisplayServer.virtual_keyboard_hide()
-
-func _on_portedit_editing_toggled(toggled_on: bool) -> void:
-	if not DisplayServer.has_hardware_keyboard():
-		if toggled_on:
-			DisplayServer.virtual_keyboard_show(%portedit.text)
-		else:
-			DisplayServer.virtual_keyboard_hide()
-
-func _on_ipedit_editing_toggled(toggled_on: bool) -> void:
-	if not DisplayServer.has_hardware_keyboard():
-		if toggled_on:
-			DisplayServer.virtual_keyboard_show(%ipedit.text)
-		else:
-			DisplayServer.virtual_keyboard_hide()
+func _on_field_editing_toggled(toggled_on: bool, field: Control):
+	if toggled_on:
+		var vk_height = DisplayServer.virtual_keyboard_get_height()
+		var node_pos_from_bottom = get_viewport_rect().size.y - field.global_position.y
+		var diff = max(vk_height - node_pos_from_bottom, 0)
+		%margin.add_theme_constant_override("margin_bottom", diff)
+	else:
+		%margin.add_theme_constant_override("margin_bottom", 0)

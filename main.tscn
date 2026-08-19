@@ -1,12 +1,10 @@
 [gd_scene format=3 uid="uid://eyfp4kqpd26c"]
 
 [ext_resource type="Script" uid="uid://cxbamfwvqlnkg" path="res://main.gd" id="1_ig7tw"]
-[ext_resource type="PackedScene" uid="uid://c2v5vbgwiocso" path="res://connect menu/connect menu.tscn" id="2_0xm2m"]
 
 [node name="Main" type="Node" unique_id=1759864762]
 script = ExtResource("1_ig7tw")
 
-[node name="Connect menu" parent="." unique_id=489122455 instance=ExtResource("2_0xm2m")]
-
 [node name="error_popup" type="AcceptDialog" parent="." unique_id=1927675351]
 unique_name_in_owner = true
+oversampling_override = 1.0

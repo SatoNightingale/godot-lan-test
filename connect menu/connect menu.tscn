@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" uid="uid://bbto47c3cb7gd" path="res://connect menu/connect_menu.gd" id="1_6fgbw"]
 
-[node name="Connect menu" type="Control" unique_id=489122455]
+[node name="connect_menu" type="Control" unique_id=489122455]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -19,59 +19,60 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="VBoxContainer" type="VBoxContainer" parent="center" unique_id=1541769856]
+[node name="margin" type="MarginContainer" parent="center" unique_id=534842269]
+unique_name_in_owner = true
 layout_mode = 2
 
-[node name="Label" type="Label" parent="center/VBoxContainer" unique_id=276849597]
+[node name="VBoxContainer" type="VBoxContainer" parent="center/margin" unique_id=1541769856]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="center/margin/VBoxContainer" unique_id=276849597]
 layout_mode = 2
 text = "Conectarse a juego"
 horizontal_alignment = 1
 
-[node name="GridContainer" type="GridContainer" parent="center/VBoxContainer" unique_id=1506442527]
+[node name="GridContainer" type="GridContainer" parent="center/margin/VBoxContainer" unique_id=1506442527]
 layout_mode = 2
 columns = 2
 
-[node name="Label" type="Label" parent="center/VBoxContainer/GridContainer" unique_id=473291558]
+[node name="Label" type="Label" parent="center/margin/VBoxContainer/GridContainer" unique_id=473291558]
 layout_mode = 2
 text = "ip: "
 
-[node name="ipedit" type="LineEdit" parent="center/VBoxContainer/GridContainer" unique_id=1506366592]
+[node name="ipedit" type="LineEdit" parent="center/margin/VBoxContainer/GridContainer" unique_id=1506366592]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(120, 0)
 layout_mode = 2
 
-[node name="Label2" type="Label" parent="center/VBoxContainer/GridContainer" unique_id=1645418840]
+[node name="Label2" type="Label" parent="center/margin/VBoxContainer/GridContainer" unique_id=1645418840]
 layout_mode = 2
 text = "puerto: "
 
-[node name="portedit" type="LineEdit" parent="center/VBoxContainer/GridContainer" unique_id=2132371533]
+[node name="portedit" type="LineEdit" parent="center/margin/VBoxContainer/GridContainer" unique_id=2132371533]
 unique_name_in_owner = true
 layout_mode = 2
 text = "4242"
 alignment = 2
 
-[node name="Label3" type="Label" parent="center/VBoxContainer/GridContainer" unique_id=143468218]
+[node name="Label3" type="Label" parent="center/margin/VBoxContainer/GridContainer" unique_id=143468218]
 layout_mode = 2
 text = "nombre: "
 
-[node name="nameedit" type="LineEdit" parent="center/VBoxContainer/GridContainer" unique_id=405432227]
+[node name="nameedit" type="LineEdit" parent="center/margin/VBoxContainer/GridContainer" unique_id=405432227]
 unique_name_in_owner = true
 layout_mode = 2
 text = "Player"
 alignment = 2
 
-[node name="Join" type="Button" parent="center/VBoxContainer" unique_id=301701912]
+[node name="Join" type="Button" parent="center/margin/VBoxContainer" unique_id=301701912]
 unique_name_in_owner = true
 layout_mode = 2
 text = "Unirse"
 
-[node name="Host" type="Button" parent="center/VBoxContainer" unique_id=1104224283]
+[node name="Host" type="Button" parent="center/margin/VBoxContainer" unique_id=1104224283]
 unique_name_in_owner = true
 layout_mode = 2
 text = "Crear"
 
-[connection signal="editing_toggled" from="center/VBoxContainer/GridContainer/ipedit" to="." method="_on_ipedit_editing_toggled"]
-[connection signal="editing_toggled" from="center/VBoxContainer/GridContainer/portedit" to="." method="_on_portedit_editing_toggled"]
-[connection signal="editing_toggled" from="center/VBoxContainer/GridContainer/nameedit" to="." method="_on_nameedit_editing_toggled"]
-[connection signal="pressed" from="center/VBoxContainer/Join" to="." method="_on_connect_pressed"]
-[connection signal="pressed" from="center/VBoxContainer/Host" to="." method="_on_host_pressed"]
+[connection signal="pressed" from="center/margin/VBoxContainer/Join" to="." method="_on_connect_pressed"]
+[connection signal="pressed" from="center/margin/VBoxContainer/Host" to="." method="_on_host_pressed"]

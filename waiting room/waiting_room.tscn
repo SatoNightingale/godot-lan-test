@@ -2,7 +2,9 @@
 
 [ext_resource type="Script" uid="uid://boqapf2mvl1a5" path="res://waiting room/waiting room.gd" id="1_m6j7u"]
 
-[node name="waiting room" type="Control" unique_id=421966016]
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_uv7ps"]
+
+[node name="waiting_room" type="Control" unique_id=421966016]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -27,15 +29,28 @@ layout_mode = 2
 
 [node name="server_ip" type="Label" parent="CenterContainer/VBoxContainer/HBoxContainer" unique_id=64179690]
 layout_mode = 2
-text = "IP: "
+text = "IP posibles:"
 
 [node name="ip" type="LineEdit" parent="CenterContainer/VBoxContainer/HBoxContainer" unique_id=1081091736]
 unique_name_in_owner = true
+visible = false
 custom_minimum_size = Vector2(120, 0)
 layout_mode = 2
 size_flags_horizontal = 3
 alignment = 2
 editable = false
+
+[node name="ip_list" type="OptionButton" parent="CenterContainer/VBoxContainer/HBoxContainer" unique_id=1511021258]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(150, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+alignment = 2
+
+[node name="HSeparator" type="HSeparator" parent="CenterContainer/VBoxContainer" unique_id=498678057]
+layout_mode = 2
+theme_override_constants/separation = 8
+theme_override_styles/separator = SubResource("StyleBoxEmpty_uv7ps")
 
 [node name="Label2" type="Label" parent="CenterContainer/VBoxContainer" unique_id=1766307655]
 layout_mode = 2
@@ -44,7 +59,7 @@ horizontal_alignment = 1
 
 [node name="player_list" type="ItemList" parent="CenterContainer/VBoxContainer" unique_id=1926020514]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(180, 100)
+custom_minimum_size = Vector2(180, 150)
 layout_mode = 2
 wraparound_items = false
 
