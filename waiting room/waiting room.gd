@@ -20,6 +20,7 @@ func _ready() -> void:
 		on_player_data_updated(id, player_data[id])
 	
 	if multiplayer.is_server():
+		%ip_list.clear()
 		var idx = 0
 		for ip in IP.get_local_addresses():
 			if ":" not in ip: # solo ipv4
@@ -29,6 +30,8 @@ func _ready() -> void:
 			idx += 1
 		#if %ip_list.get_selected_id() == -1 and %ip_list.item_count > 0:
 			#%ip_list.select(0)
+		%ip_list.show()
+		%ip.hide()
 	else:
 		%ip_list.hide()
 		%ip.text = server_address
@@ -46,11 +49,22 @@ func _on_peer_disconnected(id: int):
 	%player_list.remove_item(_player_items[id]["idx"])
 
 
+@rpc("call_local")
+func call_game_start():
+	game_start.emit()
+
+
+func _on_start_pressed() -> void:
+	if multiplayer.is_server():
+		call_game_start.rpc()
+
+
 func _on_exit_pressed() -> void:
 	multiplayer.multiplayer_peer = OfflineMultiplayerPeer.new()
 	exit.emit()
 
 
-func _on_start_pressed() -> void:
-	if multiplayer.is_server():
-		game_start.emit()
+func _on_tree_exiting() -> void:
+	%player_list.clear()
+	_player_items.clear()
+	multiplayer.peer_disconnected.disconnect(_on_peer_disconnected)

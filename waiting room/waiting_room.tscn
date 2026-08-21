@@ -73,5 +73,6 @@ unique_name_in_owner = true
 layout_mode = 2
 text = "Salir"
 
+[connection signal="tree_exiting" from="." to="." method="_on_tree_exiting"]
 [connection signal="pressed" from="CenterContainer/VBoxContainer/start" to="." method="_on_start_pressed"]
 [connection signal="pressed" from="CenterContainer/VBoxContainer/exit" to="." method="_on_exit_pressed"]

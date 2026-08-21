@@ -3,14 +3,14 @@ extends Node
 signal player_data_updated(id: int, new_data)
 
 var game_scene = preload("res://game/game.tscn")
-var connect_scene = preload("res://connect menu/connect menu.tscn")
-var lobby_scene = preload("res://waiting room/waiting_room.tscn")
+var connect_menu = preload("res://connect menu/connect menu.tscn").instantiate()
+var waiting_room = preload("res://waiting room/waiting_room.tscn").instantiate()
 
 var _active_scene: Node
 
 var player_name: String
 var player_data: Dictionary
-var ready_player_count = 0
+#var ready_player_count = 0
 
 
 func _ready() -> void:
@@ -19,9 +19,19 @@ func _ready() -> void:
 	multiplayer.peer_connected.connect(_on_peer_connected)
 	multiplayer.peer_disconnected.connect(_on_peer_disconnected)
 	multiplayer.server_disconnected.connect(_on_server_disconnected)
-	multiplayer.connection_failed.connect(error_popup.bind("Error al conectar al servidor", "Error de conexion"))
-	change_scene(connect_scene, init_connect_menu)
-	debug_tasks()
+	multiplayer.connection_failed.connect(error_popup.bind("Error al conectar al servidor.\nRevise la direccion IP", "Error de conexion"))
+	# connect_menu
+	connect_menu.player_name = player_name
+	connect_menu.hosted.connect(on_hosted)
+	connect_menu.connected.connect(on_connected)
+	connect_menu.error.connect(error_popup.bind("Error de conexion"))
+	# waiting_room
+	waiting_room.player_data = player_data
+	player_data_updated.connect(waiting_room.on_player_data_updated)
+	waiting_room.game_start.connect(load_game)
+	waiting_room.exit.connect(_on_waiting_room_disconnect)
+	change_scene(connect_menu)
+	#debug_tasks()
 
 
 func read_config():
@@ -63,56 +73,31 @@ func debug_tasks():
 			#$"waiting room"._on_start_pressed()
 
 
-func on_hosted(_player_name: String):
+func init_player_data(_player_name: String):
 	player_name = _player_name
 	player_data[multiplayer.get_unique_id()] = {"name": player_name}
 	save_config()
-	change_scene(lobby_scene, init_waiting_room_server)
 
+func on_hosted(_player_name: String):
+	init_player_data(_player_name)
+	change_scene(waiting_room)
 
 func on_connected(_player_name: String, address: String):
-	player_name = _player_name
-	player_data[multiplayer.get_unique_id()] = {"name": player_name}
-	save_config()
-	change_scene(lobby_scene, init_waiting_room_client.bind(address))
-
-
-func init_connect_menu(connect_menu: Node):
-	connect_menu.player_name = player_name
-	connect_menu.hosted.connect(on_hosted)
-	connect_menu.connected.connect(on_connected)
-	connect_menu.error.connect(error_popup.bind("Error de conexion"))
-
-
-func init_waiting_room_server(waiting_room: Node):
-	waiting_room.player_data = player_data
-	player_data_updated.connect(waiting_room.on_player_data_updated)
-	waiting_room.game_start.connect(load_game)
-	waiting_room.exit.connect(_on_waiting_room_disconnect)
-
-
-func init_waiting_room_client(waiting_room: Node, address: String):
-	init_waiting_room_server(waiting_room)
 	waiting_room.server_address = address
+	player_name = _player_name
 
 
 func load_game():
-	var game_init = func(game):
-		game.player_data = player_data
-		game.ready.connect(func():
-			print(player_name, " game ready")
-			on_player_loaded.rpc_id(1)
-		)
-	change_scene(game_scene, game_init)
-
-
-@rpc("any_peer", "call_local")
-func on_player_loaded():
-	if multiplayer.is_server():
-		ready_player_count += 1
-		print("ready players: ", ready_player_count)
-		if ready_player_count == player_data.size():
-			get_node("/root/Main/Game").server_initialize()
+	var game = game_scene.instantiate()
+	game.player_data = player_data
+	#game.ready.connect(func():
+		#print(player_name, " game ready")
+		#on_player_loaded.rpc_id(1)
+	#)
+	get_tree().change_scene_to_node(game)
+	#remove_child(_active_scene)
+	#_active_scene = game
+	#add_child(game)
 
 
 @rpc("any_peer", "call_local")
@@ -124,22 +109,23 @@ func _register_player(nombre: String):
 		player_data_updated.emit(id, player_data[id])
 
 
-func change_scene(scene: PackedScene, initproc: Callable) -> Node:
-	var new_scene = scene.instantiate()
-	if new_scene != null:
-		if _active_scene != null:
-			remove_child(_active_scene)
-			_active_scene.queue_free()
-		_active_scene = new_scene
-		initproc.call(new_scene)
-		add_child(_active_scene)
-	else:
-		printerr("Error al cargar la escena: ", scene.resource_name)
-	return new_scene
+func change_scene(scene: Node):
+	#print("change scene to: ", scene.name)
+	#print(get_stack())
+	#print_stack()
+	if _active_scene != null:
+		#if _active_scene is Game:
+			#_active_scene.queue_free()
+		remove_child(_active_scene)
+	_active_scene = scene
+	_active_scene.request_ready()
+	add_child(scene)
 
 
 func _on_connected_to_server():
 	print("on connected to server")
+	init_player_data(player_name)
+	change_scene(waiting_room)
 	_register_player.rpc(player_name)
 
 
@@ -154,12 +140,12 @@ func _on_peer_disconnected(id: int):
 func _on_server_disconnected():
 	error_popup("El servidor se ha desconectado", "Desconexion")
 	player_data.clear()
-	change_scene(connect_scene, init_connect_menu)
+	change_scene(connect_menu)
 
 
 func _on_waiting_room_disconnect():
 	player_data.clear()
-	change_scene(connect_scene, init_connect_menu)
+	change_scene(connect_menu)
 
 
 func error_popup(message: String, title := "Error"):
@@ -173,7 +159,7 @@ func parse_arguments() -> Dictionary:
 	for argument in OS.get_cmdline_args():
 		if argument.contains("="):
 			var key_value = argument.split("=")
-			arguments[key_value[0].trim_prefix("--load")] = key_value[1]
+			arguments[key_value[0].trim_prefix("--")] = key_value[1]
 		else:
 			# Options without an argument will be present in the dictionary,
 			# with the value set to an empty string.

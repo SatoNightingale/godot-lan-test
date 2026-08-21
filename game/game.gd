@@ -1,4 +1,5 @@
 extends Node2D
+class_name Game
 
 @export var player_scene = preload("res://game/player/player.tscn")
 @export var bullet_scene = preload("res://game/bullet/bullet.tscn")
@@ -11,11 +12,27 @@ signal player_killed(killer_id: int, dead_id: int)
 
 #var client_player : Player
 
+var ready_player_count = 0
+
 
 func _ready():
 	%PlayerSpawner.spawn_function = spawn_player
 	%BulletSpawner.spawn_function = spawn_bullet
 	player_killed.connect(%UI.on_player_killed)
+	if multiplayer.is_server():
+		multiplayer.peer_disconnected.connect(_on_player_disconnected)
+	multiplayer.server_disconnected.connect(_on_server_disconnected)
+	on_player_loaded.rpc_id(1)
+
+
+@rpc("any_peer", "call_local")
+func on_player_loaded():
+	if multiplayer.is_server():
+		ready_player_count += 1
+		print("ready players: ", ready_player_count)
+		if ready_player_count == player_data.size():
+			#get_node("/root/Main/Game").
+			server_initialize()
 
 
 func server_initialize():
@@ -98,6 +115,19 @@ func on_player_killed(killer_id: int, dead_id: int):
 	player_data[killer_id]["kills"] += 1
 	player_data[dead_id]["deaths"] += 1
 	player_killed.emit(killer_id, dead_id)
+
+
+func _on_player_disconnected(id: int):
+	player_data[id].node.queue_free()
+	remove_child(player_data[id].node)
+	print(player_data[id].name, " se ha desconectado")
+	player_data.erase(id)
+
+
+func _on_server_disconnected():
+	var main_menu = load("res://main.tscn").instantiate()
+	main_menu.ready.connect(main_menu.error_popup.bind("Servidor desconectado"), CONNECT_ONE_SHOT)
+	get_tree().change_scene_to_node(main_menu)
 
 
 #@rpc("call_local")

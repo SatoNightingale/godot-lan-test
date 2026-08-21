@@ -38,3 +38,7 @@ spawn_path = NodePath("..")
 unique_name_in_owner = true
 _spawnable_scenes = PackedStringArray("uid://b16301nsg01q4")
 spawn_path = NodePath("..")
+
+[node name="error_popup" type="AcceptDialog" parent="." unique_id=2051826720]
+unique_name_in_owner = true
+oversampling_override = 1.0
