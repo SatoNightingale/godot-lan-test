@@ -98,7 +98,7 @@ func respawn_player(id: int):
 		return
 	var starting_position = %start_points.get_children().pick_random()
 	var player = player_data[id].node as Player
-	player.initialize.rpc(starting_position.position)
+	player.revive.rpc(starting_position.position)
 
 
 func _on_player_shot(killer_id, dead_id):

@@ -18,11 +18,13 @@ func configure_ui(_player: Player):
 
 func _on_player_weapon_changed(weapon: Weapon):
 	if "shoot_cooldown" in weapon:
-		%shoot_button1.setup(weapon.shoot_cooldown, weapon.bullet_fired)
-		%shoot_button2.setup(weapon.shoot_cooldown, weapon.bullet_fired)
+		%shoot_button.setup(weapon.shoot_cooldown, weapon.bullet_fired)
+		#%shoot_button2.setup(weapon.shoot_cooldown, weapon.bullet_fired)
 	if "reload_cooldown" in weapon:
 		%reload_button.setup(weapon.reload_cooldown, weapon.reloading)
+	_on_update_ammo(weapon.ammo)
 	weapon.update_ammo.connect(_on_update_ammo)
+	weapon.aim_mode_changed.connect(_on_weapon_aim_mode_changed)
 
 
 func _process(_delta: float) -> void:
@@ -44,6 +46,10 @@ func set_game_screen():
 
 
 func on_player_killed(killer_id: int, dead_id: int):
+	%label_anuncios.add_mensaje("{0} ha matado a {1}".format([
+		player_data[killer_id].node.get_colored_player_name(),
+		player_data[dead_id].node.get_colored_player_name(),
+	]))
 	if multiplayer.get_unique_id() == killer_id:
 		%bajas.text = "Bajas: " + str(player_data[killer_id].kills)
 	if multiplayer.get_unique_id() == dead_id:
@@ -51,5 +57,13 @@ func on_player_killed(killer_id: int, dead_id: int):
 		%muertes.text = "Muertes: " + str(player_data[dead_id].deaths)
 
 
+func _on_weapon_aim_mode_changed(value: bool):
+	%shoot_button.visible = value
+	# cambiar la textura de %aim_button
+	var aux_texture = %aim_button.texture_normal
+	%aim_button.texture_normal = %aim_button.texture_pressed
+	%aim_button.texture_pressed = aux_texture
+
+
 func _on_update_ammo(new_ammo: int):
-	%AmmoLabel.text = str(new_ammo)
+	%AmmoLabel.text = "{0} / {1}".format([str(new_ammo), str(player.weapon.max_ammo)])

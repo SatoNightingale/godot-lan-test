@@ -4,17 +4,31 @@ class_name Player
 
 signal shot(shooter: int)
 signal weapon_changed(new_weapon: Weapon)
+signal revived
 
-@export var SPEED = 250.0
-@export var aim_offset = 100
-@export var weapon : Weapon:
-	set(value):
-		weapon = value
-		weapon_changed.emit(weapon)
+const player_colors = {
+	0: Color.BLUE,
+	1: Color.RED,
+	2: Color.GREEN,
+	3: Color.YELLOW
+}
+
+@export var speed = 250.0
+
+@export var camera: Camera2D
+
+@export var weapon: Weapon:
+	set(new_weapon):
+		if weapon:
+			remove_child(weapon)
+			weapon.queue_free()
+		new_weapon.player = self
+		weapon_changed.emit(new_weapon)
+		add_child(new_weapon)
+		weapon = new_weapon
 
 @export var respawn_timer : Timer
 
-@onready var initpos = position
 
 var player_id: int
 var player_name: String
@@ -23,17 +37,6 @@ var local_player: bool
 
 var direction: Vector2
 var alive := true
-
-var camera_aim_angle : Vector2
-var aim_mode := false: 
-	set(value):
-		if value != aim_mode:
-			aim_mode = value
-			%camara.position_smoothing_enabled = aim_mode
-			var tween = %camara.create_tween()
-			var anim_end = direction * aim_offset if aim_mode else Vector2.ZERO
-			tween.tween_property(%camara, "offset", anim_end, 0.2)
-		if not aim_mode: camera_aim_angle = Vector2.ZERO
 
 
 func _enter_tree() -> void:
@@ -50,8 +53,7 @@ func _ready():
 		%aim_timer.timeout.connect(set.bind("aim_mode", true))
 
 
-@rpc("call_local")
-func initialize(pos):
+func initialize(pos: Vector2):
 	if multiplayer.is_server():
 		alive = true
 	visible = true
@@ -60,15 +62,17 @@ func initialize(pos):
 	direction = Vector2.from_angle(rotation)
 	$shape.set_deferred("disabled", false)
 	$hitbox.set_deferred("monitoring", true)
-	match player_number:
-		0: $sprite.self_modulate = Color.BLUE
-		1: $sprite.self_modulate = Color.RED
-		2: $sprite.self_modulate = Color.GREEN
-		3: $sprite.self_modulate = Color.YELLOW
+	$sprite.self_modulate = player_colors[player_number]
 
 
-func control_movement(move_dir: Vector2, _camera_dir: Vector2):
-	velocity = move_dir.normalized() * SPEED \
+@rpc("call_local")
+func revive(pos: Vector2):
+	initialize(pos)
+	revived.emit()
+
+
+func control_movement(move_dir: Vector2):
+	velocity = move_dir.normalized() * speed \
 		if move_dir != Vector2.ZERO \
 		else Vector2.ZERO
 
@@ -77,35 +81,20 @@ func control_camera(camera_dir: Vector2, move_dir: Vector2):
 	if camera_dir != Vector2.ZERO:
 		rotation = camera_dir.angle()
 		direction = camera_dir
-		if not %aim_timer.is_stopped() and camera_dir.dot(camera_aim_angle) < 0.98:
-			%aim_timer.stop()
-		if move_dir == Vector2.ZERO and %aim_timer.is_stopped() and not aim_mode:
-			%aim_timer.start()
-			camera_aim_angle = camera_dir
-	else:
-		aim_mode = false
-		if not %aim_timer.is_stopped():
-			%aim_timer.stop()
-		if move_dir != Vector2.ZERO:
+	else: if move_dir != Vector2.ZERO:
 			rotation = move_dir.angle()
 			direction = move_dir
-	if move_dir != Vector2.ZERO:
-		aim_mode = false
-	if aim_mode:
-		%camara.offset = direction * aim_offset
 
 
 func _physics_process(_delta):
-	if not %ClientSynchronizer.is_multiplayer_authority():
+	if not local_player: # %ClientSynchronizer.is_multiplayer_authority():
 		return
 	if not alive:
 		return
-	var move_dir = Input.get_vector("move_left", "move_right", "move_up", "move_down")
 	var camera_dir = Input.get_vector("look_left", "look_right", "look_up", "look_down")
-	control_movement(move_dir, camera_dir)
+	var move_dir = Input.get_vector("move_left", "move_right", "move_up", "move_down")
+	control_movement(move_dir)
 	control_camera(camera_dir, move_dir)
-	if weapon != null:
-		weapon.process()
 	move_and_slide()
 
 
@@ -125,3 +114,8 @@ func die():
 	visible = false
 	$shape.set_deferred("disabled", true)
 	$hitbox.set_deferred("monitoring", false)
+
+
+func get_colored_player_name() -> String:
+	return "[color={0}]{1}[/color]" \
+		.format([player_colors[player_number].to_html(), player_name])

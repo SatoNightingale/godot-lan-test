@@ -41,10 +41,11 @@ properties/1/path = NodePath(".:player_number")
 properties/1/spawn = true
 properties/1/replication_mode = 2
 
-[node name="player" type="CharacterBody2D" unique_id=1954339528 node_paths=PackedStringArray("weapon", "respawn_timer") groups=["players"]]
+[node name="player" type="CharacterBody2D" unique_id=1954339528 node_paths=PackedStringArray("camera", "weapon", "respawn_timer") groups=["players"]]
 collision_mask = 3
 motion_mode = 1
 script = ExtResource("1_iidce")
+camera = NodePath("camara")
 weapon = NodePath("weapon")
 respawn_timer = NodePath("respawn_timer")
 
@@ -66,7 +67,8 @@ position = Vector2(-7, -0.5)
 position = Vector2(7, 0.5)
 shape = SubResource("CircleShape2D_sxto4")
 
-[node name="weapon" parent="." unique_id=693644199 instance=ExtResource("3_a4w0n")]
+[node name="weapon" parent="." unique_id=693644199 node_paths=PackedStringArray("player") instance=ExtResource("3_a4w0n")]
+player = NodePath("..")
 
 [node name="cannon" type="Marker2D" parent="." unique_id=36865486]
 visible = false

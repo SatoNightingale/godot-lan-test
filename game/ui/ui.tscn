@@ -5,8 +5,17 @@
 [ext_resource type="Texture2D" uid="uid://bm30au8mjfc2f" path="res://addons/virtual_joystick/textures/joystick_base_outline.png" id="2_nancp"]
 [ext_resource type="Texture2D" uid="uid://dt13r06u87fib" path="res://addons/virtual_joystick/textures/joystick_tip_arrows.png" id="3_u6kf3"]
 [ext_resource type="Texture2D" uid="uid://bh0gct150p4n3" path="res://game/ui/icons/slice37.png" id="4_dlhb6"]
+[ext_resource type="Texture2D" uid="uid://cot3dub7alw0o" path="res://game/ui/icons/bullet-shoot.png" id="5_cshcc"]
 [ext_resource type="Script" uid="uid://v7kukw1f6alt" path="res://game/ui/cooldown_button.gd" id="5_rmo86"]
-[ext_resource type="Texture2D" uid="uid://cal3fbg82lqcu" path="res://game/ui/icons/slice34.svg" id="6_3l31w"]
+[ext_resource type="Texture2D" uid="uid://88w4ecejivxu" path="res://game/ui/icons/slice37-negative.png" id="7_6fpg5"]
+[ext_resource type="Texture2D" uid="uid://4wtfduwhrodq" path="res://game/ui/icons/reload.svg" id="9_cshcc"]
+[ext_resource type="Script" uid="uid://dkrm7nukjgc6k" path="res://game/ui/label_anuncios.gd" id="10_eogtg"]
+
+[sub_resource type="SystemFont" id="SystemFont_eogtg"]
+font_names = PackedStringArray("Monospace")
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_8lmuw"]
+bg_color = Color(0.09411765, 0.09411765, 0.09411765, 0.8627451)
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_7mycd"]
 radius = 115.0
@@ -17,8 +26,20 @@ radius = 115.0
 [node name="UI" type="CanvasLayer" unique_id=845416013]
 script = ExtResource("1_nancp")
 
+[node name="console" type="RichTextLabel" parent="." unique_id=716394386]
+visible = false
+anchors_preset = -1
+offset_right = 300.0
+offset_bottom = 120.0
+theme_override_fonts/normal_font = SubResource("SystemFont_eogtg")
+theme_override_font_sizes/normal_font_size = 12
+theme_override_styles/normal = SubResource("StyleBoxFlat_8lmuw")
+text = "cosacosacosaocsoasa"
+metadata/_edit_use_anchors_ = true
+
 [node name="screen_controls" type="Control" parent="." unique_id=155929000]
 unique_name_in_owner = true
+texture_filter = 2
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -31,27 +52,8 @@ custom_minimum_size = Vector2(240, 0)
 layout_mode = 1
 anchors_preset = 9
 anchor_bottom = 1.0
+offset_right = 240.0
 grow_vertical = 2
-
-[node name="Control2" type="Control" parent="screen_controls/Control1" unique_id=1591073033]
-layout_mode = 1
-anchor_left = 0.4
-anchor_top = 0.2
-anchor_right = 0.6
-anchor_bottom = 0.2
-offset_left = -38.0
-offset_right = -11.0
-offset_bottom = 85.0
-
-[node name="shoot_button2" type="TouchScreenButton" parent="screen_controls/Control1/Control2" unique_id=1162450557]
-unique_name_in_owner = true
-modulate = Color(1, 1, 1, 0.76862746)
-scale = Vector2(0.356, 0.356)
-texture_normal = ExtResource("4_dlhb6")
-shape = SubResource("CircleShape2D_7mycd")
-shape_visible = false
-action = "shoot"
-script = ExtResource("5_rmo86")
 
 [node name="Control" type="Control" parent="screen_controls/Control1" unique_id=1193976483]
 layout_mode = 1
@@ -60,6 +62,7 @@ anchor_top = 1.0
 anchor_bottom = 1.0
 offset_top = -264.0
 offset_right = 240.0
+grow_vertical = 0
 
 [node name="CameraJoystick" type="Control" parent="screen_controls/Control1/Control" unique_id=1045949482]
 layout_mode = 1
@@ -117,6 +120,28 @@ pivot_offset = Vector2(50, 50)
 texture = ExtResource("3_u6kf3")
 stretch_mode = 5
 
+[node name="Control2" type="Control" parent="screen_controls/Control1/Control" unique_id=526668955]
+layout_mode = 1
+anchors_preset = 0
+offset_left = 30.0
+offset_top = -100.0
+offset_right = 90.0
+offset_bottom = -30.0
+grow_horizontal = 0
+metadata/_edit_use_anchors_ = true
+metadata/_edit_group_ = true
+
+[node name="shoot_button" type="TouchScreenButton" parent="screen_controls/Control1/Control/Control2" unique_id=193280338]
+unique_name_in_owner = true
+visible = false
+modulate = Color(1, 1, 1, 0.76862746)
+scale = Vector2(0.28, 0.28)
+texture_normal = ExtResource("5_cshcc")
+shape = SubResource("CircleShape2D_7mycd")
+shape_visible = false
+action = "shoot"
+script = ExtResource("5_rmo86")
+
 [node name="Control2" type="Control" parent="screen_controls" unique_id=202642603]
 custom_minimum_size = Vector2(240, 0)
 layout_mode = 1
@@ -127,27 +152,6 @@ anchor_bottom = 1.0
 grow_horizontal = 0
 grow_vertical = 2
 
-[node name="Control2" type="Control" parent="screen_controls/Control2" unique_id=1488777227]
-layout_mode = 1
-anchor_left = 0.6
-anchor_top = 0.2
-anchor_right = 0.6
-anchor_bottom = 0.2
-offset_left = -38.0
-offset_right = 37.0
-offset_bottom = 85.0
-grow_horizontal = 0
-
-[node name="shoot_button1" type="TouchScreenButton" parent="screen_controls/Control2/Control2" unique_id=2141419908]
-unique_name_in_owner = true
-modulate = Color(1, 1, 1, 0.76862746)
-scale = Vector2(0.356, 0.356)
-texture_normal = ExtResource("4_dlhb6")
-shape = SubResource("CircleShape2D_7mycd")
-shape_visible = false
-action = "shoot"
-script = ExtResource("5_rmo86")
-
 [node name="Control" type="Control" parent="screen_controls/Control2" unique_id=2078470175]
 layout_mode = 1
 anchors_preset = 2
@@ -155,6 +159,7 @@ anchor_top = 1.0
 anchor_bottom = 1.0
 offset_top = -264.0
 offset_right = 240.0
+grow_vertical = 0
 
 [node name="CameraJoystick" type="Control" parent="screen_controls/Control2/Control" unique_id=418510836]
 layout_mode = 1
@@ -168,8 +173,7 @@ grow_vertical = 2
 scale = Vector2(0.6, 0.6)
 size_flags_vertical = 3
 script = ExtResource("1_citti")
-pressed_color = Color(0.61608464, 0.76807827, 0.87981236, 1)
-joystick_mode = 1
+pressed_color = Color(0.9647059, 0.5058824, 0.5137255, 1)
 action_left = "look_left"
 action_right = "look_right"
 action_up = "look_up"
@@ -212,43 +216,86 @@ pivot_offset = Vector2(50, 50)
 texture = ExtResource("3_u6kf3")
 stretch_mode = 5
 
-[node name="Control3" type="Control" parent="screen_controls" unique_id=830718757]
+[node name="Control2" type="Control" parent="screen_controls/Control2/Control" unique_id=1488777227]
 layout_mode = 1
+anchor_left = 0.1375
+anchor_right = 0.1375
+metadata/_edit_use_anchors_ = true
+metadata/_edit_group_ = true
+
+[node name="aim_button" type="TouchScreenButton" parent="screen_controls/Control2/Control/Control2" unique_id=2141419908]
+unique_name_in_owner = true
+modulate = Color(1, 1, 1, 0.76862746)
+scale = Vector2(0.28, 0.28)
+texture_normal = ExtResource("4_dlhb6")
+texture_pressed = ExtResource("7_6fpg5")
+shape = SubResource("CircleShape2D_7mycd")
+shape_visible = false
+action = "aim"
+script = ExtResource("5_rmo86")
+
+[node name="Control3" type="Control" parent="screen_controls/Control2/Control" unique_id=830718757]
+layout_mode = 1
+anchors_preset = 7
 anchor_left = 0.5
 anchor_top = 1.0
 anchor_right = 0.5
 anchor_bottom = 1.0
-offset_left = -29.0
-offset_top = -107.0
-offset_right = 30.0
-offset_bottom = -40.0
+offset_left = -142.0
+offset_top = -162.0
+offset_right = -83.0
+offset_bottom = -95.0
 grow_horizontal = 2
 grow_vertical = 0
+metadata/_edit_group_ = true
 
-[node name="reload_button" type="TouchScreenButton" parent="screen_controls/Control3" unique_id=917922984]
+[node name="reload_button" type="TouchScreenButton" parent="screen_controls/Control2/Control/Control3" unique_id=917922984]
 unique_name_in_owner = true
 self_modulate = Color(1, 1, 1, 0.76862746)
-scale = Vector2(0.28095198, 0.280952)
-texture_normal = ExtResource("6_3l31w")
+scale = Vector2(0.28, 0.28)
+texture_normal = ExtResource("9_cshcc")
 shape = SubResource("CircleShape2D_272bh")
 shape_visible = false
 action = "reload"
 script = ExtResource("5_rmo86")
-metadata/_edit_group_ = true
 
-[node name="AmmoLabel" type="Label" parent="screen_controls/Control3/reload_button" unique_id=1960840209]
+[node name="AmmoLabel" type="Label" parent="screen_controls/Control2" unique_id=1960840209]
 unique_name_in_owner = true
-anchors_preset = 15
-anchor_right = 1.0
+layout_mode = 1
+anchors_preset = -1
+anchor_top = 1.0
 anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
+offset_left = -100.0
+offset_bottom = -10.0
+grow_vertical = 0
 size_flags_vertical = 1
-theme_override_constants/outline_size = 12
-theme_override_font_sizes/font_size = 144
-text = "3"
+theme_override_constants/outline_size = 10
+theme_override_font_sizes/font_size = 24
+text = "3 / 3"
 horizontal_alignment = 1
 vertical_alignment = 1
+
+[node name="label_anuncios" type="RichTextLabel" parent="." unique_id=243514286]
+unique_name_in_owner = true
+visible = false
+anchors_preset = -1
+anchor_top = 0.2
+anchor_right = 1.0
+anchor_bottom = 0.2
+offset_bottom = 32.0
+grow_horizontal = 2
+theme_override_constants/outline_size = 6
+theme_override_font_sizes/normal_font_size = 23
+bbcode_enabled = true
+fit_content = true
+scroll_active = false
+horizontal_alignment = 1
+vertical_alignment = 1
+script = ExtResource("10_eogtg")
+
+[node name="Timer" type="Timer" parent="label_anuncios" unique_id=2058842637]
+wait_time = 2.5
+one_shot = true
 
 [node name="respawn_screen" type="ColorRect" parent="." unique_id=462163632]
 unique_name_in_owner = true
@@ -303,28 +350,27 @@ visible = false
 layout_mode = 2
 text = "Jugar de nuevo"
 
-[node name="contador" type="MarginContainer" parent="." unique_id=1018140992]
+[node name="contador" type="HBoxContainer" parent="." unique_id=63837120]
 anchors_preset = 1
 anchor_left = 1.0
 anchor_right = 1.0
-offset_left = -220.0
-offset_bottom = 54.0
+offset_left = -190.0
+offset_top = 20.0
+offset_right = -30.0
+offset_bottom = 34.0
 grow_horizontal = 0
-theme_override_constants/margin_top = 20
-theme_override_constants/margin_right = 30
-
-[node name="HBoxContainer" type="HBoxContainer" parent="contador" unique_id=63837120]
-layout_mode = 2
 theme_override_constants/separation = 25
 
-[node name="muertes" type="Label" parent="contador/HBoxContainer" unique_id=1638602100]
+[node name="muertes" type="Label" parent="contador" unique_id=1638602100]
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_font_sizes/font_size = 18
 text = "Muertes: 0"
 
-[node name="bajas" type="Label" parent="contador/HBoxContainer" unique_id=238222933]
+[node name="bajas" type="Label" parent="contador" unique_id=238222933]
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_font_sizes/font_size = 18
 text = "Bajas: 0"
+
+[connection signal="timeout" from="label_anuncios/Timer" to="label_anuncios" method="_on_timer_timeout"]

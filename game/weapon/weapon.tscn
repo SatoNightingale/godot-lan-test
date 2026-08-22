@@ -25,6 +25,7 @@ position = Vector2(40, 0)
 stream = ExtResource("1_dp26m")
 
 [node name="shoot_cooldown" type="Timer" parent="." unique_id=1280501987]
+wait_time = 0.6
 one_shot = true
 
 [node name="reload_cooldown" type="Timer" parent="." unique_id=2006074738]
