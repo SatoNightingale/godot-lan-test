@@ -50,7 +50,6 @@ weapon = NodePath("weapon")
 respawn_timer = NodePath("respawn_timer")
 
 [node name="sprite" type="AnimatedSprite2D" parent="." unique_id=829708582]
-texture_filter = 4
 position = Vector2(4, 0)
 scale = Vector2(0.2, 0.2)
 sprite_frames = SubResource("SpriteFrames_esygj")
@@ -61,6 +60,7 @@ visible = false
 shape = SubResource("CircleShape2D_hih7m")
 
 [node name="hitbox" type="Area2D" parent="." unique_id=16569471]
+visible = false
 position = Vector2(-7, -0.5)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="hitbox" unique_id=1799772823]
@@ -81,21 +81,9 @@ unique_name_in_owner = true
 unique_name_in_owner = true
 stream = ExtResource("3_8soms")
 
-[node name="shoot_cooldown" type="Timer" parent="." unique_id=1914408065]
-one_shot = true
-
-[node name="reload_cooldown" type="Timer" parent="." unique_id=57523796]
-wait_time = 3.0
-one_shot = true
-
 [node name="respawn_timer" type="Timer" parent="." unique_id=1697499230]
 unique_name_in_owner = true
 wait_time = 3.0
-one_shot = true
-
-[node name="aim_timer" type="Timer" parent="." unique_id=1260940068]
-unique_name_in_owner = true
-wait_time = 0.5
 one_shot = true
 
 [node name="ClientSynchronizer" type="MultiplayerSynchronizer" parent="." unique_id=386237442]
@@ -107,5 +95,3 @@ unique_name_in_owner = true
 replication_config = SubResource("SceneReplicationConfig_b2mth")
 
 [connection signal="body_entered" from="hitbox" to="." method="_on_hitbox_body_entered"]
-[connection signal="timeout" from="shoot_cooldown" to="." method="_on_shoot_cooldown_timeout"]
-[connection signal="timeout" from="reload_cooldown" to="." method="_on_reload_cooldown_timeout"]

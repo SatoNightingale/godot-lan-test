@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://cqu1irl2s26n0"
-path="res://.godot/imported/slice37.svg-b911b4b8eb3a694ecfbcbde6720d8e21.ctex"
+uid="uid://bh0gct150p4n3"
+path="res://.godot/imported/slice37.png-a858186f77887a15910299d3a1b83a4e.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://game/ui/icons/slice37.svg"
-dest_files=["res://.godot/imported/slice37.svg-b911b4b8eb3a694ecfbcbde6720d8e21.ctex"]
+source_file="res://ui/icons/slice37.png"
+dest_files=["res://.godot/imported/slice37.png-a858186f77887a15910299d3a1b83a4e.ctex"]
 
 [params]
 
@@ -38,6 +38,3 @@ process/hdr_as_srgb=false
 process/hdr_clamp_exposure=false
 process/size_limit=0
 detect_3d/compress_to=1
-svg/scale=1.0
-editor/scale_with_editor_scale=false
-editor/convert_colors_with_editor_theme=false

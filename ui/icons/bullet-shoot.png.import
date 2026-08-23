@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://4kfshn5i2fq1"
-path="res://.godot/imported/slice34.png-775616c051ab1f8651a97110c766f697.ctex"
+uid="uid://cot3dub7alw0o"
+path="res://.godot/imported/bullet-shoot.png-05624be96f0c1388cd0514d1848d1a1f.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://game/ui/icons/slice34.png"
-dest_files=["res://.godot/imported/slice34.png-775616c051ab1f8651a97110c766f697.ctex"]
+source_file="res://ui/icons/bullet-shoot.png"
+dest_files=["res://.godot/imported/bullet-shoot.png-05624be96f0c1388cd0514d1848d1a1f.ctex"]
 
 [params]
 

@@ -110,12 +110,7 @@ func _register_player(nombre: String):
 
 
 func change_scene(scene: Node):
-	#print("change scene to: ", scene.name)
-	#print(get_stack())
-	#print_stack()
 	if _active_scene != null:
-		#if _active_scene is Game:
-			#_active_scene.queue_free()
 		remove_child(_active_scene)
 	_active_scene = scene
 	_active_scene.request_ready()

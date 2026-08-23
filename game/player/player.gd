@@ -24,11 +24,12 @@ const player_colors = {
 			weapon.queue_free()
 		new_weapon.player = self
 		weapon_changed.emit(new_weapon)
-		add_child(new_weapon)
+		#add_child(new_weapon)
 		weapon = new_weapon
 
 @export var respawn_timer : Timer
 
+## TODO: vida para la gente, que las balas tengan daño
 
 var player_id: int
 var player_name: String
@@ -50,7 +51,6 @@ func _ready():
 	initialize(position)
 	if local_player:
 		%camara.make_current()
-		%aim_timer.timeout.connect(set.bind("aim_mode", true))
 
 
 func initialize(pos: Vector2):
@@ -98,10 +98,15 @@ func _physics_process(_delta):
 	move_and_slide()
 
 
-func _on_hitbox_body_entered(body):
+func _on_hitbox_body_entered(body: Node2D):
 	if not multiplayer.is_server():
 		return
 	if body is Bullet:
+		# el producto punto (angulo) entre la direccion en la que iba la bala y la direccion que tomaria hacia el centro del personaje
+		# Cuanto mas pequeño sea este angulo, más directamente estará proyectada la bala contra el personaje y por consiguiente más daño le hará
+		var bullet_dir = body.linear_velocity.normalized()
+		var to_target = body.global_position.direction_to(global_position)
+		bullet_dir.dot(to_target)
 		die.rpc()
 		shot.emit(body.shooter_id)
 

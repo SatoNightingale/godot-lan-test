@@ -10,5 +10,5 @@ func _ready() -> void:
 func on_bullet_fired():
 	var bala = bullet_scene.instantiate()
 	bala.position = $player.weapon.cannon.get_global_position()
-	bala.shoot($player.direction, $player.player_id)
+	bala.shoot($player.direction, $player.player_id, $player2)
 	add_child(bala)

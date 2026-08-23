@@ -11,68 +11,116 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_6fgbw")
 
-[node name="center" type="CenterContainer" parent="." unique_id=729244737]
+[node name="margin" type="MarginContainer" parent="." unique_id=534842269]
+unique_name_in_owner = true
 layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
+anchors_preset = -1
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -120.0
+offset_top = -99.0
+offset_right = 120.0
+offset_bottom = 99.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="margin" type="MarginContainer" parent="center" unique_id=534842269]
-unique_name_in_owner = true
+[node name="VBoxContainer" type="VBoxContainer" parent="margin" unique_id=330057791]
 layout_mode = 2
 
-[node name="VBoxContainer" type="VBoxContainer" parent="center/margin" unique_id=1541769856]
-layout_mode = 2
-
-[node name="Label" type="Label" parent="center/margin/VBoxContainer" unique_id=276849597]
+[node name="Label" type="Label" parent="margin/VBoxContainer" unique_id=1903866482]
 layout_mode = 2
 text = "Conectarse a juego"
 horizontal_alignment = 1
 
-[node name="GridContainer" type="GridContainer" parent="center/margin/VBoxContainer" unique_id=1506442527]
+[node name="GridContainer" type="GridContainer" parent="margin/VBoxContainer" unique_id=369870917]
 layout_mode = 2
 columns = 2
 
-[node name="Label" type="Label" parent="center/margin/VBoxContainer/GridContainer" unique_id=473291558]
+[node name="Label" type="Label" parent="margin/VBoxContainer/GridContainer" unique_id=935071944]
 layout_mode = 2
 text = "ip: "
 
-[node name="ipedit" type="LineEdit" parent="center/margin/VBoxContainer/GridContainer" unique_id=1506366592]
+[node name="ipedit" type="LineEdit" parent="margin/VBoxContainer/GridContainer" unique_id=621954848]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(120, 0)
 layout_mode = 2
+size_flags_horizontal = 3
 
-[node name="Label2" type="Label" parent="center/margin/VBoxContainer/GridContainer" unique_id=1645418840]
+[node name="Label2" type="Label" parent="margin/VBoxContainer/GridContainer" unique_id=1159469965]
 layout_mode = 2
 text = "puerto: "
 
-[node name="portedit" type="LineEdit" parent="center/margin/VBoxContainer/GridContainer" unique_id=2132371533]
+[node name="portedit" type="LineEdit" parent="margin/VBoxContainer/GridContainer" unique_id=1125651516]
 unique_name_in_owner = true
 layout_mode = 2
 text = "4242"
 alignment = 2
 
-[node name="Label3" type="Label" parent="center/margin/VBoxContainer/GridContainer" unique_id=143468218]
+[node name="Label3" type="Label" parent="margin/VBoxContainer/GridContainer" unique_id=551984782]
 layout_mode = 2
 text = "nombre: "
 
-[node name="nameedit" type="LineEdit" parent="center/margin/VBoxContainer/GridContainer" unique_id=405432227]
+[node name="nameedit" type="LineEdit" parent="margin/VBoxContainer/GridContainer" unique_id=1271058094]
 unique_name_in_owner = true
 layout_mode = 2
 text = "Player"
 alignment = 2
 
-[node name="Join" type="Button" parent="center/margin/VBoxContainer" unique_id=301701912]
+[node name="Join" type="Button" parent="margin/VBoxContainer" unique_id=758802390]
 unique_name_in_owner = true
 layout_mode = 2
 text = "Unirse"
 
-[node name="Host" type="Button" parent="center/margin/VBoxContainer" unique_id=1104224283]
+[node name="Host" type="Button" parent="margin/VBoxContainer" unique_id=1623080653]
 unique_name_in_owner = true
 layout_mode = 2
 text = "Crear"
 
-[connection signal="pressed" from="center/margin/VBoxContainer/Join" to="." method="_on_connect_pressed"]
-[connection signal="pressed" from="center/margin/VBoxContainer/Host" to="." method="_on_host_pressed"]
+[node name="HBoxContainer" type="HBoxContainer" parent="." unique_id=2137783424]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -40.0
+offset_top = -40.0
+offset_right = -20.0
+offset_bottom = -20.0
+grow_horizontal = 0
+grow_vertical = 0
+theme_override_constants/separation = 20
+alignment = 2
+
+[node name="version_label" type="Label" parent="HBoxContainer" unique_id=1756336192]
+unique_name_in_owner = true
+layout_mode = 2
+text = "1.4"
+horizontal_alignment = 2
+
+[node name="btn_patch" type="Button" parent="HBoxContainer" unique_id=2034435547]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Aplicar parche"
+
+[node name="patch_finder" type="FileDialog" parent="." unique_id=1698678078]
+unique_name_in_owner = true
+title = "Open a File"
+dialog_hide_on_ok = true
+file_mode = 0
+access = 2
+filters = PackedStringArray("*.pck")
+use_native_dialog = true
+
+[node name="btn_patch_restart" type="ConfirmationDialog" parent="." unique_id=1546516164]
+unique_name_in_owner = true
+oversampling_override = 1.0
+title = ""
+initial_position = 1
+size = Vector2i(296, 132)
+ok_button_text = "Aceptar"
+dialog_text = "Se han cargado algunos parches y para que tengan efecto el juego debe ser reiniciado. ¿Acepta?"
+dialog_autowrap = true
+cancel_button_text = "Cancelar"

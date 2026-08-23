@@ -1,0 +1,23 @@
+[gd_scene format=3 uid="uid://dxgoqejxtky7t"]
+
+[ext_resource type="Script" uid="uid://20sqeuucqm13" path="res://tests/tests.gd" id="1_ry45r"]
+[ext_resource type="PackedScene" uid="uid://cmcwg28s1fsot" path="res://ui/ui.tscn" id="2_dsb46"]
+[ext_resource type="PackedScene" uid="uid://cubxtvqqbnv2v" path="res://game/player/player.tscn" id="3_uofsi"]
+[ext_resource type="Texture2D" uid="uid://4kfshn5i2fq1" path="res://ui/icons/slice34.png" id="4_jenrn"]
+
+[node name="tests" type="Node2D" unique_id=310234000]
+script = ExtResource("1_ry45r")
+
+[node name="UI" parent="." unique_id=845416013 instance=ExtResource("2_dsb46")]
+
+[node name="player" parent="." unique_id=1954339528 instance=ExtResource("3_uofsi")]
+position = Vector2(310, 244)
+
+[node name="player2" parent="." unique_id=1455994016 instance=ExtResource("3_uofsi")]
+modulate = Color(1, 0, 0, 1)
+position = Vector2(500, 227)
+
+[node name="Slice34" type="Sprite2D" parent="." unique_id=1880608716]
+position = Vector2(327, 126)
+scale = Vector2(0.51428574, 0.525)
+texture = ExtResource("4_jenrn")

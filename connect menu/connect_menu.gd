@@ -9,11 +9,25 @@ signal error(message: String)
 
 var player_name := "Player"
 
+## TODO: redimensionar en movil para llenar mas la pantalla
 
 func _ready() -> void:
 	%nameedit.text = player_name
+	%version_label.text = PatchSystem.version
+	# ProjectSettings.globalize_path("user://")
+	%btn_patch.pressed.connect(%patch_finder.popup_file_dialog)
+	%patch_finder.file_selected.connect(manejar_parche)
+	%btn_patch_restart.confirmed.connect(func():
+		OS.set_restart_on_exit(true)
+		get_tree().quit()
+	)
 	if not DisplayServer.has_hardware_keyboard():
 		setup_virtual_keyboard_elevation()
+
+
+func manejar_parche(path: String):
+	if PatchSystem.copiar_parche(path) == OK:
+		%btn_patch_restart.popup_centered_clamped()
 
 
 func setup_virtual_keyboard_elevation():

@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://cal3fbg82lqcu"
-path="res://.godot/imported/slice34.svg-8fb2373c9cb3b579af8848491c914f6f.ctex"
+uid="uid://cwhtno2qtc4jd"
+path="res://.godot/imported/menu_button_dark.svg-1bf5c263d294d303de2965dd724e9227.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://game/ui/icons/slice34.svg"
-dest_files=["res://.godot/imported/slice34.svg-8fb2373c9cb3b579af8848491c914f6f.ctex"]
+source_file="res://ui/icons/menu_button_dark.svg"
+dest_files=["res://.godot/imported/menu_button_dark.svg-1bf5c263d294d303de2965dd724e9227.ctex"]
 
 [params]
 
