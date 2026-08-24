@@ -1,49 +1,48 @@
-permissions:
-	contents: write
-
-
 name: Test release
 on:
-	push:
-		tags:
-		- 'v*.*.*'
+  push:
+    tags:
+    - 'v*'
 
 
 jobs:
-	export-linux:
-	runs-on: ubuntu-latest
-	steps:
-		- name: Clonando repositorio
-		uses: actions/checkout@v4
-		
-		- name: Cargando variables de entorno
-		run: |
-			cat .env >> $GITHUB_ENV
-			echo ".env cargado"
-	
-		- name: Instalar Godot y las plantillas de exportacion
-		run: |
-			echo "Descargando Godot: ${GODOT_VERSION}..."
-			wget -q https://github.com/godotengine/godot/releases/download/${GODOT_VERSION}/Godot_v${GODOT_VERSION}_linux.x86_64.zip
-			wget -q https://github.com/godotengine/godot/releases/download/${GODOT_VERSION}/Godot_v${GODOT_VERSION}_export_templates.tpz
-			
-			echo "Instalando el editor de Godot..."
-			unzip -q Godot_v{$GODOT_VERSION}_linux.x86_64.zip
-			sudo mv Godot_v{$GODOT_VERSION}_linux.x86_64.zip /usr/local/bin/godot
-			sudo chmod +x /usr/local/bin/godot
-			
-			 mkdir -p ~/.local/share/godot/export_templates/${TEMPLATES_VERSION}
-          unzip -q Godot_v${GODOT_VERSION}_export_templates.tpz
-          mv templates/* ~/.local/share/godot/export_templates/${TEMPLATES_VERSION}/
-			
-		- name: Exportar
-		run: |
-			# pre-calentar para evitar los errores de headless
-			echo "Generando caché de assets (.godot/)..."
-			godot --headless --editor --quit || true
-			
-			
-			
-			
-			
-			
+  export-linux:
+  permissions:
+  contents: write
+  runs-on: ubuntu-latest
+  steps:
+  - name: Clonando repositorio
+  uses: actions/checkout@v4
+  
+  - name: Cargando variables de entorno
+  run: |
+    cat .env >> $GITHUB_ENV
+    echo ".env cargado"
+  
+  - name: Instalar Godot y las plantillas de exportacion
+  run: |
+    echo "Descargando Godot: ${GODOT_VERSION}..."
+    wget -q https://github.com/godotengine/godot/releases/download/${GODOT_VERSION}/Godot_v${GODOT_VERSION}_linux.x86_64.zip
+    wget -q https://github.com/godotengine/godot/releases/download/${GODOT_VERSION}/Godot_v${GODOT_VERSION}_export_templates.tpz
+    
+    echo "Instalando el editor de Godot..."
+      unzip -q Godot_v{$GODOT_VERSION}_linux.x86_64.zip
+      sudo mv Godot_v{$GODOT_VERSION}_linux.x86_64.zip /usr/local/bin/godot
+      sudo chmod +x /usr/local/bin/godot
+      
+      mkdir -p ~/.local/share/godot/export_templates/${TEMPLATES_VERSION}
+      unzip -q Godot_v${GODOT_VERSION}_export_templates.tpz
+      mv templates/* ~/.local/share/godot/export_templates/${TEMPLATES_VERSION}/
+      
+    - name: Exportar
+    run: |
+      # pre-calentar para evitar los errores de headless
+      echo "Generando caché de assets (.godot/)..."
+      godot --headless --editor --quit || true
+      
+      godot --headless --verbose --export-debug "Linux" "build/linux/${{ github.event.repository.name }}_${{ github.ref_name }}.x86_64"
+      
+      
+      
+      
+      
