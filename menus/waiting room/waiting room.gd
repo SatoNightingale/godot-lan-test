@@ -14,11 +14,14 @@ var server_address: String
 
 func _ready() -> void:
 	multiplayer.peer_disconnected.connect(_on_peer_disconnected)
+
+
+## Para código que debe ejecutarse cada vez que esta se vuelva la escena actual. _ready() solo se ejecuta una vez
+func initialize():
 	%start.disabled = not multiplayer.is_server()
-	
+	%player_list.clear()
 	for id in player_data:
 		on_player_data_updated(id, player_data[id])
-	
 	if multiplayer.is_server():
 		%ip_list.clear()
 		var idx = 0
@@ -28,8 +31,6 @@ func _ready() -> void:
 				if ip.begins_with("192.168"):
 					%ip_list.select(idx)
 			idx += 1
-		#if %ip_list.get_selected_id() == -1 and %ip_list.item_count > 0:
-			#%ip_list.select(0)
 		%ip_list.show()
 		%ip.hide()
 	else:
@@ -67,4 +68,4 @@ func _on_exit_pressed() -> void:
 func _on_tree_exiting() -> void:
 	%player_list.clear()
 	_player_items.clear()
-	multiplayer.peer_disconnected.disconnect(_on_peer_disconnected)
+	#multiplayer.peer_disconnected.disconnect(_on_peer_disconnected)

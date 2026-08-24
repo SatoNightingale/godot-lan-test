@@ -10,7 +10,7 @@
 [ext_resource type="Texture2D" uid="uid://88w4ecejivxu" path="res://ui/icons/slice37-negative.png" id="7_6fpg5"]
 [ext_resource type="Texture2D" uid="uid://4wtfduwhrodq" path="res://ui/icons/reload.svg" id="9_cshcc"]
 [ext_resource type="Script" uid="uid://dkrm7nukjgc6k" path="res://ui/label_anuncios.gd" id="10_eogtg"]
-[ext_resource type="Texture2D" uid="uid://c4cl7i21cxvej" path="res://ui/icons/menu_button_light.svg" id="11_bi8hs"]
+[ext_resource type="PackedScene" uid="uid://ditdsn1ffgq6o" path="res://ui/pause menu/pause_menu.tscn" id="11_bi8hs"]
 
 [sub_resource type="SystemFont" id="SystemFont_eogtg"]
 font_names = PackedStringArray("Monospace")
@@ -24,8 +24,6 @@ radius = 115.0
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_272bh"]
 radius = 115.0
-
-[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_eogtg"]
 
 [node name="UI" type="CanvasLayer" unique_id=845416013]
 script = ExtResource("1_nancp")
@@ -302,7 +300,6 @@ one_shot = true
 
 [node name="respawn_screen" type="ColorRect" parent="." unique_id=462163632]
 unique_name_in_owner = true
-visible = false
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -347,12 +344,6 @@ layout_mode = 2
 text = "segundos para revivir"
 horizontal_alignment = 1
 
-[node name="playagain_button" type="Button" parent="respawn_screen/CenterContainer/MarginContainer/VBoxContainer" unique_id=377362065]
-unique_name_in_owner = true
-visible = false
-layout_mode = 2
-text = "Jugar de nuevo"
-
 [node name="contador" type="HBoxContainer" parent="." unique_id=63837120]
 anchors_preset = 1
 anchor_left = 1.0
@@ -376,70 +367,7 @@ layout_mode = 2
 theme_override_font_sizes/font_size = 18
 text = "Bajas: 0"
 
-[node name="TextureButton" type="TextureButton" parent="." unique_id=1051329744]
-anchors_preset = -1
-offset_left = 20.0
-offset_top = 20.0
-scale = Vector2(0.1, 0.1)
-texture_normal = ExtResource("11_bi8hs")
-
-[node name="menu" type="ColorRect" parent="." unique_id=1588740783]
+[node name="menu pausa" parent="." unique_id=466875431 instance=ExtResource("11_bi8hs")]
 unique_name_in_owner = true
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-color = Color(0.2509804, 0.2509804, 0.2509804, 0.5019608)
-
-[node name="PanelContainer" type="PanelContainer" parent="menu" unique_id=1705827167]
-layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -81.5
-offset_top = -87.0
-offset_right = 81.5
-offset_bottom = 87.0
-grow_horizontal = 2
-grow_vertical = 2
-
-[node name="MarginContainer" type="MarginContainer" parent="menu/PanelContainer" unique_id=14105152]
-layout_mode = 2
-theme_override_constants/margin_left = 15
-theme_override_constants/margin_top = 15
-theme_override_constants/margin_right = 15
-theme_override_constants/margin_bottom = 15
-
-[node name="VBoxContainer" type="VBoxContainer" parent="menu/PanelContainer/MarginContainer" unique_id=1740591238]
-layout_mode = 2
-
-[node name="Label" type="Label" parent="menu/PanelContainer/MarginContainer/VBoxContainer" unique_id=1567354042]
-layout_mode = 2
-text = "Menú"
-horizontal_alignment = 1
-
-[node name="HSeparator" type="HSeparator" parent="menu/PanelContainer/MarginContainer/VBoxContainer" unique_id=1099876903]
-layout_mode = 2
-theme_override_constants/separation = 12
-theme_override_styles/separator = SubResource("StyleBoxEmpty_eogtg")
-
-[node name="btn_serverpause" type="Button" parent="menu/PanelContainer/MarginContainer/VBoxContainer" unique_id=470635090]
-unique_name_in_owner = true
-layout_mode = 2
-disabled = true
-text = "Detener juego"
-
-[node name="btn_disconnect" type="Button" parent="menu/PanelContainer/MarginContainer/VBoxContainer" unique_id=441677385]
-unique_name_in_owner = true
-layout_mode = 2
-text = "Desconectar"
-
-[node name="btn_resumir" type="Button" parent="menu/PanelContainer/MarginContainer/VBoxContainer" unique_id=398465441]
-unique_name_in_owner = true
-layout_mode = 2
-text = "Continuar juego"
 
 [connection signal="timeout" from="label_anuncios/Timer" to="label_anuncios" method="_on_timer_timeout"]

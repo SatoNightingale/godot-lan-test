@@ -10,10 +10,11 @@ signal error(message: String)
 var player_name := "Player"
 
 ## TODO: redimensionar en movil para llenar mas la pantalla
+# _ready conecta las señales, pero cuando se vuelve a llamar las conecta dos veces
 
 func _ready() -> void:
 	%nameedit.text = player_name
-	%version_label.text = PatchSystem.version
+	%version_label.text = ProjectSettings.get_setting("application/config/version")
 	# ProjectSettings.globalize_path("user://")
 	%btn_patch.pressed.connect(%patch_finder.popup_file_dialog)
 	%patch_finder.file_selected.connect(manejar_parche)
@@ -23,6 +24,10 @@ func _ready() -> void:
 	)
 	if not DisplayServer.has_hardware_keyboard():
 		setup_virtual_keyboard_elevation()
+
+
+func initialize():
+	pass
 
 
 func manejar_parche(path: String):

@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://c4cl7i21cxvej"
-path="res://.godot/imported/menu_button_light.svg-c37b345955112b8ea7196d5445f36909.ctex"
+uid="uid://bh4qxte6rbxb"
+path="res://.godot/imported/player_scaled.png-a236973640a9f764cb7c8d487e909731.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://ui/icons/menu_button_light.svg"
-dest_files=["res://.godot/imported/menu_button_light.svg-c37b345955112b8ea7196d5445f36909.ctex"]
+source_file="res://game/player/player_scaled.png"
+dest_files=["res://.godot/imported/player_scaled.png-a236973640a9f764cb7c8d487e909731.ctex"]
 
 [params]
 
@@ -38,6 +38,3 @@ process/hdr_as_srgb=false
 process/hdr_clamp_exposure=false
 process/size_limit=0
 detect_3d/compress_to=1
-svg/scale=0.1
-editor/scale_with_editor_scale=false
-editor/convert_colors_with_editor_theme=false

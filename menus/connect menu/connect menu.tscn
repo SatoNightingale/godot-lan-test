@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://c2v5vbgwiocso"]
 
-[ext_resource type="Script" uid="uid://bbto47c3cb7gd" path="res://connect menu/connect_menu.gd" id="1_6fgbw"]
+[ext_resource type="Script" uid="uid://bbto47c3cb7gd" path="res://menus/connect menu/connect_menu.gd" id="1_6fgbw"]
 
 [node name="connect_menu" type="Control" unique_id=489122455]
 layout_mode = 3
@@ -15,14 +15,11 @@ script = ExtResource("1_6fgbw")
 unique_name_in_owner = true
 layout_mode = 1
 anchors_preset = -1
-anchor_left = 0.5
 anchor_top = 0.5
-anchor_right = 0.5
+anchor_right = 1.0
 anchor_bottom = 0.5
-offset_left = -120.0
-offset_top = -99.0
-offset_right = 120.0
-offset_bottom = 99.0
+offset_left = 300.0
+offset_right = -300.0
 grow_horizontal = 2
 grow_vertical = 2
 
@@ -97,7 +94,6 @@ alignment = 2
 [node name="version_label" type="Label" parent="HBoxContainer" unique_id=1756336192]
 unique_name_in_owner = true
 layout_mode = 2
-text = "1.4"
 horizontal_alignment = 2
 
 [node name="btn_patch" type="Button" parent="HBoxContainer" unique_id=2034435547]
@@ -124,3 +120,6 @@ ok_button_text = "Aceptar"
 dialog_text = "Se han cargado algunos parches y para que tengan efecto el juego debe ser reiniciado. ¿Acepta?"
 dialog_autowrap = true
 cancel_button_text = "Cancelar"
+
+[connection signal="pressed" from="margin/VBoxContainer/Join" to="." method="_on_connect_pressed"]
+[connection signal="pressed" from="margin/VBoxContainer/Host" to="." method="_on_host_pressed"]

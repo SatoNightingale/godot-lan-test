@@ -1,5 +1,5 @@
 #@tool
-extends RichTextLabel
+class_name Anunciador extends RichTextLabel
 
 var cola_mensajes: Array[String]
 

@@ -1,10 +1,14 @@
 extends Node2D
 class_name Game
 
+signal anuncio(mensaje: String)
+
 @export var player_scene = preload("res://game/player/player.tscn")
 @export var bullet_scene = preload("res://game/bullet/bullet.tscn")
 
 #@onready var player_name : String = get_parent().player_name
+
+## TODO: player_data no debe tener un campo 'node', sino que el mismo valor mapeado a la clave debe ser el nodo del jugador, y acceder desde ahi a sus kills, muertes, etc.
 
 var player_data : Dictionary
 
@@ -19,8 +23,10 @@ func _ready():
 	%PlayerSpawner.spawn_function = spawn_player
 	%BulletSpawner.spawn_function = spawn_bullet
 	player_killed.connect(%UI.on_player_killed)
+	anuncio.connect(%UI.anunciador.add_mensaje)
 	if multiplayer.is_server():
 		multiplayer.peer_disconnected.connect(_on_player_disconnected)
+		#%UI.menu_pausa.server_request_pause.connect(rpc_id(1, "server_pause_game"))
 	multiplayer.server_disconnected.connect(_on_server_disconnected)
 	on_player_loaded.rpc_id(1)
 
@@ -111,21 +117,29 @@ func _on_player_weapon_changed(weapon: Weapon, player_id: int):
 
 @rpc("call_local")
 func on_player_killed(killer_id: int, dead_id: int):
+	# esto lo puede hacer el mismo player
 	print(player_data[killer_id].name, " ha matado a ", player_data[dead_id].name)
 	player_data[killer_id]["kills"] += 1
 	player_data[dead_id]["deaths"] += 1
 	player_killed.emit(killer_id, dead_id)
+	anuncio.emit("{0} ha matado a {1}".format([
+		player_data[killer_id].node.get_colored_player_name(),
+		player_data[dead_id].node.get_colored_player_name(),
+	]))
 
 
+## cuando un peer se desconecta del servidor
 func _on_player_disconnected(id: int):
 	player_data[id].node.queue_free()
 	remove_child(player_data[id].node)
-	print(player_data[id].name, " se ha desconectado")
+	print(player_data[id].name, " desconectado")
+	anuncio.emit(player_data[id].node.get_colored_player_name() + " se ha desconectado")
 	player_data.erase(id)
 
-
+## cuando el servidor se desconecta
 func _on_server_disconnected():
-	var main_menu = load("res://main.tscn").instantiate()
+	multiplayer.multiplayer_peer = OfflineMultiplayerPeer.new()
+	var main_menu = load("res://menus/main menu.tscn").instantiate()
 	main_menu.ready.connect(main_menu.error_popup.bind("Servidor desconectado"), CONNECT_ONE_SHOT)
 	get_tree().change_scene_to_node(main_menu)
 
@@ -144,8 +158,3 @@ func _on_server_disconnected():
 		#player.player_number = player_number
 		#player.initialize.rpc(marker.position)
 		#player_number += 1
-
-
-#func _on_playagain_button_pressed() -> void:
-	#if multiplayer.is_server():
-		#restart_game.rpc()

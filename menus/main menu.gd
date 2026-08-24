@@ -3,8 +3,8 @@ extends Node
 signal player_data_updated(id: int, new_data)
 
 var game_scene = preload("res://game/game.tscn")
-var connect_menu = preload("res://connect menu/connect menu.tscn").instantiate()
-var waiting_room = preload("res://waiting room/waiting_room.tscn").instantiate()
+var connect_menu = preload("res://menus/connect menu/connect menu.tscn").instantiate()
+var waiting_room = preload("res://menus/waiting room/waiting_room.tscn").instantiate()
 
 var _active_scene: Node
 
@@ -90,14 +90,7 @@ func on_connected(_player_name: String, address: String):
 func load_game():
 	var game = game_scene.instantiate()
 	game.player_data = player_data
-	#game.ready.connect(func():
-		#print(player_name, " game ready")
-		#on_player_loaded.rpc_id(1)
-	#)
 	get_tree().change_scene_to_node(game)
-	#remove_child(_active_scene)
-	#_active_scene = game
-	#add_child(game)
 
 
 @rpc("any_peer", "call_local")
@@ -113,8 +106,10 @@ func change_scene(scene: Node):
 	if _active_scene != null:
 		remove_child(_active_scene)
 	_active_scene = scene
-	_active_scene.request_ready()
 	add_child(scene)
+	#_active_scene.request_ready()
+	if _active_scene.has_method("initialize"):
+		_active_scene.initialize()
 
 
 func _on_connected_to_server():

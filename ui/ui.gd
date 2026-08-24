@@ -1,6 +1,9 @@
 extends CanvasLayer
 
 
+@onready var anunciador: Anunciador = %label_anuncios
+@onready var menu_pausa: MenuPausa = %"menu pausa"
+
 var player_data
 
 var player : Player
@@ -19,7 +22,6 @@ func configure_ui(_player: Player):
 func _on_player_weapon_changed(weapon: Weapon):
 	if "shoot_cooldown" in weapon:
 		%shoot_button.setup(weapon.shoot_cooldown, weapon.bullet_fired)
-		#%shoot_button2.setup(weapon.shoot_cooldown, weapon.bullet_fired)
 	if "reload_cooldown" in weapon:
 		%reload_button.setup(weapon.reload_cooldown, weapon.reloading)
 	_on_update_ammo(weapon.ammo)
@@ -46,10 +48,6 @@ func set_game_screen():
 
 
 func on_player_killed(killer_id: int, dead_id: int):
-	%label_anuncios.add_mensaje("{0} ha matado a {1}".format([
-		player_data[killer_id].node.get_colored_player_name(),
-		player_data[dead_id].node.get_colored_player_name(),
-	]))
 	if multiplayer.get_unique_id() == killer_id:
 		%bajas.text = "Bajas: " + str(player_data[killer_id].kills)
 	if multiplayer.get_unique_id() == dead_id:
@@ -59,7 +57,7 @@ func on_player_killed(killer_id: int, dead_id: int):
 
 func _on_weapon_aim_mode_changed(value: bool):
 	%shoot_button.visible = value
-	# cambiar la textura de %aim_button
+	# intercambiar las texturas de %aim_button
 	var aux_texture = %aim_button.texture_normal
 	%aim_button.texture_normal = %aim_button.texture_pressed
 	%aim_button.texture_pressed = aux_texture

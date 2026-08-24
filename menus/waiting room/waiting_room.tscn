@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://b6lttbnc8go55"]
 
-[ext_resource type="Script" uid="uid://boqapf2mvl1a5" path="res://waiting room/waiting room.gd" id="1_m6j7u"]
+[ext_resource type="Script" uid="uid://boqapf2mvl1a5" path="res://menus/waiting room/waiting room.gd" id="1_m6j7u"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_uv7ps"]
 
