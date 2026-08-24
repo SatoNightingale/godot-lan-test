@@ -1,14 +1,7 @@
 [gd_scene format=3 uid="uid://cmcwg28s1fsot"]
 
-[ext_resource type="Script" uid="uid://djnc8xw3lwy4t" path="res://addons/virtual_joystick/virtual_joystick.gd" id="1_citti"]
 [ext_resource type="Script" uid="uid://cj3tqfaq13vb5" path="res://ui/ui.gd" id="1_nancp"]
-[ext_resource type="Texture2D" uid="uid://bm30au8mjfc2f" path="res://addons/virtual_joystick/textures/joystick_base_outline.png" id="2_nancp"]
-[ext_resource type="Texture2D" uid="uid://dt13r06u87fib" path="res://addons/virtual_joystick/textures/joystick_tip_arrows.png" id="3_u6kf3"]
-[ext_resource type="Texture2D" uid="uid://bh0gct150p4n3" path="res://ui/icons/slice37.png" id="4_dlhb6"]
-[ext_resource type="Texture2D" uid="uid://cot3dub7alw0o" path="res://ui/icons/bullet-shoot.png" id="5_cshcc"]
-[ext_resource type="Script" uid="uid://v7kukw1f6alt" path="res://ui/cooldown_button.gd" id="5_rmo86"]
-[ext_resource type="Texture2D" uid="uid://88w4ecejivxu" path="res://ui/icons/slice37-negative.png" id="7_6fpg5"]
-[ext_resource type="Texture2D" uid="uid://4wtfduwhrodq" path="res://ui/icons/reload.svg" id="9_cshcc"]
+[ext_resource type="PackedScene" uid="uid://cr2x3q1nbty36" path="res://ui/controlador/controlador_virtual.tscn" id="2_vkava"]
 [ext_resource type="Script" uid="uid://dkrm7nukjgc6k" path="res://ui/label_anuncios.gd" id="10_eogtg"]
 [ext_resource type="PackedScene" uid="uid://ditdsn1ffgq6o" path="res://ui/pause menu/pause_menu.tscn" id="11_bi8hs"]
 
@@ -19,18 +12,15 @@ subpixel_positioning = 0
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_8lmuw"]
 bg_color = Color(0.09411765, 0.09411765, 0.09411765, 0.8627451)
 
-[sub_resource type="CircleShape2D" id="CircleShape2D_7mycd"]
-radius = 115.0
-
-[sub_resource type="CircleShape2D" id="CircleShape2D_272bh"]
-radius = 115.0
-
 [node name="UI" type="CanvasLayer" unique_id=845416013]
 script = ExtResource("1_nancp")
 
 [node name="console" type="RichTextLabel" parent="." unique_id=716394386]
 visible = false
-offset_right = 300.0
+anchors_preset = 10
+anchor_right = 1.0
+offset_left = 100.0
+offset_right = -270.0
 offset_bottom = 120.0
 theme_override_fonts/normal_font = SubResource("SystemFont_eogtg")
 theme_override_font_sizes/normal_font_size = 12
@@ -38,243 +28,8 @@ theme_override_styles/normal = SubResource("StyleBoxFlat_8lmuw")
 text = "cosacosacosaocsoasa"
 metadata/_edit_use_anchors_ = true
 
-[node name="screen_controls" type="Control" parent="." unique_id=155929000]
+[node name="virtual_controls" parent="." unique_id=2023537950 instance=ExtResource("2_vkava")]
 unique_name_in_owner = true
-texture_filter = 2
-layout_mode = 3
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-
-[node name="Control1" type="Control" parent="screen_controls" unique_id=1374133106]
-custom_minimum_size = Vector2(240, 0)
-layout_mode = 1
-anchors_preset = 9
-anchor_bottom = 1.0
-offset_right = 240.0
-grow_vertical = 2
-
-[node name="Control" type="Control" parent="screen_controls/Control1" unique_id=1193976483]
-layout_mode = 1
-anchors_preset = 2
-anchor_top = 1.0
-anchor_bottom = 1.0
-offset_top = -264.0
-offset_right = 240.0
-grow_vertical = 0
-
-[node name="CameraJoystick" type="Control" parent="screen_controls/Control1/Control" unique_id=1045949482]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_right = 160.0
-offset_bottom = 176.0
-grow_horizontal = 2
-grow_vertical = 2
-scale = Vector2(0.6, 0.6)
-size_flags_vertical = 3
-script = ExtResource("1_citti")
-pressed_color = Color(0.61608464, 0.76807827, 0.87981236, 1)
-joystick_mode = 1
-action_left = "move_left"
-action_right = "move_right"
-action_up = "move_up"
-action_down = "move_down"
-metadata/_custom_type_script = "uid://djnc8xw3lwy4t"
-metadata/_edit_group_ = true
-
-[node name="Base" type="TextureRect" parent="screen_controls/Control1/Control/CameraJoystick" unique_id=122078609]
-layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -100.0
-offset_top = -100.0
-offset_right = 100.0
-offset_bottom = 100.0
-grow_horizontal = 2
-grow_vertical = 2
-pivot_offset = Vector2(100, 100)
-mouse_force_pass_scroll_events = false
-texture = ExtResource("2_nancp")
-stretch_mode = 5
-
-[node name="Tip" type="TextureRect" parent="screen_controls/Control1/Control/CameraJoystick/Base" unique_id=567289899]
-layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -50.0
-offset_top = -50.0
-offset_right = 50.0
-offset_bottom = 50.0
-grow_horizontal = 2
-grow_vertical = 2
-pivot_offset = Vector2(50, 50)
-texture = ExtResource("3_u6kf3")
-stretch_mode = 5
-
-[node name="Control2" type="Control" parent="screen_controls/Control1/Control" unique_id=526668955]
-layout_mode = 1
-anchors_preset = 0
-offset_left = 30.0
-offset_top = -100.0
-offset_right = 90.0
-offset_bottom = -30.0
-grow_horizontal = 0
-metadata/_edit_use_anchors_ = true
-metadata/_edit_group_ = true
-
-[node name="shoot_button" type="TouchScreenButton" parent="screen_controls/Control1/Control/Control2" unique_id=193280338]
-unique_name_in_owner = true
-visible = false
-modulate = Color(1, 1, 1, 0.76862746)
-scale = Vector2(0.28, 0.28)
-texture_normal = ExtResource("5_cshcc")
-shape = SubResource("CircleShape2D_7mycd")
-shape_visible = false
-action = "shoot"
-script = ExtResource("5_rmo86")
-
-[node name="Control2" type="Control" parent="screen_controls" unique_id=202642603]
-custom_minimum_size = Vector2(240, 0)
-layout_mode = 1
-anchors_preset = 11
-anchor_left = 1.0
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 0
-grow_vertical = 2
-
-[node name="Control" type="Control" parent="screen_controls/Control2" unique_id=2078470175]
-layout_mode = 1
-anchors_preset = 2
-anchor_top = 1.0
-anchor_bottom = 1.0
-offset_top = -264.0
-offset_right = 240.0
-grow_vertical = 0
-
-[node name="CameraJoystick" type="Control" parent="screen_controls/Control2/Control" unique_id=418510836]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_right = 160.0
-offset_bottom = 176.0
-grow_horizontal = 2
-grow_vertical = 2
-scale = Vector2(0.6, 0.6)
-size_flags_vertical = 3
-script = ExtResource("1_citti")
-pressed_color = Color(0.9647059, 0.5058824, 0.5137255, 1)
-action_left = "look_left"
-action_right = "look_right"
-action_up = "look_up"
-action_down = "look_down"
-metadata/_custom_type_script = "uid://djnc8xw3lwy4t"
-metadata/_edit_group_ = true
-
-[node name="Base" type="TextureRect" parent="screen_controls/Control2/Control/CameraJoystick" unique_id=269962991]
-layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -100.0
-offset_top = -100.0
-offset_right = 100.0
-offset_bottom = 100.0
-grow_horizontal = 2
-grow_vertical = 2
-pivot_offset = Vector2(100, 100)
-mouse_force_pass_scroll_events = false
-texture = ExtResource("2_nancp")
-stretch_mode = 5
-
-[node name="Tip" type="TextureRect" parent="screen_controls/Control2/Control/CameraJoystick/Base" unique_id=125392406]
-layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -50.0
-offset_top = -50.0
-offset_right = 50.0
-offset_bottom = 50.0
-grow_horizontal = 2
-grow_vertical = 2
-pivot_offset = Vector2(50, 50)
-texture = ExtResource("3_u6kf3")
-stretch_mode = 5
-
-[node name="Control2" type="Control" parent="screen_controls/Control2/Control" unique_id=1488777227]
-layout_mode = 1
-anchor_left = 0.1375
-anchor_right = 0.1375
-metadata/_edit_use_anchors_ = true
-metadata/_edit_group_ = true
-
-[node name="aim_button" type="TouchScreenButton" parent="screen_controls/Control2/Control/Control2" unique_id=2141419908]
-unique_name_in_owner = true
-modulate = Color(1, 1, 1, 0.76862746)
-scale = Vector2(0.28, 0.28)
-texture_normal = ExtResource("4_dlhb6")
-texture_pressed = ExtResource("7_6fpg5")
-shape = SubResource("CircleShape2D_7mycd")
-shape_visible = false
-action = "aim"
-script = ExtResource("5_rmo86")
-
-[node name="Control3" type="Control" parent="screen_controls/Control2/Control" unique_id=830718757]
-layout_mode = 1
-anchors_preset = 7
-anchor_left = 0.5
-anchor_top = 1.0
-anchor_right = 0.5
-anchor_bottom = 1.0
-offset_left = -142.0
-offset_top = -162.0
-offset_right = -83.0
-offset_bottom = -95.0
-grow_horizontal = 2
-grow_vertical = 0
-metadata/_edit_group_ = true
-
-[node name="reload_button" type="TouchScreenButton" parent="screen_controls/Control2/Control/Control3" unique_id=917922984]
-unique_name_in_owner = true
-self_modulate = Color(1, 1, 1, 0.76862746)
-scale = Vector2(0.28, 0.28)
-texture_normal = ExtResource("9_cshcc")
-shape = SubResource("CircleShape2D_272bh")
-shape_visible = false
-action = "reload"
-script = ExtResource("5_rmo86")
-
-[node name="AmmoLabel" type="Label" parent="screen_controls/Control2" unique_id=1960840209]
-unique_name_in_owner = true
-layout_mode = 1
-anchors_preset = -1
-anchor_top = 1.0
-anchor_bottom = 1.0
-offset_left = -100.0
-offset_bottom = -10.0
-grow_vertical = 0
-size_flags_vertical = 1
-theme_override_constants/outline_size = 10
-theme_override_font_sizes/font_size = 24
-text = "3 / 3"
-horizontal_alignment = 1
-vertical_alignment = 1
 
 [node name="label_anuncios" type="RichTextLabel" parent="." unique_id=243514286]
 unique_name_in_owner = true
@@ -300,6 +55,7 @@ one_shot = true
 
 [node name="respawn_screen" type="ColorRect" parent="." unique_id=462163632]
 unique_name_in_owner = true
+visible = false
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0

@@ -1,4 +1,4 @@
-extends Node
+extends Control
 
 signal player_data_updated(id: int, new_data)
 
@@ -10,7 +10,6 @@ var _active_scene: Node
 
 var player_name: String
 var player_data: Dictionary
-#var ready_player_count = 0
 
 
 func _ready() -> void:
@@ -30,8 +29,11 @@ func _ready() -> void:
 	player_data_updated.connect(waiting_room.on_player_data_updated)
 	waiting_room.game_start.connect(load_game)
 	waiting_room.exit.connect(_on_waiting_room_disconnect)
+	if OS.get_name() == "Android" or OS.get_name() == "iOS":
+		theme = load("res://menus/tema_movil.tres")
 	change_scene(connect_menu)
-	#debug_tasks()
+	#if Engine.is_embedded_in_editor():
+		#debug_tasks()
 
 
 func read_config():

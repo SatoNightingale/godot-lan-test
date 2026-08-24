@@ -11,66 +11,67 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_6fgbw")
 
-[node name="margin" type="MarginContainer" parent="." unique_id=534842269]
-unique_name_in_owner = true
+[node name="CenterContainer" type="CenterContainer" parent="." unique_id=506014048]
 layout_mode = 1
-anchors_preset = -1
-anchor_top = 0.5
+anchors_preset = 15
 anchor_right = 1.0
-anchor_bottom = 0.5
-offset_left = 300.0
-offset_right = -300.0
+anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="VBoxContainer" type="VBoxContainer" parent="margin" unique_id=330057791]
+[node name="margin" type="MarginContainer" parent="CenterContainer" unique_id=534842269]
+unique_name_in_owner = true
 layout_mode = 2
 
-[node name="Label" type="Label" parent="margin/VBoxContainer" unique_id=1903866482]
+[node name="VBoxContainer" type="VBoxContainer" parent="CenterContainer/margin" unique_id=330057791]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="CenterContainer/margin/VBoxContainer" unique_id=1903866482]
 layout_mode = 2
 text = "Conectarse a juego"
 horizontal_alignment = 1
 
-[node name="GridContainer" type="GridContainer" parent="margin/VBoxContainer" unique_id=369870917]
+[node name="GridContainer" type="GridContainer" parent="CenterContainer/margin/VBoxContainer" unique_id=369870917]
 layout_mode = 2
 columns = 2
 
-[node name="Label" type="Label" parent="margin/VBoxContainer/GridContainer" unique_id=935071944]
+[node name="Label" type="Label" parent="CenterContainer/margin/VBoxContainer/GridContainer" unique_id=935071944]
 layout_mode = 2
 text = "ip: "
 
-[node name="ipedit" type="LineEdit" parent="margin/VBoxContainer/GridContainer" unique_id=621954848]
+[node name="ipedit" type="LineEdit" parent="CenterContainer/margin/VBoxContainer/GridContainer" unique_id=621954848]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(120, 0)
 layout_mode = 2
 size_flags_horizontal = 3
+alignment = 2
 
-[node name="Label2" type="Label" parent="margin/VBoxContainer/GridContainer" unique_id=1159469965]
+[node name="Label2" type="Label" parent="CenterContainer/margin/VBoxContainer/GridContainer" unique_id=1159469965]
 layout_mode = 2
 text = "puerto: "
 
-[node name="portedit" type="LineEdit" parent="margin/VBoxContainer/GridContainer" unique_id=1125651516]
+[node name="portedit" type="LineEdit" parent="CenterContainer/margin/VBoxContainer/GridContainer" unique_id=1125651516]
 unique_name_in_owner = true
 layout_mode = 2
 text = "4242"
 alignment = 2
 
-[node name="Label3" type="Label" parent="margin/VBoxContainer/GridContainer" unique_id=551984782]
+[node name="Label3" type="Label" parent="CenterContainer/margin/VBoxContainer/GridContainer" unique_id=551984782]
 layout_mode = 2
 text = "nombre: "
 
-[node name="nameedit" type="LineEdit" parent="margin/VBoxContainer/GridContainer" unique_id=1271058094]
+[node name="nameedit" type="LineEdit" parent="CenterContainer/margin/VBoxContainer/GridContainer" unique_id=1271058094]
 unique_name_in_owner = true
 layout_mode = 2
 text = "Player"
 alignment = 2
 
-[node name="Join" type="Button" parent="margin/VBoxContainer" unique_id=758802390]
+[node name="Join" type="Button" parent="CenterContainer/margin/VBoxContainer" unique_id=758802390]
 unique_name_in_owner = true
 layout_mode = 2
 text = "Unirse"
 
-[node name="Host" type="Button" parent="margin/VBoxContainer" unique_id=1623080653]
+[node name="Host" type="Button" parent="CenterContainer/margin/VBoxContainer" unique_id=1623080653]
 unique_name_in_owner = true
 layout_mode = 2
 text = "Crear"
@@ -121,5 +122,5 @@ dialog_text = "Se han cargado algunos parches y para que tengan efecto el juego 
 dialog_autowrap = true
 cancel_button_text = "Cancelar"
 
-[connection signal="pressed" from="margin/VBoxContainer/Join" to="." method="_on_connect_pressed"]
-[connection signal="pressed" from="margin/VBoxContainer/Host" to="." method="_on_host_pressed"]
+[connection signal="pressed" from="CenterContainer/margin/VBoxContainer/Join" to="." method="_on_connect_pressed"]
+[connection signal="pressed" from="CenterContainer/margin/VBoxContainer/Host" to="." method="_on_host_pressed"]

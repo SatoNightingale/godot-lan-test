@@ -4,15 +4,6 @@ class_name Anunciador extends RichTextLabel
 var cola_mensajes: Array[String]
 
 
-#func _ready() -> void:
-	#var tween = create_tween()
-	#tween.tween_callback(show).set_delay(1)
-	#tween.tween_property(self, "modulate", Color.TRANSPARENT, 0.3)
-	#tween.tween_callback(hide)
-	#tween.tween_callback(set_modulate.bind(Color.WHITE))
-	#tween.set_loops()
-
-
 func add_mensaje(mensaje: String):
 	cola_mensajes.push_back(mensaje)
 	_next_message()

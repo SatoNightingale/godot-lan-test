@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://cwhtno2qtc4jd"
-path="res://.godot/imported/menu_button_dark.svg-1bf5c263d294d303de2965dd724e9227.ctex"
+uid="uid://c4cl7i21cxvej"
+path="res://.godot/imported/menu_button_light.svg-4f7d27829f45ee46929b488eb740bf7a.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://ui/icons/menu_button_dark.svg"
-dest_files=["res://.godot/imported/menu_button_dark.svg-1bf5c263d294d303de2965dd724e9227.ctex"]
+source_file="res://ui/pause menu/menu_button_light.svg"
+dest_files=["res://.godot/imported/menu_button_light.svg-4f7d27829f45ee46929b488eb740bf7a.ctex"]
 
 [params]
 
@@ -38,6 +38,6 @@ process/hdr_as_srgb=false
 process/hdr_clamp_exposure=false
 process/size_limit=0
 detect_3d/compress_to=1
-svg/scale=1.0
+svg/scale=0.1
 editor/scale_with_editor_scale=false
 editor/convert_colors_with_editor_theme=false

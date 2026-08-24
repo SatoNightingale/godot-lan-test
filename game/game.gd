@@ -26,7 +26,6 @@ func _ready():
 	anuncio.connect(%UI.anunciador.add_mensaje)
 	if multiplayer.is_server():
 		multiplayer.peer_disconnected.connect(_on_player_disconnected)
-		#%UI.menu_pausa.server_request_pause.connect(rpc_id(1, "server_pause_game"))
 	multiplayer.server_disconnected.connect(_on_server_disconnected)
 	on_player_loaded.rpc_id(1)
 

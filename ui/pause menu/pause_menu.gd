@@ -9,6 +9,8 @@ func _ready() -> void:
 	%btn_resumir.pressed.connect(%menu_screen.hide)
 	%btn_disconnect.pressed.connect(_on_disconnect_request)
 	%btn_serverpause.disabled = !multiplayer.is_server()
+	if OS.get_name() == "Android" or OS.get_name() == "iOS":
+		theme = load("res://menus/tema_movil.tres")
 
 
 @rpc("call_local")

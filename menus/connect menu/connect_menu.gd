@@ -84,10 +84,11 @@ func _on_connect_pressed() -> void:
 
 
 func _on_field_editing_toggled(toggled_on: bool, field: Control):
+	%margin.add_theme_constant_override("margin_bottom", 0)
 	if toggled_on:
 		var vk_height = DisplayServer.virtual_keyboard_get_height()
-		var node_pos_from_bottom = get_viewport_rect().size.y - field.global_position.y
-		var diff = max(vk_height - node_pos_from_bottom, 0)
-		%margin.add_theme_constant_override("margin_bottom", diff)
-	else:
-		%margin.add_theme_constant_override("margin_bottom", 0)
+		var node_size_from_bottom = get_viewport_rect().size.y - field.global_position.y - field.size.y
+		var diff = min(node_size_from_bottom - vk_height, 0)
+		# duplicamos el diff porque está en un center container, y
+		# añadimos un pequeño margen para que no roce el teclado
+		%margin.add_theme_constant_override("margin_bottom", -diff * 2 + 2)
