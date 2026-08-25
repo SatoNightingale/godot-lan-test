@@ -1,14 +1,13 @@
----
-name: Linux build
+name: Make debug builds
 on:
   push:
-    branches: master
+    tags: 'v*'
 jobs:
-  export_game:
+  export_presets:
     runs-on: ubuntu-latest
     permissions:
       contents: write
-    name: Export Game
+    name: Exportar
     steps:
       - name: checkout
         uses: actions/checkout@v5
@@ -23,12 +22,11 @@ jobs:
           export_debug: true
           cache: true
 
-      - name: Subir artefacto
+      - name: Crear artefacto
         uses: actions/upload-artifact@v7.0.1
         with:
           name: resultados-${{ github.run_number }}
           path: ./build/*
-          warn: No se encontraron los archivos
           retention-days: 0
           overwrite: true
           archive: true
