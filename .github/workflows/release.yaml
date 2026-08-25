@@ -1,36 +1,27 @@
-# Whenever a tag push matching pattern "v*" then run the job
-on: 
+---
+name: Linux build
+on:
   push:
     tags:
-      - "v*"
-
+      - v*
 jobs:
-  # job id, can be anything
   export_game:
     runs-on: ubuntu-latest
-    # Add permission for release creation. Can be made narrower according to your needs
     permissions:
       contents: write
-    # Job name, can be anything
     name: Export Game
     steps:
-      # Always include the checkout step so that 
-      # your project is available for Godot to export
-    - name: checkout
-      uses: actions/checkout@v5
-    
-    - name: Cargando variables de entorno
-    run: |
-      cat .env >> $GITHUB_ENV
-      echo ".env cargado"
-    
-    - name: export game
-      id: export
-      # Use latest version (see releases for all versions)
-      uses: firebelley/godot-export@v8.0.0
-      with:
-        # Defining all the required inputs
-        godot_executable_download_url: https://github.com/godotengine/godot/releases/download/${GODOT_VERSION}/Godot_v${GODOT_VERSION}_linux.x86_64.zip
-        godot_export_templates_download_url: https://github.com/godotengine/godot/releases/download/${GODOT_VERSION}/Godot_v${GODOT_VERSION}_export_templates.tpz
-        relative_project_path: ./
-        archive_output: true
+      - name: checkout
+        uses: actions/checkout@v5
+      - name: Cargando variables de entorno
+        run: |
+          cat .env >> $GITHUB_ENV
+          echo ".env cargado"
+      - name: export game
+        id: export
+        uses: firebelley/godot-export@v8.0.0
+        with:
+          godot_executable_download_url: https://github.com/godotengine/godot/releases/download/${GODOT_VERSION}/Godot_v${GODOT_VERSION}_linux.x86_64.zip
+          godot_export_templates_download_url: https://github.com/godotengine/godot/releases/download/${GODOT_VERSION}/Godot_v${GODOT_VERSION}_export_templates.tpz
+          relative_project_path: ./
+          archive_output: true
