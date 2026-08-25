@@ -12,16 +12,12 @@ jobs:
     steps:
       - name: checkout
         uses: actions/checkout@v5
-      - name: Cargando variables de entorno
-        run: |
-          cat .env >> $GITHUB_ENV
-          echo ".env cargado"
       - name: export game
         id: export
         uses: firebelley/godot-export@v8.0.0
         with:
-          godot_executable_download_url: https://github.com/godotengine/godot/releases/download/${GODOT_VERSION}/Godot_v${GODOT_VERSION}_linux.x86_64.zip
-          godot_export_templates_download_url: https://github.com/godotengine/godot/releases/download/${GODOT_VERSION}/Godot_v${GODOT_VERSION}_export_templates.tpz
+          godot_executable_download_url: https://github.com/godotengine/godot/releases/download/4.6.1-stable/Godot_v4.6.1-stable_linux.x86_64.zip
+          godot_export_templates_download_url: https://github.com/godotengine/godot/releases/download/4.6.1-stable/Godot_v4.6.1-stable_export_templates.tpz
           relative_project_path: ./
           relative_export_path: ./build
           cache: true
