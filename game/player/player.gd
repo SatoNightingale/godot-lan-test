@@ -2,7 +2,8 @@ extends CharacterBody2D
 class_name Player
 
 
-signal shot(shooter: int)
+#signal shot(shooter: int)
+signal dead(killer_id: int)
 signal weapon_changed(new_weapon: Weapon)
 signal revived
 
@@ -24,12 +25,13 @@ const player_colors = {
 			weapon.queue_free()
 		new_weapon.player = self
 		weapon_changed.emit(new_weapon)
-		#add_child(new_weapon)
+		if weapon.get_parent() == null:
+			add_child(new_weapon)
 		weapon = new_weapon
 
 @export var respawn_timer : Timer
 
-## TODO: vida para la gente, que las balas tengan daño
+var vida := 100.0
 
 var player_id: int
 var player_name: String
@@ -54,8 +56,8 @@ func _ready():
 
 
 func initialize(pos: Vector2):
-	if multiplayer.is_server():
-		alive = true
+	alive = true
+	vida = 100.0
 	visible = true
 	position = pos
 	rotation = 0.0
@@ -98,27 +100,31 @@ func _physics_process(_delta):
 	move_and_slide()
 
 
+@rpc("call_local")
+func damage(dn: int, inflicter_id: int):
+	vida -= dn
+	
+	if vida <= 0:
+		die(inflicter_id)
+
+
+#@rpc("call_local")
+func die(killer_id: int):
+	alive = false
+	dead.emit(killer_id)
+	# animacion de muerte por aqui...
+	visible = false
+	$shape.set_deferred("disabled", true)
+	$hitbox.set_deferred("monitoring", false)
+	respawn_timer.start()
+
+
 func _on_hitbox_body_entered(body: Node2D):
 	if not multiplayer.is_server():
 		return
 	if body is Bullet:
-		# el producto punto (angulo) entre la direccion en la que iba la bala y la direccion que tomaria hacia el centro del personaje
-		# Cuanto mas pequeño sea este angulo, más directamente estará proyectada la bala contra el personaje y por consiguiente más daño le hará
-		var bullet_dir = body.linear_velocity.normalized()
-		var to_target = body.global_position.direction_to(global_position)
-		bullet_dir.dot(to_target)
-		die.rpc()
-		shot.emit(body.shooter_id)
-
-
-@rpc("call_local")
-func die():
-	if multiplayer.is_server():
-		alive = false
-	respawn_timer.start()
-	visible = false
-	$shape.set_deferred("disabled", true)
-	$hitbox.set_deferred("monitoring", false)
+		damage.rpc(body.calcular_dano(self), body.shooter_id)
+		#shot.emit(body.shooter_id)
 
 
 func get_colored_player_name() -> String:

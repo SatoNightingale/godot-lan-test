@@ -2,6 +2,7 @@ extends Node2D
 class_name Game
 
 signal anuncio(mensaje: String)
+signal player_killed(killer_id: int, dead_id: int)
 
 @export var player_scene = preload("res://game/player/player.tscn")
 @export var bullet_scene = preload("res://game/bullet/bullet.tscn")
@@ -11,8 +12,6 @@ signal anuncio(mensaje: String)
 ## TODO: player_data no debe tener un campo 'node', sino que el mismo valor mapeado a la clave debe ser el nodo del jugador, y acceder desde ahi a sus kills, muertes, etc.
 
 var player_data : Dictionary
-
-signal player_killed(killer_id: int, dead_id: int)
 
 #var client_player : Player
 
@@ -25,7 +24,7 @@ func _ready():
 	player_killed.connect(%UI.on_player_killed)
 	anuncio.connect(%UI.anunciador.add_mensaje)
 	if multiplayer.is_server():
-		multiplayer.peer_disconnected.connect(_on_player_disconnected)
+		multiplayer.peer_disconnected.connect(_on_peer_disconnected)
 	multiplayer.server_disconnected.connect(_on_server_disconnected)
 	on_player_loaded.rpc_id(1)
 
@@ -77,7 +76,7 @@ func spawn_player(data) -> Node:
 		player.weapon_changed.connect(_on_player_weapon_changed)
 		if player.weapon != null:
 			_on_player_weapon_changed(player.weapon, data.id)
-		player.shot.connect(_on_player_shot.bind(data.id))
+		player.dead.connect(_on_player_dead.bind(data.id))
 		player.ready.connect(func():
 			player.respawn_timer.timeout.connect(respawn_player.bind(data.id)),
 			CONNECT_ONE_SHOT
@@ -90,11 +89,11 @@ func spawn_player(data) -> Node:
 	return player
 
 
-func spawn_bullet(shooter_id) -> Node:
+func spawn_bullet(direction: Vector2, shooter_id: int) -> Node:
 	var bala = bullet_scene.instantiate()
 	var shooter = player_data[shooter_id]["node"] as Player
 	bala.position = shooter.weapon.cannon.get_global_position()
-	bala.shoot(shooter.direction, shooter_id)
+	bala.shoot(direction, shooter_id)
 	return bala
 
 
@@ -106,7 +105,7 @@ func respawn_player(id: int):
 	player.revive.rpc(starting_position.position)
 
 
-func _on_player_shot(killer_id, dead_id):
+func _on_player_dead(killer_id, dead_id):
 	on_player_killed.rpc(killer_id, dead_id)
 
 
@@ -120,7 +119,8 @@ func on_player_killed(killer_id: int, dead_id: int):
 	print(player_data[killer_id].name, " ha matado a ", player_data[dead_id].name)
 	player_data[killer_id]["kills"] += 1
 	player_data[dead_id]["deaths"] += 1
-	player_killed.emit(killer_id, dead_id)
+	#player_killed.emit(killer_id, dead_id)
+	%UI.on_player_killed(killer_id, dead_id)
 	anuncio.emit("{0} ha matado a {1}".format([
 		player_data[killer_id].node.get_colored_player_name(),
 		player_data[dead_id].node.get_colored_player_name(),
@@ -128,7 +128,7 @@ func on_player_killed(killer_id: int, dead_id: int):
 
 
 ## cuando un peer se desconecta del servidor
-func _on_player_disconnected(id: int):
+func _on_peer_disconnected(id: int):
 	player_data[id].node.queue_free()
 	remove_child(player_data[id].node)
 	print(player_data[id].name, " desconectado")

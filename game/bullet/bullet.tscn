@@ -10,7 +10,7 @@ radius = 4.12311
 mass = 0.1
 gravity_scale = 0.0
 contact_monitor = true
-max_contacts_reported = 1
+max_contacts_reported = 10
 script = ExtResource("1_ckyol")
 
 [node name="Sprite2D" type="Sprite2D" parent="." unique_id=1181533782]
@@ -20,4 +20,3 @@ texture = ExtResource("2_toeda")
 shape = SubResource("CircleShape2D_nex8d")
 
 [connection signal="body_entered" from="." to="." method="_on_body_entered"]
-[connection signal="body_shape_entered" from="." to="." method="_on_body_shape_entered"]

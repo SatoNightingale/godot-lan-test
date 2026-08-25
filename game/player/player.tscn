@@ -94,4 +94,14 @@ replication_config = SubResource("SceneReplicationConfig_onrkg")
 unique_name_in_owner = true
 replication_config = SubResource("SceneReplicationConfig_b2mth")
 
+[node name="TextureProgressBar" type="TextureProgressBar" parent="." unique_id=703729196]
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -14.0
+offset_top = -33.0
+offset_right = 15.0
+offset_bottom = -28.0
+grow_horizontal = 2
+
 [connection signal="body_entered" from="hitbox" to="." method="_on_hitbox_body_entered"]

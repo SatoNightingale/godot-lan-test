@@ -2,7 +2,7 @@ extends Node2D
 class_name Weapon
 
 signal update_ammo(new_ammo: int)
-signal bullet_fired
+signal bullet_fired(direction: Vector2)
 signal reloading
 signal aim_mode_changed(value: bool)
 
@@ -18,6 +18,10 @@ var ammo := 3:
 	set(value):
 		ammo = value
 		update_ammo.emit(value)
+
+## Factor de desviación del arma, en radianes.
+## La dirección de cada disparo variará aleatoriamente en proporción a esta cantidad
+var desviacion : float = PI / 36
 
 var can_shoot := true
 
@@ -81,7 +85,13 @@ func shoot():
 			ammo -= 1
 			if ammo == 0:
 				reload.rpc()
-			bullet_fired.emit()
+			# la dirección de tiro se desvía aleatoriamente según
+			# el factor de desviación del arma
+			var angulo_tiro = Vector2.from_angle(
+				player.direction.angle() + \
+				randf_range(-desviacion, desviacion)
+			)
+			bullet_fired.emit(angulo_tiro)
 			$shoot_cooldown.start()
 		%shot_sound.play()
 
