@@ -1,0 +1,12 @@
+[gd_scene format=3 uid="uid://ckhehsw51wwr1"]
+
+[ext_resource type="Script" uid="uid://bynqbjpj64g4u" path="res://game/weapon/weapon/weapon.gd" id="1_xo5fp"]
+
+[node name="weapon" type="Node2D" unique_id=693644199]
+script = ExtResource("1_xo5fp")
+
+[node name="sprite" type="Sprite2D" parent="." unique_id=1448784083]
+texture_filter = 1
+
+[node name="wield_slowdown_timer" type="Timer" parent="." unique_id=261132106]
+one_shot = true

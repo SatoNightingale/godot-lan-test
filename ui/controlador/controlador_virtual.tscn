@@ -4,16 +4,14 @@
 [ext_resource type="Script" uid="uid://s6xwnjrmalta" path="res://ui/controlador/controlador_virtual.gd" id="1_xdjfl"]
 [ext_resource type="Texture2D" uid="uid://bm30au8mjfc2f" path="res://addons/virtual_joystick/textures/joystick_base_outline.png" id="2_xdjfl"]
 [ext_resource type="Texture2D" uid="uid://dt13r06u87fib" path="res://addons/virtual_joystick/textures/joystick_tip_arrows.png" id="3_d2vm8"]
-[ext_resource type="Texture2D" uid="uid://cot3dub7alw0o" path="res://ui/controlador/icons/bullet-shoot.png" id="4_0uk1c"]
-[ext_resource type="Script" uid="uid://v7kukw1f6alt" path="res://ui/cooldown_button.gd" id="5_tabjo"]
+[ext_resource type="Texture2D" uid="uid://deckinjpwwlu2" path="res://ui/controlador/icons/bullet-shoot.svg" id="5_d2vm8"]
+[ext_resource type="Texture2D" uid="uid://d3t35id8teo7x" path="res://ui/controlador/icons/joystick_tip_bullet.svg" id="6_d2vm8"]
 [ext_resource type="Texture2D" uid="uid://bh0gct150p4n3" path="res://ui/controlador/icons/slice37.png" id="6_uljo1"]
 [ext_resource type="Texture2D" uid="uid://88w4ecejivxu" path="res://ui/controlador/icons/slice37-negative.png" id="7_d32ch"]
+[ext_resource type="PackedScene" uid="uid://owedt21eosqi" path="res://ui/controlador/cooldown button.tscn" id="7_xdjfl"]
 [ext_resource type="Texture2D" uid="uid://4wtfduwhrodq" path="res://ui/controlador/icons/reload.svg" id="8_ve33x"]
 
-[sub_resource type="CircleShape2D" id="CircleShape2D_7mycd"]
-radius = 115.0
-
-[sub_resource type="CircleShape2D" id="CircleShape2D_272bh"]
+[sub_resource type="CircleShape2D" id="CircleShape2D_xdjfl"]
 radius = 115.0
 
 [node name="screen_controls" type="Control" unique_id=2023537950]
@@ -43,7 +41,8 @@ offset_top = -264.0
 offset_right = 240.0
 grow_vertical = 0
 
-[node name="CameraJoystick" type="Control" parent="Control1/Control" unique_id=1930946018]
+[node name="MovementJoystick" type="Control" parent="Control1/Control" unique_id=1930946018]
+unique_name_in_owner = true
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -64,7 +63,7 @@ action_down = "move_down"
 metadata/_custom_type_script = "uid://djnc8xw3lwy4t"
 metadata/_edit_group_ = true
 
-[node name="Base" type="TextureRect" parent="Control1/Control/CameraJoystick" unique_id=1588701282]
+[node name="Base" type="TextureRect" parent="Control1/Control/MovementJoystick" unique_id=1588701282]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -82,7 +81,7 @@ mouse_force_pass_scroll_events = false
 texture = ExtResource("2_xdjfl")
 stretch_mode = 5
 
-[node name="Tip" type="TextureRect" parent="Control1/Control/CameraJoystick/Base" unique_id=1944153246]
+[node name="Tip" type="TextureRect" parent="Control1/Control/MovementJoystick/Base" unique_id=1944153246]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -110,16 +109,12 @@ grow_horizontal = 0
 metadata/_edit_use_anchors_ = true
 metadata/_edit_group_ = true
 
-[node name="shoot_button" type="TouchScreenButton" parent="Control1/Control/Control2" unique_id=187892793]
+[node name="shoot_button" type="TouchScreenButton" parent="Control1/Control/Control2" unique_id=953970198]
 unique_name_in_owner = true
 visible = false
-modulate = Color(1, 1, 1, 0.76862746)
 scale = Vector2(0.28, 0.28)
-texture_normal = ExtResource("4_0uk1c")
-shape = SubResource("CircleShape2D_7mycd")
-shape_visible = false
+texture_normal = ExtResource("5_d2vm8")
 action = "shoot"
-script = ExtResource("5_tabjo")
 
 [node name="Control2" type="Control" parent="." unique_id=1038588131]
 custom_minimum_size = Vector2(240, 0)
@@ -141,6 +136,7 @@ offset_right = 240.0
 grow_vertical = 0
 
 [node name="CameraJoystick" type="Control" parent="Control2/Control" unique_id=434503624]
+unique_name_in_owner = true
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -192,26 +188,28 @@ offset_bottom = 50.0
 grow_horizontal = 2
 grow_vertical = 2
 pivot_offset = Vector2(50, 50)
-texture = ExtResource("3_d2vm8")
+texture = ExtResource("6_d2vm8")
 stretch_mode = 5
 
 [node name="Control2" type="Control" parent="Control2/Control" unique_id=1623942072]
 layout_mode = 1
-anchor_left = 0.1375
-anchor_right = 0.1375
+anchors_preset = 0
+offset_left = 30.0
+offset_right = 89.0
+offset_bottom = 67.0
 metadata/_edit_use_anchors_ = true
 metadata/_edit_group_ = true
 
-[node name="aim_button" type="TouchScreenButton" parent="Control2/Control/Control2" unique_id=1408437860]
+[node name="aim_button" type="TouchScreenButton" parent="Control2/Control/Control2" unique_id=2033973617]
 unique_name_in_owner = true
 modulate = Color(1, 1, 1, 0.76862746)
+clip_children = 2
 scale = Vector2(0.28, 0.28)
 texture_normal = ExtResource("6_uljo1")
 texture_pressed = ExtResource("7_d32ch")
-shape = SubResource("CircleShape2D_7mycd")
+shape = SubResource("CircleShape2D_xdjfl")
 shape_visible = false
 action = "aim"
-script = ExtResource("5_tabjo")
 
 [node name="Control3" type="Control" parent="Control2/Control" unique_id=1989677506]
 layout_mode = 1
@@ -228,15 +226,10 @@ grow_horizontal = 2
 grow_vertical = 0
 metadata/_edit_group_ = true
 
-[node name="reload_button" type="TouchScreenButton" parent="Control2/Control/Control3" unique_id=480262716]
+[node name="reload_button" parent="Control2/Control/Control3" unique_id=1792771256 instance=ExtResource("7_xdjfl")]
 unique_name_in_owner = true
-self_modulate = Color(1, 1, 1, 0.76862746)
-scale = Vector2(0.28, 0.28)
 texture_normal = ExtResource("8_ve33x")
-shape = SubResource("CircleShape2D_272bh")
-shape_visible = false
 action = "reload"
-script = ExtResource("5_tabjo")
 
 [node name="AmmoLabel" type="Label" parent="Control2" unique_id=1046562866]
 unique_name_in_owner = true

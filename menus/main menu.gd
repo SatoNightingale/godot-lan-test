@@ -32,8 +32,8 @@ func _ready() -> void:
 	if OS.get_name() == "Android" or OS.get_name() == "iOS":
 		theme = load("res://menus/tema_movil.tres")
 	change_scene(connect_menu)
-	#if Engine.is_embedded_in_editor():
-		#debug_tasks()
+	if OS.has_feature("editor"):
+		debug_tasks()
 
 
 func read_config():
@@ -67,9 +67,9 @@ func debug_tasks():
 				multiplayer.multiplayer_peer = peer
 				on_connected("Player " + numplayer, "localhost")
 				match numplayer:
-					"1": get_window().position = Vector2i(723, 110)
-					"2": get_window().position = Vector2i(723, 110)
-					"3": get_window().position = Vector2i(723, 110)
+					"1": get_window().position = Vector2i(513, 110)
+					"2": get_window().position = Vector2i(0, 240)
+					"3": get_window().position = Vector2i(513, 240)
 		#await multiplayer.peer_connected
 		#if multiplayer.is_server():
 			#$"waiting room"._on_start_pressed()

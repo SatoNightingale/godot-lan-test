@@ -1,0 +1,30 @@
+[gd_scene format=3 uid="uid://owedt21eosqi"]
+
+[ext_resource type="Script" uid="uid://v7kukw1f6alt" path="res://ui/controlador/cooldown_button.gd" id="3_ttpq0"]
+[ext_resource type="Texture2D" uid="uid://c52t6vdvvh0th" path="res://ui/controlador/pie.svg" id="4_bb5rj"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_7mycd"]
+radius = 115.0
+
+[node name="aim_button" type="TouchScreenButton" unique_id=1637407670]
+modulate = Color(1, 1, 1, 0.76862746)
+clip_children = 2
+scale = Vector2(0.28, 0.28)
+shape = SubResource("CircleShape2D_7mycd")
+shape_visible = false
+script = ExtResource("3_ttpq0")
+
+[node name="pie" type="TextureProgressBar" parent="." unique_id=696721082]
+modulate = Color(1, 1, 1, 0.5019608)
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+fill_mode = 4
+nine_patch_stretch = true
+stretch_margin_left = 6
+stretch_margin_top = 6
+stretch_margin_right = 6
+stretch_margin_bottom = 6
+texture_progress = ExtResource("4_bb5rj")

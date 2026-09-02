@@ -1,6 +1,6 @@
 [gd_scene format=4 uid="uid://c2t6r04ag1ftr"]
 
-[ext_resource type="TileSet" uid="uid://dwtdlh8y4kqvy" path="res://maps/tilesets/rpgmmv.tres" id="1_p80ne"]
+[ext_resource type="TileSet" uid="uid://dwtdlh8y4kqvy" path="res://maps/tilesets/rpgmaker mv/rpgmmv.tres" id="1_p80ne"]
 
 [node name="Map2" type="Node2D" unique_id=274028217]
 y_sort_enabled = true

@@ -1,0 +1,31 @@
+[gd_scene format=3 uid="uid://bwwotfrudy3o3"]
+
+[ext_resource type="PackedScene" uid="uid://dc5yelyhv1r2x" path="res://game/weapon/fire_weapon/fire_weapon.tscn" id="1_xgedx"]
+[ext_resource type="Texture2D" uid="uid://c6vyarvq5myao" path="res://game/weapon/ak47/AK47.png" id="3_wodgf"]
+[ext_resource type="AudioStream" uid="uid://d3iaupxjkdw84" path="res://game/weapon/pistol.wav" id="4_wlhrn"]
+
+[node name="ak47" unique_id=693644199 instance=ExtResource("1_xgedx")]
+max_ammo = 20
+automatica = true
+desviacion = 10.0
+shoot_cooldown = 0.1
+reload_cooldown = 4.0
+damage = 50.0
+
+[node name="sprite" parent="." index="0" unique_id=1448784083]
+position = Vector2(-1, 0)
+texture = ExtResource("3_wodgf")
+offset = Vector2(37, 0)
+
+[node name="cannon" parent="sprite" index="0" unique_id=1996995724]
+position = Vector2(59, 0)
+
+[node name="shot_sound" parent="." index="1" unique_id=66055893]
+position = Vector2(58, 0)
+stream = ExtResource("4_wlhrn")
+
+[node name="timer_rafaga" type="Timer" parent="." index="7" unique_id=1896245306]
+wait_time = 0.5
+one_shot = true
+
+[connection signal="timeout" from="timer_rafaga" to="." method="_on_timer_rafaga_timeout"]

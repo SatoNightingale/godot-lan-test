@@ -50,6 +50,9 @@ var is_pressed := false
 # The joystick output.
 var output := Vector2.ZERO
 
+# Hace que el joystick dispare acciones cuando se desplaza completamente en una direccion
+var push_mode := true
+
 # PRIVATE VARIABLES
 
 var _touch_index : int = -1
@@ -152,6 +155,7 @@ func _update_joystick(touch_position: Vector2) -> void:
 			Input.action_release(action_up)
 		if output.y <= 0 and Input.is_action_pressed(action_down):
 			Input.action_release(action_down)
+		
 		# Press actions
 		if output.x < 0:
 			Input.action_press(action_left, -output.x)
@@ -174,7 +178,3 @@ func _reset():
 		for action in [action_left, action_right, action_down, action_up]:
 			if Input.is_action_pressed(action):
 				Input.action_release(action)
-
-
-func _on_shoot_button_pressed() -> void:
-	pass # Replace with function body.

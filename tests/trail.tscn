@@ -1,0 +1,11 @@
+[gd_scene format=3 uid="uid://cbn76jlrq7yq"]
+
+[ext_resource type="Script" uid="uid://da8u2wpoe7o6d" path="res://tests/trail.gd" id="1_ugouo"]
+
+[node name="Node2D" type="Node2D" unique_id=1207617628 node_paths=PackedStringArray("line")]
+script = ExtResource("1_ugouo")
+line = NodePath("Line2D")
+
+[node name="Line2D" type="Line2D" parent="." unique_id=815239941]
+width = 3.0
+default_color = Color(1, 0.7607843, 0.3019608, 1)

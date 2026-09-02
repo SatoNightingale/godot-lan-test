@@ -2,10 +2,10 @@ extends CharacterBody2D
 class_name Player
 
 
-#signal shot(shooter: int)
-signal dead(killer_id: int)
 signal weapon_changed(new_weapon: Weapon)
+signal dead(killer_id: int)
 signal revived
+signal glance_mode_changed(value: bool)
 
 const player_colors = {
 	0: Color.BLUE,
@@ -14,24 +14,48 @@ const player_colors = {
 	3: Color.YELLOW
 }
 
-@export var speed = 250.0
-
-@export var camera: Camera2D
+@export var base_speed := 200.0
 
 @export var weapon: Weapon:
 	set(new_weapon):
 		if weapon:
 			remove_child(weapon)
-			weapon.queue_free()
-		new_weapon.player = self
-		weapon_changed.emit(new_weapon)
-		if weapon.get_parent() == null:
-			add_child(new_weapon)
+			#weapon.queue_free()
+		if new_weapon:
+			new_weapon.player = self
+			weapon_changed.emit(new_weapon)
+			if new_weapon.get_parent() == null:
+				add_child(new_weapon)
+			else:
+				new_weapon.reparent(self, false)
 		weapon = new_weapon
 
 @export var respawn_timer : Timer
 
-var vida := 100.0
+@export var vida_max := 100.0
+
+@export var base_glance_distance := 100
+
+@export var _lifebar_gradient: Gradient
+
+@export var _camera: Camera2D
+
+var glance_mode := false:
+	set(value):
+		if value != glance_mode:
+			glance_mode = value
+			_camera.position_smoothing_enabled = glance_mode
+			glance_mode_changed.emit(glance_mode)
+			if !glance_mode:
+				_camera.offset = Vector2.ZERO
+
+var speed := base_speed
+
+var vida := vida_max:
+	set(value):
+		vida = value
+		queue_redraw()
+
 
 var player_id: int
 var player_name: String
@@ -50,6 +74,10 @@ func _enter_tree() -> void:
 
 
 func _ready():
+	###
+	#var tween = create_tween()
+	#tween.tween_property(self, "vida", 1, 5.0)
+	###
 	initialize(position)
 	if local_player:
 		%camara.make_current()
@@ -57,7 +85,7 @@ func _ready():
 
 func initialize(pos: Vector2):
 	alive = true
-	vida = 100.0
+	vida = vida_max
 	visible = true
 	position = pos
 	rotation = 0.0
@@ -83,13 +111,18 @@ func control_camera(camera_dir: Vector2, move_dir: Vector2):
 	if camera_dir != Vector2.ZERO:
 		rotation = camera_dir.angle()
 		direction = camera_dir
-	else: if move_dir != Vector2.ZERO:
+	else:
+		if move_dir != Vector2.ZERO:
 			rotation = move_dir.angle()
 			direction = move_dir
+	if move_dir != Vector2.ZERO:
+		glance_mode = false
+	if glance_mode:
+		_camera.offset = base_glance_distance * camera_dir
 
 
 func _physics_process(_delta):
-	if not local_player: # %ClientSynchronizer.is_multiplayer_authority():
+	if not local_player:
 		return
 	if not alive:
 		return
@@ -97,13 +130,23 @@ func _physics_process(_delta):
 	var move_dir = Input.get_vector("move_left", "move_right", "move_up", "move_down")
 	control_movement(move_dir)
 	control_camera(camera_dir, move_dir)
+	if Input.is_action_just_pressed("aim"):
+		glance_mode = !glance_mode
 	move_and_slide()
+
+
+func _draw() -> void:
+	if vida < vida_max:
+		var vida_scale = remap(vida, 0, vida_max, 0, 1)
+		var bar_start = Vector2(-15, -30)
+		var bar_end = bar_start + Vector2.RIGHT * vida / 100 * 40
+		var bar_color = _lifebar_gradient.sample(vida_scale)
+		draw_line(bar_start, bar_end, bar_color, 4)
 
 
 @rpc("call_local")
 func damage(dn: int, inflicter_id: int):
 	vida -= dn
-	
 	if vida <= 0:
 		die(inflicter_id)
 
@@ -111,7 +154,8 @@ func damage(dn: int, inflicter_id: int):
 #@rpc("call_local")
 func die(killer_id: int):
 	alive = false
-	dead.emit(killer_id)
+	if multiplayer.is_server():
+		dead.emit(killer_id)
 	# animacion de muerte por aqui...
 	visible = false
 	$shape.set_deferred("disabled", true)
@@ -120,11 +164,9 @@ func die(killer_id: int):
 
 
 func _on_hitbox_body_entered(body: Node2D):
-	if not multiplayer.is_server():
-		return
-	if body is Bullet:
-		damage.rpc(body.calcular_dano(self), body.shooter_id)
-		#shot.emit(body.shooter_id)
+	if multiplayer.is_server():
+		if body is Bullet:
+			damage.rpc(body.calcular_dano(self), body.shooter_id)
 
 
 func get_colored_player_name() -> String:

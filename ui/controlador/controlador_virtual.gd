@@ -6,21 +6,20 @@ var player: Player
 func configure_ui(_player: Player):
 	player = _player
 	player.weapon_changed.connect(_on_player_weapon_changed)
+	player.glance_mode_changed.connect(_on_player_glance_mode_changed)
 	if player.weapon != null:
 		_on_player_weapon_changed(player.weapon)
 
 
 func _on_player_weapon_changed(weapon: Weapon):
-	if "shoot_cooldown" in weapon:
-		%shoot_button.setup(weapon.shoot_cooldown, weapon.bullet_fired)
-	if "reload_cooldown" in weapon:
-		%reload_button.setup(weapon.reload_cooldown, weapon.reloading)
-	_on_update_ammo(weapon.ammo)
-	weapon.update_ammo.connect(_on_update_ammo)
-	weapon.aim_mode_changed.connect(_on_weapon_aim_mode_changed)
+	if weapon is FireWeapon:
+		#%shoot_button.setup(weapon.get_node("shoot_timer"), weapon.bullet_fired)
+		%reload_button.setup(weapon.get_node("reload_timer"), weapon.reloading)
+		_on_update_ammo(weapon.ammo)
+		weapon.update_ammo.connect(_on_update_ammo)
 
 
-func _on_weapon_aim_mode_changed(value: bool):
+func _on_player_glance_mode_changed(value: bool):
 	%shoot_button.visible = value
 	# intercambiar las texturas de %aim_button
 	var aux_texture = %aim_button.texture_normal

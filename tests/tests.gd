@@ -1,14 +1,15 @@
 extends Node2D
 
-var bullet_scene = preload("res://game/bullet/bullet.tscn")
-
 func _ready() -> void:
-	$UI.configure_ui($player)
+	# res://game/weapon/revolver.tscn
+	var weapon = load("res://game/weapon/mp5/mp5.tscn").instantiate()
+	$player.weapon = weapon
 	$player.weapon.bullet_fired.connect(on_bullet_fired)
+	$UI.configure_ui($player)
 
 
-func on_bullet_fired():
-	var bala = bullet_scene.instantiate()
+func on_bullet_fired(direction: Vector2):
+	var bala = $player.weapon.municion.instantiate()
 	bala.position = $player.weapon.cannon.get_global_position()
-	bala.shoot($player.direction, $player.player_id, $player2)
+	bala.shoot(direction, $player)
 	add_child(bala)

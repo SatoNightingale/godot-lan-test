@@ -1,0 +1,25 @@
+[gd_scene format=3 uid="uid://dtsq5gpig8f7m"]
+
+[ext_resource type="PackedScene" uid="uid://dc5yelyhv1r2x" path="res://game/weapon/fire_weapon/fire_weapon.tscn" id="1_dvyog"]
+[ext_resource type="Texture2D" uid="uid://cvj5vk257m4n5" path="res://game/weapon/revolver/colt revolver.png" id="2_xvksq"]
+[ext_resource type="AudioStream" uid="uid://d3iaupxjkdw84" path="res://game/weapon/pistol.wav" id="4_ch4gr"]
+
+[node name="revolver" unique_id=693644199 instance=ExtResource("1_dvyog")]
+reloading_slowdown = 0.8
+damage = 80.0
+
+[node name="sprite" parent="." index="0" unique_id=1448784083]
+texture = ExtResource("2_xvksq")
+offset = Vector2(28, 0)
+
+[node name="cannon" parent="sprite" index="0" unique_id=1996995724]
+position = Vector2(49, 0)
+
+[node name="shot_sound" parent="." index="1" unique_id=66055893]
+stream = ExtResource("4_ch4gr")
+
+[node name="shoot_timer" parent="." index="3" unique_id=1922823095]
+wait_time = 0.6
+
+[node name="reload_timer" parent="." index="4" unique_id=1383800656]
+wait_time = 3.0

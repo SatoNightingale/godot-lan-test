@@ -1,0 +1,43 @@
+[gd_scene format=3 uid="uid://dc5yelyhv1r2x"]
+
+[ext_resource type="PackedScene" uid="uid://ckhehsw51wwr1" path="res://game/weapon/weapon/weapon.tscn" id="1_2fmv7"]
+[ext_resource type="Script" uid="uid://d4fetufyvgwa8" path="res://game/weapon/fire_weapon/fire_weapon.gd" id="2_xt5wk"]
+[ext_resource type="PackedScene" uid="uid://b16301nsg01q4" path="res://game/bullet/bullet.tscn" id="3_xex5d"]
+[ext_resource type="Texture2D" uid="uid://bfqtqssskbed" path="res://game/weapon/pie.svg" id="4_hgrxx"]
+
+[node name="fire_weapon" unique_id=693644199 node_paths=PackedStringArray("cannon") instance=ExtResource("1_2fmv7")]
+script = ExtResource("2_xt5wk")
+data = null
+municion = ExtResource("3_xex5d")
+cannon = NodePath("sprite/cannon")
+max_ammo = 6
+automatica = false
+alcance = 700
+desviacion = 5.0
+shoot_cooldown = 0.6
+reload_cooldown = 3.0
+reloading_slowdown = 0.66
+aim_distance = 0
+
+[node name="cannon" type="Marker2D" parent="sprite" parent_id_path=PackedInt32Array(1448784083) index="0" unique_id=1996995724]
+
+[node name="shot_sound" type="AudioStreamPlayer2D" parent="." index="1" unique_id=66055893]
+unique_name_in_owner = true
+
+[node name="reload_pie" type="TextureProgressBar" parent="." index="2" unique_id=403752930]
+visible = false
+offset_left = 30.0
+offset_top = -30.0
+offset_right = 36.0
+offset_bottom = -24.0
+value = 100.0
+fill_mode = 4
+texture_progress = ExtResource("4_hgrxx")
+
+[node name="shoot_timer" type="Timer" parent="." index="3" unique_id=1922823095]
+one_shot = true
+
+[node name="reload_timer" type="Timer" parent="." index="4" unique_id=1383800656]
+one_shot = true
+
+[connection signal="timeout" from="reload_timer" to="." method="_on_reload_timer_timeout"]

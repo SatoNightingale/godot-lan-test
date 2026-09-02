@@ -2,8 +2,10 @@
 
 [ext_resource type="Script" uid="uid://byhjvhlcdawq8" path="res://game/player/player.gd" id="1_iidce"]
 [ext_resource type="Texture2D" uid="uid://bh4qxte6rbxb" path="res://game/player/player_scaled.png" id="2_a4w0n"]
-[ext_resource type="AudioStream" uid="uid://d3iaupxjkdw84" path="res://game/bullet/pistol.wav" id="3_8soms"]
-[ext_resource type="PackedScene" uid="uid://ckhehsw51wwr1" path="res://game/weapon/weapon.tscn" id="3_a4w0n"]
+
+[sub_resource type="Gradient" id="Gradient_b2mth"]
+offsets = PackedFloat32Array(0, 0.33, 0.66, 1)
+colors = PackedColorArray(1, 0, 0, 1, 1, 0.3764706, 0, 1, 1, 0.5882353, 0, 1, 1, 1, 1, 1)
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_esygj"]
 animations = [{
@@ -25,13 +27,13 @@ radius = 25.02
 [sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_onrkg"]
 properties/0/path = NodePath(".:position")
 properties/0/spawn = true
-properties/0/replication_mode = 1
+properties/0/replication_mode = 2
 properties/1/path = NodePath(".:rotation")
 properties/1/spawn = true
-properties/1/replication_mode = 1
+properties/1/replication_mode = 2
 properties/2/path = NodePath(".:direction")
 properties/2/spawn = true
-properties/2/replication_mode = 1
+properties/2/replication_mode = 2
 
 [sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_b2mth"]
 properties/0/path = NodePath(".:alive")
@@ -40,14 +42,18 @@ properties/0/replication_mode = 2
 properties/1/path = NodePath(".:player_number")
 properties/1/spawn = true
 properties/1/replication_mode = 2
+properties/2/path = NodePath(".:vida")
+properties/2/spawn = true
+properties/2/replication_mode = 2
 
-[node name="player" type="CharacterBody2D" unique_id=1954339528 node_paths=PackedStringArray("camera", "weapon", "respawn_timer") groups=["players"]]
+[node name="player" type="CharacterBody2D" unique_id=1954339528 node_paths=PackedStringArray("respawn_timer", "_camera") groups=["players"]]
+modulate = Color(1, 0.99607843, 1, 1)
 collision_mask = 3
 motion_mode = 1
 script = ExtResource("1_iidce")
-camera = NodePath("camara")
-weapon = NodePath("weapon")
 respawn_timer = NodePath("respawn_timer")
+_lifebar_gradient = SubResource("Gradient_b2mth")
+_camera = NodePath("camara")
 
 [node name="sprite" type="AnimatedSprite2D" parent="." unique_id=829708582]
 texture_filter = 2
@@ -67,19 +73,8 @@ position = Vector2(-7, -0.5)
 position = Vector2(7, 0.5)
 shape = SubResource("CircleShape2D_sxto4")
 
-[node name="weapon" parent="." unique_id=693644199 node_paths=PackedStringArray("player") instance=ExtResource("3_a4w0n")]
-player = NodePath("..")
-
-[node name="cannon" type="Marker2D" parent="." unique_id=36865486]
-visible = false
-position = Vector2(40, 0)
-
 [node name="camara" type="Camera2D" parent="." unique_id=1293068465]
 unique_name_in_owner = true
-
-[node name="shot_sound" type="AudioStreamPlayer2D" parent="." unique_id=1428304197]
-unique_name_in_owner = true
-stream = ExtResource("3_8soms")
 
 [node name="respawn_timer" type="Timer" parent="." unique_id=1697499230]
 unique_name_in_owner = true
@@ -93,15 +88,5 @@ replication_config = SubResource("SceneReplicationConfig_onrkg")
 [node name="ServerSynchronizer" type="MultiplayerSynchronizer" parent="." unique_id=1411247040]
 unique_name_in_owner = true
 replication_config = SubResource("SceneReplicationConfig_b2mth")
-
-[node name="TextureProgressBar" type="TextureProgressBar" parent="." unique_id=703729196]
-anchors_preset = 5
-anchor_left = 0.5
-anchor_right = 0.5
-offset_left = -14.0
-offset_top = -33.0
-offset_right = 15.0
-offset_bottom = -28.0
-grow_horizontal = 2
 
 [connection signal="body_entered" from="hitbox" to="." method="_on_hitbox_body_entered"]

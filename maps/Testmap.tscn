@@ -1,10 +1,10 @@
 [gd_scene format=4 uid="uid://v2ihwrki8d6q"]
 
-[ext_resource type="Texture2D" uid="uid://dla3tt8jjqkxc" path="res://maps/tilesets/tsi_BasePipo1.png" id="5_ml565"]
-[ext_resource type="Texture2D" uid="uid://blk67m261yxdu" path="res://maps/tilesets/tsi_BasePipo2.png" id="6_homch"]
-[ext_resource type="Texture2D" uid="uid://demewbl4rsdoe" path="res://maps/tilesets/tsi_cesped.png" id="Grass, Dirt, Flower"]
-[ext_resource type="Texture2D" uid="uid://bfs3sk0at636h" path="res://maps/tilesets/tsi_agua.png" id="[A]Water_pipo"]
-[ext_resource type="Texture2D" uid="uid://wbtrtfcrrnec" path="res://maps/tilesets/tsi_BasePipo.png" id="[Base]BaseChip_pipo tsx"]
+[ext_resource type="Texture2D" uid="uid://dla3tt8jjqkxc" path="res://maps/tilesets/pipoya/tsi_BasePipo1.png" id="5_ml565"]
+[ext_resource type="Texture2D" uid="uid://blk67m261yxdu" path="res://maps/tilesets/pipoya/tsi_BasePipo2.png" id="6_homch"]
+[ext_resource type="Texture2D" uid="uid://demewbl4rsdoe" path="res://maps/tilesets/pipoya/tsi_cesped.png" id="Grass, Dirt, Flower"]
+[ext_resource type="Texture2D" uid="uid://bfs3sk0at636h" path="res://maps/tilesets/pipoya/tsi_agua.png" id="[A]Water_pipo"]
+[ext_resource type="Texture2D" uid="uid://wbtrtfcrrnec" path="res://maps/tilesets/pipoya/tsi_BasePipo.png" id="[Base]BaseChip_pipo tsx"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_0"]
 texture = ExtResource("[Base]BaseChip_pipo tsx")
