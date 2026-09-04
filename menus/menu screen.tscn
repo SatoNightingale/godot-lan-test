@@ -1,6 +1,7 @@
 [gd_scene format=3 uid="uid://eyfp4kqpd26c"]
 
-[ext_resource type="Script" uid="uid://cxbamfwvqlnkg" path="res://menus/main menu.gd" id="1_ig7tw"]
+[ext_resource type="Theme" uid="uid://cpjugtrdovxql" path="res://menus/tema_escritorio.tres" id="1_275rp"]
+[ext_resource type="Script" uid="uid://cxbamfwvqlnkg" path="res://menus/menu screen.gd" id="1_ig7tw"]
 
 [node name="Main" type="Control" unique_id=1717518396]
 layout_mode = 3
@@ -9,6 +10,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+theme = ExtResource("1_275rp")
 script = ExtResource("1_ig7tw")
 
 [node name="error_popup" type="AcceptDialog" parent="." unique_id=1927675351]

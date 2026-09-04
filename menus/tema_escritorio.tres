@@ -1,0 +1,9 @@
+[gd_resource type="Theme" format=3 uid="uid://cpjugtrdovxql"]
+
+[ext_resource type="StyleBox" uid="uid://ctjhi5h666xl5" path="res://menus/start menu/buttons style.tres" id="1_mo52d"]
+
+[resource]
+Label/colors/font_color = Color(1, 1, 1, 1)
+LineEdit/constants/minimum_character_width = 8
+start_menu_button/base_type = &"Button"
+start_menu_button/styles/normal = ExtResource("1_mo52d")

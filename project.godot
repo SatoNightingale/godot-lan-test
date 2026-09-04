@@ -22,6 +22,7 @@ config/icon="res://icon.svg"
 [autoload]
 
 PatchSystem="*uid://7w37r2vsmrjn"
+Configurations="*uid://l5c4wgitfdam"
 
 [display]
 

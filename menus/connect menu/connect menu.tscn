@@ -1,6 +1,7 @@
 [gd_scene format=3 uid="uid://c2v5vbgwiocso"]
 
 [ext_resource type="Script" uid="uid://bbto47c3cb7gd" path="res://menus/connect menu/connect_menu.gd" id="1_6fgbw"]
+[ext_resource type="StyleBox" uid="uid://bgf7akwmqdo5b" path="res://menus/separador invisible.tres" id="2_acjcy"]
 
 [node name="connect_menu" type="Control" unique_id=489122455]
 layout_mode = 3
@@ -19,108 +20,76 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="margin" type="MarginContainer" parent="CenterContainer" unique_id=534842269]
+[node name="PanelContainer" type="PanelContainer" parent="CenterContainer" unique_id=932297425]
+layout_mode = 2
+
+[node name="margin" type="MarginContainer" parent="CenterContainer/PanelContainer" unique_id=534842269]
 unique_name_in_owner = true
 layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
 
-[node name="VBoxContainer" type="VBoxContainer" parent="CenterContainer/margin" unique_id=330057791]
+[node name="VBoxContainer" type="VBoxContainer" parent="CenterContainer/PanelContainer/margin" unique_id=330057791]
 layout_mode = 2
 
-[node name="Label" type="Label" parent="CenterContainer/margin/VBoxContainer" unique_id=1903866482]
+[node name="Label" type="Label" parent="CenterContainer/PanelContainer/margin/VBoxContainer" unique_id=1903866482]
 layout_mode = 2
 text = "Conectarse a juego"
 horizontal_alignment = 1
 
-[node name="GridContainer" type="GridContainer" parent="CenterContainer/margin/VBoxContainer" unique_id=369870917]
+[node name="GridContainer" type="GridContainer" parent="CenterContainer/PanelContainer/margin/VBoxContainer" unique_id=369870917]
 layout_mode = 2
 columns = 2
 
-[node name="Label" type="Label" parent="CenterContainer/margin/VBoxContainer/GridContainer" unique_id=935071944]
+[node name="Label" type="Label" parent="CenterContainer/PanelContainer/margin/VBoxContainer/GridContainer" unique_id=935071944]
 layout_mode = 2
 text = "ip: "
 
-[node name="ipedit" type="LineEdit" parent="CenterContainer/margin/VBoxContainer/GridContainer" unique_id=621954848]
+[node name="ipedit" type="LineEdit" parent="CenterContainer/PanelContainer/margin/VBoxContainer/GridContainer" unique_id=621954848]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(120, 0)
 layout_mode = 2
 size_flags_horizontal = 3
 alignment = 2
 
-[node name="Label2" type="Label" parent="CenterContainer/margin/VBoxContainer/GridContainer" unique_id=1159469965]
+[node name="Label2" type="Label" parent="CenterContainer/PanelContainer/margin/VBoxContainer/GridContainer" unique_id=1159469965]
 layout_mode = 2
 text = "puerto: "
 
-[node name="portedit" type="LineEdit" parent="CenterContainer/margin/VBoxContainer/GridContainer" unique_id=1125651516]
+[node name="portedit" type="LineEdit" parent="CenterContainer/PanelContainer/margin/VBoxContainer/GridContainer" unique_id=1125651516]
 unique_name_in_owner = true
 layout_mode = 2
-text = "4242"
+placeholder_text = "4242"
 alignment = 2
 
-[node name="Label3" type="Label" parent="CenterContainer/margin/VBoxContainer/GridContainer" unique_id=551984782]
+[node name="Label3" type="Label" parent="CenterContainer/PanelContainer/margin/VBoxContainer/GridContainer" unique_id=551984782]
+visible = false
 layout_mode = 2
 text = "nombre: "
 
-[node name="nameedit" type="LineEdit" parent="CenterContainer/margin/VBoxContainer/GridContainer" unique_id=1271058094]
+[node name="nameedit" type="LineEdit" parent="CenterContainer/PanelContainer/margin/VBoxContainer/GridContainer" unique_id=1271058094]
 unique_name_in_owner = true
+visible = false
 layout_mode = 2
 text = "Player"
 alignment = 2
 
-[node name="Join" type="Button" parent="CenterContainer/margin/VBoxContainer" unique_id=758802390]
+[node name="Join" type="Button" parent="CenterContainer/PanelContainer/margin/VBoxContainer" unique_id=758802390]
 unique_name_in_owner = true
 layout_mode = 2
 text = "Unirse"
 
-[node name="Host" type="Button" parent="CenterContainer/margin/VBoxContainer" unique_id=1623080653]
+[node name="HSeparator" type="HSeparator" parent="CenterContainer/PanelContainer/margin/VBoxContainer" unique_id=1909965948]
+layout_mode = 2
+theme_override_constants/separation = 10
+theme_override_styles/separator = ExtResource("2_acjcy")
+
+[node name="back" type="Button" parent="CenterContainer/PanelContainer/margin/VBoxContainer" unique_id=703023139]
 unique_name_in_owner = true
 layout_mode = 2
-text = "Crear"
+text = "Atrás"
 
-[node name="HBoxContainer" type="HBoxContainer" parent="." unique_id=2137783424]
-layout_mode = 1
-anchors_preset = -1
-anchor_left = 1.0
-anchor_top = 1.0
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = -40.0
-offset_top = -40.0
-offset_right = -20.0
-offset_bottom = -20.0
-grow_horizontal = 0
-grow_vertical = 0
-theme_override_constants/separation = 20
-alignment = 2
-
-[node name="version_label" type="Label" parent="HBoxContainer" unique_id=1756336192]
-unique_name_in_owner = true
-layout_mode = 2
-horizontal_alignment = 2
-
-[node name="btn_patch" type="Button" parent="HBoxContainer" unique_id=2034435547]
-unique_name_in_owner = true
-layout_mode = 2
-text = "Aplicar parche"
-
-[node name="patch_finder" type="FileDialog" parent="." unique_id=1698678078]
-unique_name_in_owner = true
-title = "Open a File"
-dialog_hide_on_ok = true
-file_mode = 0
-access = 2
-filters = PackedStringArray("*.pck")
-use_native_dialog = true
-
-[node name="btn_patch_restart" type="ConfirmationDialog" parent="." unique_id=1546516164]
-unique_name_in_owner = true
-oversampling_override = 1.0
-title = ""
-initial_position = 1
-size = Vector2i(296, 132)
-ok_button_text = "Aceptar"
-dialog_text = "Se han cargado algunos parches y para que tengan efecto el juego debe ser reiniciado. ¿Acepta?"
-dialog_autowrap = true
-cancel_button_text = "Cancelar"
-
-[connection signal="pressed" from="CenterContainer/margin/VBoxContainer/Join" to="." method="_on_connect_pressed"]
-[connection signal="pressed" from="CenterContainer/margin/VBoxContainer/Host" to="." method="_on_host_pressed"]
+[connection signal="pressed" from="CenterContainer/PanelContainer/margin/VBoxContainer/Join" to="." method="_on_connect_pressed"]
+[connection signal="pressed" from="CenterContainer/PanelContainer/margin/VBoxContainer/back" to="." method="_on_back_pressed"]

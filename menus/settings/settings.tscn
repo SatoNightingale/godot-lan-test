@@ -1,0 +1,91 @@
+[gd_scene format=3 uid="uid://dr55mysc7igl0"]
+
+[ext_resource type="Script" uid="uid://cqf0cormp2q47" path="res://menus/settings/settings.gd" id="1_2e4a5"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_2v7s5"]
+
+[node name="Settings menu" type="Control" unique_id=414483973]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_2e4a5")
+
+[node name="CenterContainer" type="CenterContainer" parent="." unique_id=1701944957]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="PanelContainer" type="PanelContainer" parent="CenterContainer" unique_id=915929783]
+layout_mode = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="CenterContainer/PanelContainer" unique_id=2145301252]
+layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
+
+[node name="VBoxContainer" type="VBoxContainer" parent="CenterContainer/PanelContainer/MarginContainer" unique_id=1469450424]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer" unique_id=1112829340]
+layout_mode = 2
+text = "Configuraciones"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="HSeparator" type="HSeparator" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer" unique_id=135063250]
+layout_mode = 2
+theme_override_constants/separation = 10
+theme_override_styles/separator = SubResource("StyleBoxEmpty_2v7s5")
+
+[node name="GridContainer" type="GridContainer" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer" unique_id=952629991]
+layout_mode = 2
+columns = 2
+
+[node name="Label" type="Label" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer/GridContainer" unique_id=773126758]
+layout_mode = 2
+text = "Nombre del jugador"
+
+[node name="nombre" type="LineEdit" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer/GridContainer" unique_id=1544311249]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(120, 0)
+layout_mode = 2
+tooltip_text = "Nombre que se mostrará en el juego"
+text = "Player"
+alignment = 2
+
+[node name="Label2" type="Label" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer/GridContainer" unique_id=1382988315]
+layout_mode = 2
+text = "Puerto"
+
+[node name="puerto" type="LineEdit" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer/GridContainer" unique_id=310292518]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(120, 0)
+layout_mode = 2
+text = "4242"
+alignment = 2
+
+[node name="HSeparator2" type="HSeparator" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer" unique_id=1364827809]
+layout_mode = 2
+theme_override_constants/separation = 10
+theme_override_styles/separator = SubResource("StyleBoxEmpty_2v7s5")
+
+[node name="back" type="Button" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer" unique_id=949093177]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+text = "Atrás
+"
+
+[connection signal="tree_exiting" from="." to="." method="_on_tree_exiting"]
+[connection signal="text_submitted" from="CenterContainer/PanelContainer/MarginContainer/VBoxContainer/GridContainer/nombre" to="." method="_on_nombre_text_submitted"]
+[connection signal="text_submitted" from="CenterContainer/PanelContainer/MarginContainer/VBoxContainer/GridContainer/puerto" to="." method="_on_puerto_text_submitted"]
+[connection signal="pressed" from="CenterContainer/PanelContainer/MarginContainer/VBoxContainer/back" to="." method="_on_back_pressed"]

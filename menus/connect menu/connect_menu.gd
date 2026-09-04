@@ -1,38 +1,18 @@
 extends Control
 
-signal hosted(name: String)
-signal connected(name: String, address: String)
+signal connected(address: String)
 signal error(message: String)
+signal go_back
 
-@export var default_port = 4242
-@export var max_players = 4
-
-var player_name := "Player"
-
-## TODO: redimensionar en movil para llenar mas la pantalla
-# _ready conecta las señales, pero cuando se vuelve a llamar las conecta dos veces
 
 func _ready() -> void:
-	%nameedit.text = player_name
-	%version_label.text = ProjectSettings.get_setting("application/config/version")
-	# ProjectSettings.globalize_path("user://")
-	%btn_patch.pressed.connect(%patch_finder.popup_file_dialog)
-	%patch_finder.file_selected.connect(manejar_parche)
-	%btn_patch_restart.confirmed.connect(func():
-		OS.set_restart_on_exit(true)
-		get_tree().quit()
-	)
+	%portedit.placeholder_text = str(Configurations.default_port)
 	if not DisplayServer.has_hardware_keyboard():
 		setup_virtual_keyboard_elevation()
 
 
 func initialize():
 	pass
-
-
-func manejar_parche(path: String):
-	if PatchSystem.copiar_parche(path) == OK:
-		%btn_patch_restart.popup_centered_clamped()
 
 
 func setup_virtual_keyboard_elevation():
@@ -48,37 +28,17 @@ func setup_virtual_keyboard_elevation():
 	#%nameedit.focus_exited.connect(margin_restart_callable)
 
 
-func _on_host_pressed() -> void:
-	if %nameedit.text == "":
-		error.emit("Error: nombre vacio")
-		return
-	if %portedit.text == "":
-		error.emit("Error: puerto vacio")
-		return
-	var peer = ENetMultiplayerPeer.new()
-	var errcod = peer.create_server(int(%portedit.text), max_players)
-	if errcod == OK:
-		multiplayer.multiplayer_peer = peer
-		hosted.emit(%nameedit.text)
-	else:
-		error.emit("Error al crear servidor: " + str(errcod))
-
-
 func _on_connect_pressed() -> void:
-	if %nameedit.text == "":
-		error.emit("Error: nombre vacio")
-		return
-	if %portedit.text == "":
-		error.emit("Error: puerto vacio")
-		return
 	if %ipedit.text == "":
-		error.emit("Error: direccion ip vacia")
+		error.emit("Error: especifique una direccion IP")
 		return
+	var ip = %ipedit.text
+	var port = %portedit.text.to_int() if not %portedit.text.is_empty() else Configurations.default_port
 	var peer = ENetMultiplayerPeer.new()
-	var errcod = peer.create_client(%ipedit.text, int(%portedit.text))
+	var errcod = peer.create_client(ip, port)
 	if errcod == OK:
 		multiplayer.multiplayer_peer = peer
-		connected.emit(%nameedit.text, %ipedit.text)
+		connected.emit(ip)
 	else:
 		error.emit("Error al conectar: " + str(errcod))
 
@@ -92,3 +52,7 @@ func _on_field_editing_toggled(toggled_on: bool, field: Control):
 		# duplicamos el diff porque está en un center container, y
 		# añadimos un pequeño margen para que no roce el teclado
 		%margin.add_theme_constant_override("margin_bottom", -diff * 2 + 2)
+
+
+func _on_back_pressed() -> void:
+	go_back.emit()
