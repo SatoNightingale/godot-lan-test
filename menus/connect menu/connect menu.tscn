@@ -76,20 +76,14 @@ layout_mode = 2
 text = "Player"
 alignment = 2
 
-[node name="Join" type="Button" parent="CenterContainer/PanelContainer/margin/VBoxContainer" unique_id=758802390]
-unique_name_in_owner = true
-layout_mode = 2
-text = "Unirse"
-
 [node name="HSeparator" type="HSeparator" parent="CenterContainer/PanelContainer/margin/VBoxContainer" unique_id=1909965948]
 layout_mode = 2
 theme_override_constants/separation = 10
 theme_override_styles/separator = ExtResource("2_acjcy")
 
-[node name="back" type="Button" parent="CenterContainer/PanelContainer/margin/VBoxContainer" unique_id=703023139]
+[node name="Join" type="Button" parent="CenterContainer/PanelContainer/margin/VBoxContainer" unique_id=758802390]
 unique_name_in_owner = true
 layout_mode = 2
-text = "Atrás"
+text = "Unirse"
 
 [connection signal="pressed" from="CenterContainer/PanelContainer/margin/VBoxContainer/Join" to="." method="_on_connect_pressed"]
-[connection signal="pressed" from="CenterContainer/PanelContainer/margin/VBoxContainer/back" to="." method="_on_back_pressed"]

@@ -1,7 +1,5 @@
 extends Control
 
-signal go_back
-
 
 func _ready() -> void:
 	%nombre.text = Configurations.player_name
@@ -10,6 +8,7 @@ func _ready() -> void:
 func _on_tree_exiting() -> void:
 	Configurations.player_name = %nombre.text
 	Configurations.default_port = %puerto.text.to_int()
+	Configurations.save_config()
 
 #@onready var config_maps : Dictionary[Node, Array] = {
 	#%nombre: ["player_name", get_text, set_text, as_is],
@@ -40,7 +39,3 @@ func _on_tree_exiting() -> void:
 		#var getter = config_maps[control][1]
 		#var func_transform = config_maps[control][3]
 		#Configurations.set(propiedad, func_transform.call(getter.call(control)))
-
-
-func _on_back_pressed() -> void:
-	go_back.emit()

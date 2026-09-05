@@ -1,10 +1,36 @@
 [gd_resource type="Theme" format=3 uid="uid://cs03jfkamn1a2"]
 
-[ext_resource type="StyleBox" uid="uid://ctjhi5h666xl5" path="res://menus/start menu/buttons style.tres" id="1_esg51"]
+[ext_resource type="StyleBox" uid="uid://ctjhi5h666xl5" path="res://menus/buttons style.tres" id="1_esg51"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_mo52d"]
+content_margin_left = 0.0
+content_margin_top = 10.0
+content_margin_right = 50.0
+content_margin_bottom = 10.0
+bg_color = Color(0.6, 0.6, 0.6, 0)
+border_width_bottom = 5
+border_color = Color(1, 1, 1, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_rcgc7"]
+content_margin_left = 0.0
+content_margin_top = 10.0
+content_margin_right = 50.0
+content_margin_bottom = 10.0
+bg_color = Color(0.6, 0.6, 0.6, 0)
+border_width_bottom = 5
+border_color = Color(0.8745098, 0.52156866, 0, 1)
 
 [resource]
 default_font_size = 24
 Label/colors/font_color = Color(1, 1, 1, 1)
 LineEdit/constants/minimum_character_width = 8
 start_menu_button/base_type = &"Button"
+start_menu_button/colors/font_hover_color = Color(1, 1, 1, 1)
+start_menu_button/colors/font_hover_pressed_color = Color(0.8745098, 0.52156866, 0, 1)
+start_menu_button/colors/font_pressed_color = Color(0.8745098, 0.52156866, 0, 1)
+start_menu_button/font_sizes/font_size = 24
+start_menu_button/styles/focus = SubResource("StyleBoxFlat_mo52d")
+start_menu_button/styles/hover = SubResource("StyleBoxFlat_mo52d")
+start_menu_button/styles/hover_pressed = SubResource("StyleBoxFlat_rcgc7")
 start_menu_button/styles/normal = ExtResource("1_esg51")
+start_menu_button/styles/pressed = SubResource("StyleBoxFlat_rcgc7")

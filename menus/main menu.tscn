@@ -1,0 +1,110 @@
+[gd_scene format=3 uid="uid://eyfp4kqpd26c"]
+
+[ext_resource type="Theme" uid="uid://cpjugtrdovxql" path="res://menus/tema_escritorio.tres" id="1_iqb2k"]
+[ext_resource type="Script" uid="uid://cxbamfwvqlnkg" path="res://menus/main menu.gd" id="2_v12x7"]
+
+[node name="Main" type="Control" unique_id=1717518396]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = ExtResource("1_iqb2k")
+script = ExtResource("2_v12x7")
+
+[node name="HBoxContainer" type="HBoxContainer" parent="." unique_id=441748708]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 20
+
+[node name="MarginContainer" type="MarginContainer" parent="HBoxContainer" unique_id=1761647424]
+layout_mode = 2
+theme_override_constants/margin_left = 40
+theme_override_constants/margin_bottom = 40
+
+[node name="start menu" type="VBoxContainer" parent="HBoxContainer/MarginContainer" unique_id=1427132959]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 8
+
+[node name="boton_crear" type="Button" parent="HBoxContainer/MarginContainer/start menu" unique_id=393696157]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"start_menu_button"
+text = "Crear juego"
+alignment = 0
+
+[node name="boton_conectar" type="Button" parent="HBoxContainer/MarginContainer/start menu" unique_id=1600823631]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"start_menu_button"
+text = "Conectarse a juego"
+alignment = 0
+
+[node name="boton_config" type="Button" parent="HBoxContainer/MarginContainer/start menu" unique_id=473931651]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"start_menu_button"
+text = "Configuraciones"
+alignment = 0
+
+[node name="boton_parche" type="Button" parent="HBoxContainer/MarginContainer/start menu" unique_id=132615011]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"start_menu_button"
+text = "Aplicar parche"
+alignment = 0
+
+[node name="version_label" type="Label" parent="HBoxContainer/MarginContainer/start menu/boton_parche" unique_id=58576530]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 1.0
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_bottom = 7.0
+grow_horizontal = 0
+grow_vertical = 2
+theme_override_font_sizes/font_size = 10
+text = "%version_label"
+horizontal_alignment = 1
+vertical_alignment = 2
+
+[node name="menu_container" type="CenterContainer" parent="HBoxContainer" unique_id=274516450]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(510, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="error_popup" type="AcceptDialog" parent="." unique_id=1927675351]
+unique_name_in_owner = true
+oversampling_override = 1.0
+size = Vector2i(100, 102)
+
+[node name="patch_finder" type="FileDialog" parent="." unique_id=283040636]
+unique_name_in_owner = true
+oversampling_override = 1.0
+title = "Open a File"
+size = Vector2i(789, 360)
+dialog_hide_on_ok = true
+file_mode = 0
+access = 2
+filters = PackedStringArray("*.pck")
+use_native_dialog = true
+
+[node name="dlg_patch_restart" type="ConfirmationDialog" parent="." unique_id=310722190]
+unique_name_in_owner = true
+oversampling_override = 1.0
+title = ""
+initial_position = 1
+size = Vector2i(296, 250)
+ok_button_text = "Aceptar"
+dialog_text = "Se han cargado algunas actualizaciones. Para que tengan efecto, el juego debe ser reiniciado. ¿Acepta?"
+dialog_autowrap = true
+cancel_button_text = "Cancelar"

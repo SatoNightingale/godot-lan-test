@@ -5,7 +5,6 @@ extends Control
 ## Estos a su vez responden a su conexion con _on_peer_connected
 ## y se registran con _register_player en l id del jugador recien conectado
 
-signal exit
 signal game_start
 
 var player_data: Dictionary
@@ -60,12 +59,7 @@ func _on_start_pressed() -> void:
 		call_game_start.rpc()
 
 
-func _on_exit_pressed() -> void:
-	multiplayer.multiplayer_peer = OfflineMultiplayerPeer.new()
-	exit.emit()
-
-
 func _on_tree_exiting() -> void:
+	multiplayer.multiplayer_peer = OfflineMultiplayerPeer.new()
 	%player_list.clear()
 	_player_items.clear()
-	#multiplayer.peer_disconnected.disconnect(_on_peer_disconnected)

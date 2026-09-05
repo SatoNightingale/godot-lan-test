@@ -2,7 +2,7 @@ extends Control
 
 signal connected(address: String)
 signal error(message: String)
-signal go_back
+#signal go_back
 
 
 func _ready() -> void:
@@ -54,5 +54,5 @@ func _on_field_editing_toggled(toggled_on: bool, field: Control):
 		%margin.add_theme_constant_override("margin_bottom", -diff * 2 + 2)
 
 
-func _on_back_pressed() -> void:
-	go_back.emit()
+#func _on_back_pressed() -> void:
+	#go_back.emit()

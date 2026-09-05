@@ -5,9 +5,6 @@ signal anuncio(mensaje: String)
 #signal player_killed(killer_id: int, dead_id: int)
 
 @export var player_scene = preload("res://game/player/player.tscn")
-#@export var bullet_scene = preload("res://game/bullet/bullet.tscn")
-
-#@onready var player_name : String = get_parent().player_name
 
 ## TODO: player_data no debe tener un campo 'node', considerar un diccionario aparte que mapee ids a nodos de players
 

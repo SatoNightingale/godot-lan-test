@@ -5,7 +5,6 @@ signal player_data_updated(id: int, new_data)
 @export var max_players = 4
 
 var game_scene = preload("res://game/game.tscn")
-var start_menu = preload("res://menus/start menu/start menu.tscn").instantiate()
 var connect_menu = preload("res://menus/connect menu/connect menu.tscn").instantiate()
 var waiting_room = preload("res://menus/waiting room/waiting_room.tscn").instantiate()
 var settings = preload("res://menus/settings/settings.tscn").instantiate()
@@ -24,22 +23,33 @@ func _ready() -> void:
 	multiplayer.peer_disconnected.connect(_on_peer_disconnected)
 	multiplayer.server_disconnected.connect(_on_server_disconnected)
 	multiplayer.connection_failed.connect(error_popup.bind("Error al conectar al servidor.\nRevise la direccion IP", "Error de conexion"))
+	# inicializar escenas
 	init_scenes()
+	# version
+	%version_label.text = ProjectSettings.get_setting("application/config/version")
+	# botones
+	%boton_crear.pressed.connect(host_game)
+	%boton_conectar.pressed.connect(change_scene.bind(connect_menu))
+	%boton_config.pressed.connect(change_scene.bind(settings))
+	# sistema de parcheo
+	%boton_parche.pressed.connect(%patch_finder.popup_file_dialog)
+	%patch_finder.file_selected.connect(func(path):
+		if PatchSystem.copiar_parche(path) == OK:
+			%dlg_patch_restart.popup_centered_clamped()
+	)
+	%dlg_patch_restart.confirmed.connect(func():
+		OS.set_restart_on_exit(true)
+		get_tree().quit()
+	)
 	# tema movil
 	if OS.get_name() == "Android" or OS.get_name() == "iOS":
 		theme = load("res://menus/tema_movil.tres")
-	# escena inicial
-	change_scene(start_menu)
 	# tareas de debugeo
 	if OS.has_feature("editor"):
 		debug_tasks()
 
 
 func init_scenes():
-	# start menu
-	start_menu.to_host.connect(on_hosted)
-	start_menu.to_connect.connect(change_scene.bind(connect_menu))
-	start_menu.to_config.connect(change_scene.bind(settings))
 	# connect_menu
 	connect_menu.connected.connect(on_connected)
 	connect_menu.error.connect(error_popup.bind("Error de conexion"))
@@ -47,12 +57,7 @@ func init_scenes():
 	waiting_room.player_data = player_data
 	player_data_updated.connect(waiting_room.on_player_data_updated)
 	waiting_room.game_start.connect(load_game)
-	waiting_room.exit.connect(_on_waiting_room_disconnect)
-	# settings
-	settings.go_back.connect(func():
-		Configurations.save_config()
-		change_scene(start_menu)
-	)
+	waiting_room.tree_exiting.connect(_on_waiting_room_disconnect)
 
 
 func debug_tasks():
@@ -62,7 +67,7 @@ func debug_tasks():
 		if "host" in args:
 			if peer.create_server(4242, 4) == OK:
 				multiplayer.multiplayer_peer = peer
-				on_hosted()
+				host_game()
 		if "player" in args:
 			var numplayer = args["player"]
 			if peer.create_client("localhost", 4242) == OK:
@@ -78,13 +83,12 @@ func debug_tasks():
 
 
 func init_player_data():
-	#Configurations.player_name = player_name
 	player_data[multiplayer.get_unique_id()] = {
 		"name": Configurations.player_name
 	}
 
 
-func on_hosted():
+func host_game():
 	var peer = ENetMultiplayerPeer.new()
 	var port = Configurations.default_port
 	var errcod = peer.create_server(port, max_players)
@@ -118,12 +122,12 @@ func _register_player(nombre: String):
 
 func change_scene(scene: Node):
 	if _active_scene != null:
-		remove_child(_active_scene)
+		%menu_container.remove_child(_active_scene)
+	if scene != null:
+		%menu_container.add_child(scene)
+		if scene.has_method("initialize"):
+			scene.initialize()
 	_active_scene = scene
-	add_child(scene)
-	#_active_scene.request_ready()
-	if _active_scene.has_method("initialize"):
-		_active_scene.initialize()
 
 
 func _on_connected_to_server():
@@ -144,12 +148,12 @@ func _on_peer_disconnected(id: int):
 func _on_server_disconnected():
 	error_popup("El servidor se ha desconectado", "Desconexion")
 	player_data.clear()
-	change_scene(start_menu)
+	change_scene(null)
 
 
 func _on_waiting_room_disconnect():
 	player_data.clear()
-	change_scene(start_menu)
+	#change_scene(null)
 
 
 func error_popup(message: String, title := "Error"):
