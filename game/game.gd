@@ -54,7 +54,7 @@ func server_initialize():
 # Esto va a ser llamado en cada peer por PlayerSpawner
 func spawn_player(data) -> Node:
 	# instanciar el player
-	var player : Player = preload("res://game/player/player.tscn").instantiate()
+	var player : Player = player_scene.instantiate()
 	# registrar datos del player
 	player_data[data.id]["node"] = player
 	player_data[data.id]["deaths"] = 0

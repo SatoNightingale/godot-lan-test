@@ -107,7 +107,7 @@ func on_connected(address: String):
 
 func load_game():
 	var game = game_scene.instantiate()
-	game.player_data = player_data
+	game.player_data = player_data.duplicate()
 	get_tree().change_scene_to_node(game)
 
 
@@ -115,7 +115,7 @@ func load_game():
 func _register_player(nombre: String):
 	var id = multiplayer.get_remote_sender_id()
 	if id not in player_data:
-		print(Configurations.player_name, ": Peer conectado: ", id, " -> ", nombre)
+		print(Configurations.player_name, "> Peer conectado: ", id, " -> ", nombre)
 		player_data[id] = {"name": nombre}
 		player_data_updated.emit(id, player_data[id])
 
