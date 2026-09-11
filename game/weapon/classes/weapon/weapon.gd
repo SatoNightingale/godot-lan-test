@@ -4,7 +4,7 @@ class_name Weapon extends Node2D
 signal wielded(args: Array)
 
 ## Daño básico del arma
-@export var damage: float = 100.0
+@export var damage: float
 ## Tiempo en que el personaje permanece ralentizado luego de usar el arma
 @export var after_wield_slowdown_time: float = 0.7
 ## Modificador de la velocidad del player cuando esta usando el arma
@@ -25,16 +25,6 @@ func _ready() -> void:
 	$wield_slowdown_timer.timeout.connect(func():
 		player.speed = player.base_speed
 	)
-
-
-func _process(_delta):
-	if player == null:
-		return
-	
-	$sprite.flip_v = abs(global_rotation) > PI / 2
-	
-	if not player.local_player:
-		return
 
 
 ## Aplica una ralentizacion al player por un tiempo determinado. Si ya hay una ralentizacion siendo aplicada, reinicia el Timer con el nuevo tiempo. 

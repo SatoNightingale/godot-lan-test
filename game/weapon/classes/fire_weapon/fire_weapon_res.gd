@@ -1,9 +1,11 @@
-class_name FireWeaponRes extends Resource
+class_name FireWeaponRes extends Resource ##
 
+
+## Textura que mostará el arma en el juego
+var game_texture: Texture2D
 ## Escena que contiene el tipo de municion que usa el arma
 @export var municion: PackedScene = preload("res://game/bullet/bullet.tscn")
-# Marcador para la posicion desde donde las balas son disparadas
-#@export var cannon: Marker2D
+## Marcador para la posicion desde donde las balas son disparadas
 @export var cannonpos : Vector2
 ## Municion maxima del arma
 @export var max_ammo := 6

@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="ItemInfo" format=3 uid="uid://w66t2te8c0jk"]
+
+[ext_resource type="Script" uid="uid://d3tgi6xiu3i6w" path="res://items/item_info.gd" id="1_yawc1"]
+
+[resource]
+script = ExtResource("1_yawc1")
+nombre = "Colt"
+precio = 1500.0
+icon_texture_path = "uid://cvj5vk257m4n5"
+item_scene_path = "uid://dtsq5gpig8f7m"
+metadata/_custom_type_script = "uid://d3tgi6xiu3i6w"

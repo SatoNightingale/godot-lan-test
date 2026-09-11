@@ -1,7 +1,6 @@
-extends CharacterBody2D
-class_name Player
+class_name Player extends CharacterBody2D
 
-
+# TODO: Para no poner una señal _changed para cada propiedad que debe ser observada, sería bueno crear una clase observable que se ocupe de esto (similar a una Property)
 signal weapon_changed(new_weapon: Weapon)
 signal dead(killer_id: int)
 signal revived
@@ -14,13 +13,12 @@ const player_colors = {
 	3: Color.YELLOW
 }
 
-@export var base_speed := 200.0
-
 @export var weapon: Weapon:
 	set(new_weapon):
 		if weapon:
 			remove_child(weapon)
 			#weapon.queue_free()
+		weapon = new_weapon
 		if new_weapon:
 			new_weapon.player = self
 			weapon_changed.emit(new_weapon)
@@ -28,7 +26,8 @@ const player_colors = {
 				add_child(new_weapon)
 			else:
 				new_weapon.reparent(self, false)
-		weapon = new_weapon
+
+@export var base_speed := 250.0 # 200.0 puede servir como velocidad de caminata
 
 @export var respawn_timer : Timer
 
@@ -49,21 +48,34 @@ var glance_mode := false:
 			if !glance_mode:
 				_camera.offset = Vector2.ZERO
 
-var speed := base_speed
-
-var vida := vida_max:
-	set(value):
-		vida = value
-		queue_redraw()
-
-
 var player_id: int
 var player_name: String
 var player_number: int
 var local_player: bool
 
+var speed := base_speed
+var vida := vida_max:
+	set(value):
+		vida = value
+		queue_redraw()
+var dinero := Observable.new(3000.0)
 var direction: Vector2
 var alive := true
+
+var weapon_item := Observable.new(null,
+func(new_item): # former name: new_weapon
+	if new_item:
+		if new_item.object is Weapon:
+			if weapon != null:
+				weapon.queue_free()
+			weapon = new_item.object
+		else:
+			printerr("El item pasado como weapon_item no contiene una Weapon")
+	else:
+		weapon = null
+)
+
+var inventario: Array[Item]
 
 
 func _enter_tree() -> void:
@@ -74,10 +86,6 @@ func _enter_tree() -> void:
 
 
 func _ready():
-	###
-	#var tween = create_tween()
-	#tween.tween_property(self, "vida", 1, 5.0)
-	###
 	initialize(position)
 	if local_player:
 		%camara.make_current()
@@ -95,7 +103,7 @@ func initialize(pos: Vector2):
 	$sprite.self_modulate = player_colors[player_number]
 
 
-@rpc("call_local")
+@rpc("authority", "call_local")
 func revive(pos: Vector2):
 	initialize(pos)
 	revived.emit()
@@ -160,6 +168,11 @@ func die(killer_id: int):
 	visible = false
 	$shape.set_deferred("disabled", true)
 	$hitbox.set_deferred("monitoring", false)
+	#respawn_timer.start()
+
+
+@rpc("authority", "call_local")
+func start_respawn_timer():
 	respawn_timer.start()
 
 
@@ -172,3 +185,35 @@ func _on_hitbox_body_entered(body: Node2D):
 func get_colored_player_name() -> String:
 	return "[color={0}]{1}[/color]" \
 		.format([player_colors[player_number].to_html(), player_name])
+
+
+#TODO Se viene script de inventario para encapsular todas estas weas
+# add_item puede hacer algo distinto que add_weapon si solamente añade el item al inventario, sin setear el arma.
+# Podrian tenerse mas armas que la activa
+func add_item(item: Item):
+	inventario.append(item)
+	if item.object is Weapon:
+		weapon_item.value = item
+		#weapon.queue_free()
+		#weapon = item.object
+
+func get_item(id: int) -> Item:
+	for it in inventario:
+		if it.id == id:
+			return it
+	return null
+
+func has_item(id: int) -> bool:
+	return get_item(id) != null
+
+func take_item(id: int):
+	var i = 0
+	for item in inventario:
+		if item.id == id:
+			inventario.remove_at(i)
+			break
+		i += 1
+	# si esta equipado, desequiparlo
+	if weapon_item.value != null:
+		if id == weapon_item.value.id:
+			weapon_item.value = null

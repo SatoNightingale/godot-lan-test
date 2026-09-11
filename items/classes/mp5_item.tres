@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="ItemInfo" format=3 uid="uid://ckt8nn8nn661m"]
+
+[ext_resource type="Script" uid="uid://d3tgi6xiu3i6w" path="res://items/item_info.gd" id="1_ggsby"]
+
+[resource]
+script = ExtResource("1_ggsby")
+nombre = "MP5"
+precio = 2500.0
+icon_texture_path = "uid://bx8oj73yiw85y"
+item_scene_path = "uid://bwgymtp14y11m"
+metadata/_custom_type_script = "uid://d3tgi6xiu3i6w"

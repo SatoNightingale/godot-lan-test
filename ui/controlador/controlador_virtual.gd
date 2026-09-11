@@ -1,14 +1,14 @@
 class_name ControladorVirtual extends Control
 
 
-var player: Player
-
-func configure_ui(_player: Player):
-	player = _player
-	player.weapon_changed.connect(_on_player_weapon_changed)
-	player.glance_mode_changed.connect(_on_player_glance_mode_changed)
-	if player.weapon != null:
-		_on_player_weapon_changed(player.weapon)
+var player: Player:
+	set(_player):
+		player = _player
+		player.weapon_changed.connect(_on_player_weapon_changed)
+		player.glance_mode_changed.connect(_on_player_glance_mode_changed)
+		setup_visibility(player.weapon != null)
+		if player.weapon != null:
+			_on_player_weapon_changed(player.weapon)
 
 
 func _on_player_weapon_changed(weapon: Weapon):
@@ -29,3 +29,12 @@ func _on_player_glance_mode_changed(value: bool):
 
 func _on_update_ammo(new_ammo: int):
 	%AmmoLabel.text = "{0} / {1}".format([str(new_ammo), str(player.weapon.max_ammo)])
+
+
+# Cuando no tiene arma, el tip del joystick de apuntar no debe mostrar el icono de bala
+# Tambien se podria tener un controlador diferente para cada tipo de arma, con una variante para cuando no tiene arma ninguna. Pero eso ya es otra cosa
+func setup_visibility(value: bool):
+	%reload_button.visible = value
+	%aim_button.visible = value
+	%shoot_button.visible = value
+	%AmmoLabel.visible = value

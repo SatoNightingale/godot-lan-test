@@ -9,6 +9,7 @@ signal anuncio(mensaje: String)
 ## TODO: player_data no debe tener un campo 'node', considerar un diccionario aparte que mapee ids a nodos de players
 
 var player_data : Dictionary
+var players: Dictionary[int, Player]
 
 #var client_player : Player
 
@@ -37,6 +38,9 @@ func on_player_loaded():
 
 
 func server_initialize():
+	if not multiplayer.is_server():
+		return
+	const ruta_arma_inicial = "res://items/classes/colt_item.tres"
 	var starting_positions = %start_points.get_children()
 	var player_number = 0
 	for id in player_data:
@@ -49,6 +53,9 @@ func server_initialize():
 			"number": player_number
 		})
 		player_number += 1
+		colocar_arma_inicial.rpc(id,
+			ItemManager.new_item_dto_from_path(ruta_arma_inicial)
+		)
 
 
 # Esto va a ser llamado en cada peer por PlayerSpawner
@@ -56,15 +63,12 @@ func spawn_player(data) -> Node:
 	# instanciar el player
 	var player : Player = player_scene.instantiate()
 	# registrar datos del player
-	player_data[data.id]["node"] = player
+	players[data.id] = player
 	player_data[data.id]["deaths"] = 0
 	player_data[data.id]["kills"] = 0
 	# ponerle sus datos
 	player.name = str(data.id)
 	player.player_name = data["name"]
-	# ponerle su arma
-	var arma_inicial : Weapon = preload("res://game/weapon/revolver/revolver.tscn").instantiate()
-	player.weapon = arma_inicial
 	# asignarle su posicion inicial
 	player.position = data["start_pos"]
 	# asignarle su numero de indice
@@ -73,73 +77,88 @@ func spawn_player(data) -> Node:
 	if multiplayer.is_server(): # solo se ejecutan en el servidor
 		player.weapon_changed.connect(_on_player_weapon_changed)
 		if player.weapon != null:
-			_on_player_weapon_changed(player.weapon, data.id)
+			_on_player_weapon_changed(player.weapon)
 		player.dead.connect(_on_player_dead.bind(data.id))
 		player.ready.connect(func():
-			player.respawn_timer.timeout.connect(respawn_player.bind(data.id)),
-			CONNECT_ONE_SHOT
-		)
+			player.respawn_timer.timeout.connect(respawn_player.bind(data.id))
+		, CONNECT_ONE_SHOT)
 	# configurar la UI con el jugador actual
 	if data.id == multiplayer.get_unique_id():
 		#client_player = player
 		%UI.player_data = player_data
-		%UI.configure_ui(player)
+		%UI.player = player
 	return player
 
 
 func spawn_bullet(data) -> Node:
-	#var bala = bullet_scene.instantiate()
-	var shooter = player_data[data.shooter_id]["node"] as Player
+	var shooter = players[data.shooter_id]
 	var bala = shooter.weapon.municion.instantiate()
 	bala.position = shooter.weapon.cannon.get_global_position()
 	bala.shoot(data.direction, shooter)
 	return bala
 
 
-func respawn_player(id: int):
-	if not multiplayer.is_server():
-		return
-	var starting_position = %start_points.get_children().pick_random()
-	var player = player_data[id].node as Player
-	player.revive.rpc(starting_position.position)
+@rpc("authority", "call_local")
+func colocar_arma_inicial(player_id: int, item_dto: Dictionary):
+	players[player_id].add_item(Item.from_dto(item_dto))
+
+
+func _on_player_weapon_changed(weapon: Weapon):
+	if weapon is FireWeapon:
+		weapon.bullet_fired.connect(func(direction: Vector2):
+			%BulletSpawner.spawn({
+				"shooter_id": weapon.player.player_id,
+				"direction": direction
+			}))
 
 
 func _on_player_dead(killer_id, dead_id):
 	if multiplayer.is_server():
+		#players[killer_id].dinero.value += 700
+		#players[dead_id].dinero.value -= 1000
 		on_player_killed.rpc(killer_id, dead_id)
+		var dead = players[dead_id]
+		if dead.dinero.value > 0:
+			dead.start_respawn_timer()
+			dead.start_respawn_timer.rpc_id(dead_id)
+		else:
+			%UI.set_defeated_screen.rpc_id(dead_id)
 
 
-func _on_player_weapon_changed(weapon: Weapon, player_id: int):
-	if weapon is FireWeapon:
-		weapon.bullet_fired.connect(func(direction: Vector2):
-			%BulletSpawner.spawn({
-				"shooter_id": player_id,
-				"direction": direction
-			})
-		)
-
-
-@rpc("call_local")
+@rpc("authority", "call_local")
 func on_player_killed(killer_id: int, dead_id: int):
 	# esto lo puede hacer el mismo player
 	print(player_data[killer_id].name, " ha matado a ", player_data[dead_id].name)
 	player_data[killer_id]["kills"] += 1
 	player_data[dead_id]["deaths"] += 1
+	players[killer_id].dinero.value += 700
+	players[dead_id].dinero.value -= 1000
 	#player_killed.emit(killer_id, dead_id)
 	%UI.on_player_killed(killer_id, dead_id)
 	anuncio.emit("{0} ha matado a {1}".format([
-		player_data[killer_id].node.get_colored_player_name(),
-		player_data[dead_id].node.get_colored_player_name(),
+		players[killer_id].get_colored_player_name(),
+		players[dead_id].get_colored_player_name(),
 	]))
+	if multiplayer.get_unique_id() == dead_id:
+		%UI.set_dead_screen(player_data[killer_id].name)
+
+
+func respawn_player(id: int):
+	if not multiplayer.is_server():
+		return
+	var starting_position = %start_points.get_children().pick_random()
+	var player = players[id]
+	player.revive.rpc(starting_position.position)
 
 
 ## cuando un peer se desconecta del servidor
 func _on_peer_disconnected(id: int):
-	player_data[id].node.queue_free()
-	remove_child(player_data[id].node)
+	players[id].queue_free()
+	remove_child(players[id])
 	print(player_data[id].name, " desconectado")
-	anuncio.emit(player_data[id].node.get_colored_player_name() + " se ha desconectado")
+	anuncio.emit(players[id].get_colored_player_name() + " se ha desconectado")
 	player_data.erase(id)
+	players.erase(id)
 
 ## cuando el servidor se desconecta
 func _on_server_disconnected():

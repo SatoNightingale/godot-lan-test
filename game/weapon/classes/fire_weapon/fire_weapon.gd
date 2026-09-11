@@ -5,7 +5,6 @@ signal update_ammo(new_ammo: int)
 signal bullet_fired(direction: Vector2)
 signal reloading
 
-@export var data : FireWeaponRes
 ## Escena que contiene el tipo de municion que usa el arma
 @export var municion: PackedScene = preload("res://game/bullet/bullet.tscn")
 ## Marcador para la posicion desde donde las balas son disparadas
@@ -29,7 +28,7 @@ signal reloading
 @export var aim_distance := 0
 
 
-var ammo := max_ammo:
+var ammo = max_ammo:
 	set(value):
 		ammo = value
 		update_ammo.emit(value)
@@ -128,11 +127,6 @@ func _on_player_revived():
 	recharging = false
 
 
-#func _on_shoot_timer_timeout():
-	#shoot_semaphore = true
-
-
 func _on_reload_timer_timeout():
 	recharging = false
-	#shoot_semaphore = true
 	ammo = max_ammo

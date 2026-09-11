@@ -23,6 +23,7 @@ config/icon="res://icon.svg"
 
 PatchSystem="*uid://7w37r2vsmrjn"
 Configurations="*uid://l5c4wgitfdam"
+ItemManager="*uid://dre4woh5meh76"
 
 [display]
 

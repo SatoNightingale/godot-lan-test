@@ -2,6 +2,7 @@
 
 [ext_resource type="Script" uid="uid://cj3tqfaq13vb5" path="res://ui/ui.gd" id="1_nancp"]
 [ext_resource type="PackedScene" uid="uid://cr2x3q1nbty36" path="res://ui/controlador/controlador_virtual.tscn" id="2_vkava"]
+[ext_resource type="PackedScene" uid="uid://d3yryot1jdjf6" path="res://ui/tienda/tienda.tscn" id="5_tf0e0"]
 [ext_resource type="Script" uid="uid://dkrm7nukjgc6k" path="res://ui/label_anuncios.gd" id="10_eogtg"]
 [ext_resource type="PackedScene" uid="uid://ditdsn1ffgq6o" path="res://ui/pause menu/pause_menu.tscn" id="11_bi8hs"]
 
@@ -53,6 +54,28 @@ script = ExtResource("10_eogtg")
 wait_time = 2.5
 one_shot = true
 
+[node name="contador" type="HBoxContainer" parent="." unique_id=63837120]
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_top = 20.0
+offset_right = -80.0
+grow_horizontal = 0
+theme_override_constants/separation = 10
+
+[node name="muertes" type="Label" parent="contador" unique_id=1638602100]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Muertes: 0"
+
+[node name="bajas" type="Label" parent="contador" unique_id=238222933]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Bajas: 0"
+
+[node name="Tienda" parent="." unique_id=756692496 instance=ExtResource("5_tf0e0")]
+unique_name_in_owner = true
+
 [node name="respawn_screen" type="ColorRect" parent="." unique_id=462163632]
 unique_name_in_owner = true
 visible = false
@@ -100,28 +123,30 @@ layout_mode = 2
 text = "segundos para revivir"
 horizontal_alignment = 1
 
-[node name="contador" type="HBoxContainer" parent="." unique_id=63837120]
-anchors_preset = 1
-anchor_left = 1.0
+[node name="defeated_screen" type="ColorRect" parent="." unique_id=357610239]
+unique_name_in_owner = true
+visible = false
+anchors_preset = 15
 anchor_right = 1.0
-offset_left = -190.0
-offset_top = 20.0
-offset_right = -30.0
-offset_bottom = 34.0
-grow_horizontal = 0
-theme_override_constants/separation = 25
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.25202772, 0.2520276, 0.25202763, 0.5019608)
+metadata/_edit_lock_ = true
 
-[node name="muertes" type="Label" parent="contador" unique_id=1638602100]
-unique_name_in_owner = true
-layout_mode = 2
-theme_override_font_sizes/font_size = 18
-text = "Muertes: 0"
+[node name="CenterContainer" type="CenterContainer" parent="defeated_screen" unique_id=2002758395]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+metadata/_edit_lock_ = true
 
-[node name="bajas" type="Label" parent="contador" unique_id=238222933]
-unique_name_in_owner = true
+[node name="Label" type="Label" parent="defeated_screen/CenterContainer" unique_id=1158503304]
 layout_mode = 2
-theme_override_font_sizes/font_size = 18
-text = "Bajas: 0"
+theme_override_font_sizes/font_size = 24
+text = "Has sido elimando"
 
 [node name="menu pausa" parent="." unique_id=466875431 instance=ExtResource("11_bi8hs")]
 unique_name_in_owner = true

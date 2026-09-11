@@ -1,25 +1,14 @@
 [gd_scene format=3 uid="uid://bwgymtp14y11m"]
 
-[ext_resource type="PackedScene" uid="uid://bdqs3noeqrfie" path="res://game/weapon/burst_weapon/burst_weapon.tscn" id="1_73yhi"]
-[ext_resource type="PackedScene" uid="uid://b16301nsg01q4" path="res://game/bullet/bullet.tscn" id="2_hm07i"]
-[ext_resource type="Script" uid="uid://vwqr3y87lvlw" path="res://game/weapon/fire_weapon/fire_weapon_res.gd" id="3_3uw4v"]
+[ext_resource type="PackedScene" uid="uid://bdqs3noeqrfie" path="res://game/weapon/classes/burst_weapon/burst_weapon.tscn" id="1_73yhi"]
 [ext_resource type="Texture2D" uid="uid://bx8oj73yiw85y" path="res://game/weapon/mp5/MP5.png" id="3_hm07i"]
 
-[sub_resource type="Resource" id="Resource_kagen"]
-script = ExtResource("3_3uw4v")
-metadata/_custom_type_script = "uid://vwqr3y87lvlw"
-
 [node name="mp5" unique_id=693644199 instance=ExtResource("1_73yhi")]
-burst_length = 3
-burst_time = 0.5
-data = SubResource("Resource_kagen")
 max_ammo = 30
 automatica = true
 alcance = 500
 shoot_cooldown = 0.07
 reload_cooldown = 4.0
-damage = 60.0
-wielding_slowdown = 0.48
 
 [node name="sprite" parent="." index="0" unique_id=1448784083]
 texture = ExtResource("3_hm07i")
