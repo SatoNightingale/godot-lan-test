@@ -104,14 +104,25 @@ theme_override_constants/margin_bottom = 30
 layout_mode = 2
 metadata/_edit_lock_ = true
 
-[node name="killer_name" type="Label" parent="respawn_screen/CenterContainer/MarginContainer/VBoxContainer" unique_id=1473090161]
+[node name="killer_name" type="RichTextLabel" parent="respawn_screen/CenterContainer/MarginContainer/VBoxContainer" unique_id=1481959]
 unique_name_in_owner = true
 layout_mode = 2
-theme_override_font_sizes/font_size = 24
-text = " te ha matado"
+theme_override_font_sizes/normal_font_size = 24
+bbcode_enabled = true
+text = "$killer_name te ha matado"
+fit_content = true
+scroll_active = false
+autowrap_mode = 0
 horizontal_alignment = 1
 
-[node name="respawn_count" type="Label" parent="respawn_screen/CenterContainer/MarginContainer/VBoxContainer" unique_id=742571575]
+[node name="perdida" type="Label" parent="respawn_screen/CenterContainer/MarginContainer/VBoxContainer" unique_id=604227055]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 16
+text = "¡-$perdida de oro!"
+horizontal_alignment = 1
+
+[node name="respawn_countdown" type="Label" parent="respawn_screen/CenterContainer/MarginContainer/VBoxContainer" unique_id=742571575]
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_font_sizes/font_size = 40
@@ -146,9 +157,42 @@ metadata/_edit_lock_ = true
 [node name="Label" type="Label" parent="defeated_screen/CenterContainer" unique_id=1158503304]
 layout_mode = 2
 theme_override_font_sizes/font_size = 24
-text = "Has sido elimando"
+text = "Has sido eliminado"
 
 [node name="menu pausa" parent="." unique_id=466875431 instance=ExtResource("11_bi8hs")]
 unique_name_in_owner = true
+visible = false
+
+[node name="gameover_screen" type="VBoxContainer" parent="." unique_id=194800940]
+unique_name_in_owner = true
+visible = false
+anchors_preset = -1
+anchor_right = 1.0
+anchor_bottom = 0.5
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 30
+alignment = 1
+
+[node name="winner_name" type="RichTextLabel" parent="gameover_screen" unique_id=685962677]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/normal_font_size = 22
+bbcode_enabled = true
+text = "$player_name ha ganado la partida"
+fit_content = true
+scroll_active = false
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="gameover_disconnect" type="Button" parent="gameover_screen" unique_id=1000793689]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+theme_override_font_sizes/font_size = 22
+text = "Desconectar"
 
 [connection signal="timeout" from="label_anuncios/Timer" to="label_anuncios" method="_on_timer_timeout"]
+[connection signal="gui_input" from="defeated_screen" to="." method="_on_defeated_screen_gui_input"]
+[connection signal="pressed" from="gameover_screen/gameover_disconnect" to="." method="_on_gameover_disconnect_pressed"]

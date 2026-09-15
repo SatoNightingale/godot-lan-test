@@ -64,6 +64,8 @@ var alive := true
 
 var weapon_item := Observable.new(null,
 func(new_item): # former name: new_weapon
+	if not multiplayer.is_server():
+		return
 	if new_item:
 		if new_item.object is Weapon:
 			if weapon != null:
@@ -74,6 +76,13 @@ func(new_item): # former name: new_weapon
 	else:
 		weapon = null
 )
+
+@rpc("authority", "call_local")
+func change_weapon_item(weapon_item_id: int):
+	# weapon_item_id debe ser un id a la posicion en el inventario...
+	# nope, porque no todo el mundo va a tener ese objeto. Tampoco es
+	# algo que se pueda transferir por la red
+	pass
 
 var inventario: Array[Item]
 
@@ -171,7 +180,7 @@ func die(killer_id: int):
 	#respawn_timer.start()
 
 
-@rpc("authority", "call_local")
+@rpc("authority")
 func start_respawn_timer():
 	respawn_timer.start()
 

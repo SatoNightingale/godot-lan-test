@@ -1,10 +1,10 @@
 extends Control
 
 signal player_data_updated(id: int, new_data)
+signal error_popup(message: String, title: String)
 
-@export var max_players = 4
+var main: Main
 
-var game_scene = preload("res://game/game.tscn")
 var connect_menu = preload("res://menus/connect menu/connect menu.tscn").instantiate()
 var waiting_room = preload("res://menus/waiting room/waiting_room.tscn").instantiate()
 var settings = preload("res://menus/settings/settings.tscn").instantiate()
@@ -18,17 +18,19 @@ func _ready() -> void:
 	# leer configuraciones
 	Configurations.read_config()
 	# conectar señales multiplayer
+	Network.server_created.connect(on_hosted)
+	Network.client_created.connect(on_connected)
 	multiplayer.connected_to_server.connect(_on_connected_to_server)
 	multiplayer.peer_connected.connect(_on_peer_connected)
 	multiplayer.peer_disconnected.connect(_on_peer_disconnected)
 	multiplayer.server_disconnected.connect(_on_server_disconnected)
-	multiplayer.connection_failed.connect(error_popup.bind("Error al conectar al servidor.\nRevise la direccion IP", "Error de conexion"))
+	multiplayer.connection_failed.connect(error_popup.emit.bind("Error al conectar al servidor.\nRevise la direccion IP", "Error de conexion"))
 	# inicializar escenas
 	init_scenes()
 	# version
 	%version_label.text = ProjectSettings.get_setting("application/config/version")
 	# botones
-	%boton_crear.pressed.connect(host_game)
+	%boton_crear.pressed.connect(Network.host)
 	%boton_conectar.pressed.connect(change_scene.bind(connect_menu))
 	%boton_config.pressed.connect(change_scene.bind(settings))
 	# sistema de parcheo
@@ -51,32 +53,33 @@ func _ready() -> void:
 
 func init_scenes():
 	# connect_menu
-	connect_menu.connected.connect(on_connected)
-	connect_menu.error.connect(error_popup.bind("Error de conexion"))
+	connect_menu.request_conectar.connect(Network.join)
+	connect_menu.error.connect(error_popup.emit.bind("Error"))
 	# waiting_room
 	waiting_room.player_data = player_data
 	player_data_updated.connect(waiting_room.on_player_data_updated)
-	waiting_room.game_start.connect(load_game)
+	waiting_room.game_start.connect(func():
+		if multiplayer.is_server():
+			main.change_to_game(player_data.duplicate())
+	)
 	waiting_room.tree_exiting.connect(_on_waiting_room_disconnect)
 
 
 func debug_tasks():
 	var args = parse_arguments()
 	if "host" in args or "player" in args:
-		var peer = ENetMultiplayerPeer.new()
+		#var peer = ENetMultiplayerPeer.new()
 		if "host" in args:
-			if peer.create_server(4242, 4) == OK:
-				multiplayer.multiplayer_peer = peer
-				host_game()
+			Configurations.player_name = "Server"
+			Network.host()
 		if "player" in args:
 			var numplayer = args["player"]
-			if peer.create_client("localhost", 4242) == OK:
-				multiplayer.multiplayer_peer = peer
-				on_connected("localhost")
-				match numplayer:
-					"1": get_window().position = Vector2i(513, 110)
-					"2": get_window().position = Vector2i(0, 240)
-					"3": get_window().position = Vector2i(513, 240)
+			Configurations.player_name = "Player " + str(numplayer)
+			Network.join("localhost", 4242)
+			match numplayer:
+				"1": get_window().position = Vector2i(513, 110)
+				"2": get_window().position = Vector2i(0, 240)
+				"3": get_window().position = Vector2i(513, 240)
 		#await multiplayer.peer_connected
 		#if multiplayer.is_server():
 			#$"waiting room"._on_start_pressed()
@@ -88,14 +91,7 @@ func init_player_data():
 	}
 
 
-func host_game():
-	var peer = ENetMultiplayerPeer.new()
-	var port = Configurations.default_port
-	var errcod = peer.create_server(port, max_players)
-	if errcod == OK:
-		multiplayer.multiplayer_peer = peer
-	else:
-		error_popup("Error al crear servidor: " + str(errcod))
+func on_hosted():
 	init_player_data()
 	change_scene(waiting_room)
 
@@ -103,12 +99,6 @@ func on_connected(address: String):
 	waiting_room.server_address = address
 	# no se cambia la escena, porque eso se lo dejamos a la señal
 	# connected_to_server
-
-
-func load_game():
-	var game = game_scene.instantiate()
-	game.player_data = player_data.duplicate()
-	get_tree().change_scene_to_node(game)
 
 
 @rpc("any_peer", "call_local")
@@ -131,7 +121,6 @@ func change_scene(scene: Node):
 
 
 func _on_connected_to_server():
-	print("on connected to server")
 	init_player_data()
 	change_scene(waiting_room)
 	_register_player.rpc(Configurations.player_name)
@@ -146,7 +135,7 @@ func _on_peer_disconnected(id: int):
 
 
 func _on_server_disconnected():
-	error_popup("El servidor se ha desconectado", "Desconexion")
+	error_popup.emit("El servidor se ha desconectado", "Desconexion")
 	player_data.clear()
 	change_scene(null)
 
@@ -154,12 +143,6 @@ func _on_server_disconnected():
 func _on_waiting_room_disconnect():
 	player_data.clear()
 	#change_scene(null)
-
-
-func error_popup(message: String, title := "Error"):
-	%error_popup.dialog_text = message
-	%error_popup.title = title
-	%error_popup.popup_centered_clamped()
 
 
 func parse_arguments() -> Dictionary:

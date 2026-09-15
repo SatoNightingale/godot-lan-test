@@ -9,6 +9,7 @@ automatica = true
 desviacion = 10.0
 shoot_cooldown = 0.1
 reload_cooldown = 4.0
+damage = 45.0
 
 [node name="sprite" parent="." index="0" unique_id=1448784083]
 position = Vector2(-1, 0)

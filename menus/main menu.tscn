@@ -82,11 +82,6 @@ custom_minimum_size = Vector2(510, 0)
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="error_popup" type="AcceptDialog" parent="." unique_id=1927675351]
-unique_name_in_owner = true
-oversampling_override = 1.0
-size = Vector2i(100, 102)
-
 [node name="patch_finder" type="FileDialog" parent="." unique_id=283040636]
 unique_name_in_owner = true
 oversampling_override = 1.0

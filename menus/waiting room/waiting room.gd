@@ -60,6 +60,5 @@ func _on_start_pressed() -> void:
 
 
 func _on_tree_exiting() -> void:
-	multiplayer.multiplayer_peer = OfflineMultiplayerPeer.new()
 	%player_list.clear()
 	_player_items.clear()

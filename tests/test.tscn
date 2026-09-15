@@ -11,6 +11,9 @@ script = ExtResource("1_ry45r")
 [node name="player" parent="." unique_id=1954339528 instance=ExtResource("3_uofsi")]
 position = Vector2(310, 244)
 
+[node name="player2" parent="." unique_id=1045793019 instance=ExtResource("3_uofsi")]
+position = Vector2(532, 200)
+
 [node name="Slice34" type="Sprite2D" parent="." unique_id=1880608716]
 position = Vector2(327, 126)
 scale = Vector2(0.51428574, 0.525)

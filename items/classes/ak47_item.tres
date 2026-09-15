@@ -7,5 +7,5 @@ script = ExtResource("2_yj5k5")
 nombre = "AK-47"
 precio = 4000.0
 icon_texture_path = "uid://c6vyarvq5myao"
-item_scene_path = "uid://bwgymtp14y11m"
+item_scene_path = "uid://bwwotfrudy3o3"
 metadata/_custom_type_script = "uid://d3tgi6xiu3i6w"

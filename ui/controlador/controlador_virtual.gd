@@ -12,6 +12,7 @@ var player: Player:
 
 
 func _on_player_weapon_changed(weapon: Weapon):
+	setup_visibility(weapon != null)
 	if weapon is FireWeapon:
 		#%shoot_button.setup(weapon.get_node("shoot_timer"), weapon.bullet_fired)
 		%reload_button.setup(weapon.get_node("reload_timer"), weapon.reloading)

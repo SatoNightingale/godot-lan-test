@@ -2,7 +2,7 @@ class_name Bullet extends RigidBody2D
 
 ## SE SUPONE que el padre de las balas siempre es un nodo anclado al origen (0; 0), que puede fungir como "global"
 
-const dist_quemarropa = 100
+const dist_quemarropa = 50
 
 @export var sprite : Texture2D:
 	set(value):
@@ -44,10 +44,10 @@ func _physics_process(delta):
 
 func shoot(direction: Vector2, who: Player):
 	shooter_id = who.player_id
-	pos_emisor = who.global_position
 	var arma = who.weapon as FireWeapon
 	max_alcance = arma.alcance
 	base_damage = arma.damage
+	pos_emisor = arma.cannon.global_position
 	rotation = direction.angle()
 	apply_central_impulse(direction * impulso)
 
@@ -76,8 +76,12 @@ func modif_recorrido(x) -> float:
 func calcular_dano(player: Player) -> float:
 	# el producto punto (angulo) entre la direccion en la que iba la bala y la direccion que tomaria hacia el centro del personaje
 	# Cuanto mas pequeño sea este angulo, más directamente estará proyectada la bala contra el personaje y por consiguiente más daño le hará
+	var bullet_dir = pos_emisor.direction_to(global_position)
 	var linea_recta = pos_emisor.direction_to(player.global_position)
-	var angle_to_target = linea_recta.dot(linear_velocity.normalized())
+	#var angle_to_target = linea_recta.dot(linear_velocity.normalized())
+	#var angle_to_target = linea_recta.dot(bullet_dir)
+	print(rad_to_deg(bullet_dir.angle_to(linea_recta)))
+	var angle_to_target = cos(bullet_dir.angle_to(linea_recta))
 	# si el angulo es de 90 grados, el daño se reduce a la mitad
 	# si el angulo es de 0 grados, se hace el daño completo
 	# el angulo se convierte en daño en funcion del coseno de cita, entre ambos extremos

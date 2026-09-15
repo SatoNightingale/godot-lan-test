@@ -1,8 +1,8 @@
 extends Control
 
-signal connected(address: String)
+signal request_conectar(ip: String, port: int) # name
+#signal connected(address: String)
 signal error(message: String)
-#signal go_back
 
 
 func _ready() -> void:
@@ -30,17 +30,11 @@ func setup_virtual_keyboard_elevation():
 
 func _on_connect_pressed() -> void:
 	if %ipedit.text == "":
-		error.emit("Error: especifique una direccion IP")
+		error.emit("Especifique una direccion IP")
 		return
-	var ip = %ipedit.text
+	var ip = %ipedit.text if not %ipedit.text.is_empty() else "localhost"
 	var port = %portedit.text.to_int() if not %portedit.text.is_empty() else Configurations.default_port
-	var peer = ENetMultiplayerPeer.new()
-	var errcod = peer.create_client(ip, port)
-	if errcod == OK:
-		multiplayer.multiplayer_peer = peer
-		connected.emit(ip)
-	else:
-		error.emit("Error al conectar: " + str(errcod))
+	request_conectar.emit(ip, port)
 
 
 func _on_field_editing_toggled(toggled_on: bool, field: Control):

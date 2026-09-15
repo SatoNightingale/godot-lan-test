@@ -72,4 +72,4 @@ func _drop_data(_at_position: Vector2, data: Variant) -> void:
 		tienda.try_comprar(data["item_info"])
 	# vender
 	if data.source == ItemSource.INVENTORY and self._source == ItemSource.SHOP:
-		tienda.request_vender.rpc_id(1, data["item_id"])
+		tienda.request_venta.rpc_id(1, data["item_id"])

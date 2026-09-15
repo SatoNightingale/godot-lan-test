@@ -1,6 +1,8 @@
 class_name MenuPausa extends Control
 
 
+signal desconectar
+
 var juego_pausado := false
 
 
@@ -21,9 +23,7 @@ func server_pause_game(pause_state: bool):
 
 
 func _on_disconnect_request():
-	multiplayer.multiplayer_peer = OfflineMultiplayerPeer.new()
-	var main_menu = load("res://menus/main menu.tscn").instantiate()
-	get_tree().change_scene_to_node(main_menu)
+	desconectar.emit()
 
 
 func _on_menu_screen_gui_input(event: InputEvent) -> void:

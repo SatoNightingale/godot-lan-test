@@ -3,6 +3,8 @@ class_name Tienda extends Control
 
 # Seria interesante poner este script en un nodo que tome las pulsaciones del mouse (como el Panel Container) y asi poder recibir directamente los dropeos sin tener que meterle un script a shop_tabs
 
+var players: Dictionary[int, Player]
+
 var player: Player:
 	set(value):
 		player = value
@@ -43,35 +45,44 @@ func debug_tasks():
 # si bien los cambios en el estado del player afectado (p. ej. si se cambio de arma) tendrian que comunicarse a los demas peers de todas formas
 
 @rpc("any_peer", "call_local")
-func request_comprar(info_path: String):
+func request_compra(info_path: String):
 	if multiplayer.is_server():
 		if ItemManager.item_info_exists(info_path):
+			var player_id = multiplayer.get_remote_sender_id()
+			var transaction_player = players[player_id]
 			var info = ItemManager.get_item_info(info_path)
-			if player.dinero.value >= info.precio:
+			if transaction_player.dinero.value >= info.precio:
 				# crear el item con su id unico
 				var dto = ItemManager.new_item_dto(info)
-				comprar.rpc(dto)
+				transaction_player.dinero.value -= dto.precio
+				transaction_player.add_item(Item.from_dto(dto))
+				realizar_compra.rpc_id(player_id, dto)
+			else:
+				printerr("Jugador con id: ", player_id, " intentando hacer una compra del objeto id '", info.resource_path, "' para el cual no tiene suficiente dinero")
 
 
 @rpc("any_peer", "call_local")
-func request_vender(id: int):
+func request_venta(item_id: int):
 	if multiplayer.is_server():
-		var selling = player.get_item(id)
+		var player_id = multiplayer.get_remote_sender_id()
+		var transaction_player = players[player_id]
+		var selling = transaction_player.get_item(item_id)
 		if selling:
-			vender.rpc({"id": id, "precio": selling.precio})
+			var item_data = {"id": item_id, "precio": selling.precio}
+			transaction_player.dinero.value += item_data.precio
+			transaction_player.take_item(item_data.id)
+			realizar_venta.rpc_id(player_id, item_data)
 		else:
-			printerr("el jugador no tiene el item con id: ", id)
+			printerr("el jugador no tiene el item con id: ", item_id)
 
 
 @rpc("authority", "call_local")
-func comprar(dto: Dictionary):
-	#if player.dinero.value < item.precio:
-	player.dinero.value -= dto.precio
-	player.add_item(Item.from_dto(dto))
+func realizar_compra(item_dto: Dictionary):
+	player.dinero.value -= item_dto.precio
+	player.add_item(Item.from_dto(item_dto))
 
 @rpc("authority", "call_local")
-func vender(item_data: Dictionary):
-	#if player.has_item(item.id):
+func realizar_venta(item_data: Dictionary):
 	player.dinero.value += item_data.precio
 	player.take_item(item_data.id)
 
@@ -79,7 +90,7 @@ func vender(item_data: Dictionary):
 func try_comprar(info: ItemInfo):
 	# Esto todavia no es rpc, por lo que suponemos que todo va a ser legal
 	if player.dinero.value >= info.precio:
-		request_comprar.rpc(info.resource_path)
+		request_compra.rpc(info.resource_path)
 	else:
 		# emitir mensaje de "tas arrancao"
 		var tween = create_tween()
