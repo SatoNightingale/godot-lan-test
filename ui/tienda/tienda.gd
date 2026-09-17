@@ -56,12 +56,7 @@ func request_compra(info_path: String):
 			if transaction_inventory.dinero.value >= info.precio:
 				# crear el item con su id unico
 				var dto = ItemManager.new_item_dto(info)
-				# Comprar en el servidor
 				transaction_inventory.modificar_dinero(-dto.precio, player_id)
-				#if player_id != 1: # Comprar en el cliente
-					#transaction_inventory.modificar_dinero.rpc_id(
-						#player_id, -dto.precio)
-				# Adquirir item, servidor y cliente
 				transaction_inventory.server_add_item(dto)
 			else:
 				printerr("Jugador con id: ", player_id, " intentando hacer una compra del objeto id '", info.resource_path, "' para el cual no tiene suficiente dinero")
@@ -75,12 +70,7 @@ func request_venta(item_id: int):
 		var selling = transaction_inventory.get_item(item_id)
 		if selling:
 			var item_data = {"id": item_id, "precio": selling.precio}
-			# Vender en el servidor
 			transaction_inventory.modificar_dinero(item_data.precio, player_id)
-			#if player_id != 1: # Vender en el cliente
-				#transaction_inventory.modificar_dinero.rpc_id(
-					#player_id, item_data.precio)
-			# Retirar item, servidor y cliente
 			transaction_inventory.server_take_item(item_id)
 		else:
 			printerr("el jugador no tiene el item con id: ", item_id)

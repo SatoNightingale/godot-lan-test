@@ -27,7 +27,7 @@ const player_colors = {
 			else:
 				new_weapon.reparent(self, false)
 
-@export var base_speed := 250.0 # 200.0 puede servir como velocidad de caminata
+@export var base_speed := 240.0 # 200.0 puede servir como velocidad de caminata
 
 @export var respawn_timer : Timer
 
@@ -63,6 +63,7 @@ var vida := vida_max:
 var dinero := Observable.new(3000.0)
 var direction: Vector2
 var alive := true
+var shape_radius_approx: float ## Radio aproximado del hitbox. Usado para calculos de precision en las colisiones
 
 
 func _enter_tree() -> void:
@@ -74,6 +75,9 @@ func _enter_tree() -> void:
 
 func _ready():
 	initialize(position)
+	var shape_size = $hitbox/shape.shape.get_rect().size
+	# (shape_size.x + shape_size.y) / 4
+	shape_radius_approx = max(shape_size.x, shape_size.y) / 2
 	if local_player:
 		%camara.make_current()
 
@@ -172,6 +176,3 @@ func _on_hitbox_body_entered(body: Node2D):
 func get_colored_player_name() -> String:
 	return "[color={0}]{1}[/color]" \
 		.format([player_colors[player_number].to_html(), player_name])
-
-
-#TODO Se viene script de inventario para encapsular todas estas weas
