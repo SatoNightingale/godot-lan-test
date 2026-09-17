@@ -39,6 +39,8 @@ const player_colors = {
 
 @export var _camera: Camera2D
 
+@onready var inventario : Inventario = $Inventario
+
 var glance_mode := false:
 	set(value):
 		if value != glance_mode:
@@ -61,30 +63,6 @@ var vida := vida_max:
 var dinero := Observable.new(3000.0)
 var direction: Vector2
 var alive := true
-
-var weapon_item := Observable.new(null,
-func(new_item): # former name: new_weapon
-	if not multiplayer.is_server():
-		return
-	if new_item:
-		if new_item.object is Weapon:
-			if weapon != null:
-				weapon.queue_free()
-			weapon = new_item.object
-		else:
-			printerr("El item pasado como weapon_item no contiene una Weapon")
-	else:
-		weapon = null
-)
-
-@rpc("authority", "call_local")
-func change_weapon_item(weapon_item_id: int):
-	# weapon_item_id debe ser un id a la posicion en el inventario...
-	# nope, porque no todo el mundo va a tener ese objeto. Tampoco es
-	# algo que se pueda transferir por la red
-	pass
-
-var inventario: Array[Item]
 
 
 func _enter_tree() -> void:
@@ -180,7 +158,7 @@ func die(killer_id: int):
 	#respawn_timer.start()
 
 
-@rpc("authority")
+@rpc("authority", "call_local")
 func start_respawn_timer():
 	respawn_timer.start()
 
@@ -197,32 +175,3 @@ func get_colored_player_name() -> String:
 
 
 #TODO Se viene script de inventario para encapsular todas estas weas
-# add_item puede hacer algo distinto que add_weapon si solamente añade el item al inventario, sin setear el arma.
-# Podrian tenerse mas armas que la activa
-func add_item(item: Item):
-	inventario.append(item)
-	if item.object is Weapon:
-		weapon_item.value = item
-		#weapon.queue_free()
-		#weapon = item.object
-
-func get_item(id: int) -> Item:
-	for it in inventario:
-		if it.id == id:
-			return it
-	return null
-
-func has_item(id: int) -> bool:
-	return get_item(id) != null
-
-func take_item(id: int):
-	var i = 0
-	for item in inventario:
-		if item.id == id:
-			inventario.remove_at(i)
-			break
-		i += 1
-	# si esta equipado, desequiparlo
-	if weapon_item.value != null:
-		if id == weapon_item.value.id:
-			weapon_item.value = null

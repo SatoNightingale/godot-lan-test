@@ -32,13 +32,11 @@ func _ready() -> void:
 
 
 func _physics_process(delta):
-	if not is_multiplayer_authority():
-		return
 	recorrido += delta * linear_velocity.length()
 	$trail.set_point_position(1, Vector2.LEFT * min(recorrido, trail_length))
 	#if recorrido <= trail_length:
 		#$trail.set_point_position(1, Vector2.LEFT * recorrido)
-	if recorrido >= max_alcance:
+	if is_multiplayer_authority() and recorrido >= max_alcance:
 		queue_free()
 
 
@@ -91,7 +89,7 @@ func calcular_dano(player: Player) -> float:
 	var mod_recorrido = modif_recorrido(recorrido)
 	#var mod_recorrido = curva_dano.sample(recorrido / max_alcance)
 	print("> base: ", base_damage, ", recorrido: ", mod_recorrido, ", angulo: ", mod_angulo, " -> total: ", base_damage * mod_recorrido * mod_angulo)
-	return base_damage * mod_recorrido * mod_angulo
+	return 0 * mod_recorrido * mod_angulo
 
 
 func _on_body_entered(_body: Node) -> void:

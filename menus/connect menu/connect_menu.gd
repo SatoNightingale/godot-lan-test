@@ -1,7 +1,6 @@
 extends Control
 
 signal request_conectar(ip: String, port: int) # name
-#signal connected(address: String)
 signal error(message: String)
 
 
@@ -32,6 +31,9 @@ func _on_connect_pressed() -> void:
 	if %ipedit.text == "":
 		error.emit("Especifique una direccion IP")
 		return
+	if not %ipedit.text.is_valid_ip_address():
+		error.emit("Direccion ip invalida")
+		return
 	var ip = %ipedit.text if not %ipedit.text.is_empty() else "localhost"
 	var port = %portedit.text.to_int() if not %portedit.text.is_empty() else Configurations.default_port
 	request_conectar.emit(ip, port)
@@ -46,7 +48,3 @@ func _on_field_editing_toggled(toggled_on: bool, field: Control):
 		# duplicamos el diff porque está en un center container, y
 		# añadimos un pequeño margen para que no roce el teclado
 		%margin.add_theme_constant_override("margin_bottom", -diff * 2 + 2)
-
-
-#func _on_back_pressed() -> void:
-	#go_back.emit()

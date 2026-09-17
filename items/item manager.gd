@@ -6,12 +6,16 @@ var _item_info_cache : Dictionary[String, ItemInfo]
 var _cache_max_length = 20
 var _cache_order = []
 
+# Si un item esta tirado en el suelo en un cliente cualquiera, ¿cómo le digo al servidor por rpc que pickee ese item para un player? Debe haber una manera general de buscar items por su id
+var _item_db: Dictionary[int, Item]
 
 func new_item_dto(info: ItemInfo) -> Dictionary:
 	if multiplayer.is_server():
-		var item = info.as_item_dto()
-		registrar_item(item)
-		return item
+		var dto = info.as_item_dto()
+		max_id += 1
+		dto.id = max_id
+		_item_db[dto.id] = Item.new_from_dto(dto)
+		return dto
 	printerr("get_new_item solo puede ser llamado por el servidor")
 	return {}
 
@@ -22,13 +26,13 @@ func new_item_dto_from_path(path: String) -> Dictionary:
 
 
 ## Toda vez que se cree un item, debe registrarse en el servidor llamando a esta funcion, y el id devuelto debe pasarse a todos los peers
-#@rpc("any_peer", "call_local")
-func registrar_item(item: Dictionary) -> int:
-	if multiplayer.is_server(): # item.id == 0:
-		max_id += 1
-		item.id = max_id
-		return max_id
-	return 0
+##@rpc("any_peer", "call_local")
+#func registrar_item(item: Dictionary) -> int:
+	#if multiplayer.is_server(): # item.id == 0:
+		#max_id += 1
+		#item.id = max_id
+		#return max_id
+	#return 0
 
 
 func item_info_exists(path: String):

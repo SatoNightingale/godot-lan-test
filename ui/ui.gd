@@ -13,8 +13,10 @@ var player : Player:
 	set(_player):
 		player = _player
 		controlador.player = player
-		tienda.player = player
 		respawn_timer = player.respawn_timer
+		player.ready.connect(func(): 
+			tienda.inventario = player.inventario
+		)
 		#respawn_timer.timeout.connect(set_game_screen)
 
 var respawn_timer: Timer

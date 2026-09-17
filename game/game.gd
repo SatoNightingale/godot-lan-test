@@ -12,7 +12,9 @@ var main: Main
 var player_data : Dictionary
 var players: Dictionary[int, Player]
 
-var _ready_peers : Array[int]
+@onready var _ready_semaphore : MultiplayerSemaphore = $MultiplayerSemaphore
+
+#var _ready_peers : Array[int]
 
 #var client_player : Player
 
@@ -27,24 +29,29 @@ func _ready():
 	%UI.menu_pausa.desconectar.connect(desconectar_partida)
 	if multiplayer.is_server():
 		multiplayer.peer_disconnected.connect(_on_peer_disconnected)
+		_ready_semaphore.setup(server_initialize, player_data.size())
 	else:
 		multiplayer.server_disconnected.connect(_on_server_disconnected)
-	_player_ready.rpc_id(1, multiplayer.get_unique_id())
+	_ready_semaphore.notify()
+	#_player_ready.rpc_id(1, multiplayer.get_unique_id())
 
 
-@rpc("any_peer", "call_local")
-func _player_ready(id: int):
-	if multiplayer.is_server():
-		if id not in _ready_peers:
-			_ready_peers.append(id)
-		if _ready_peers.size() == player_data.size():
-			server_initialize()
+#@rpc("any_peer", "call_local")
+#func _player_ready(id: int):
+	#if multiplayer.is_server():
+		#if id not in _ready_peers:
+			#_ready_peers.append(id)
+		#if _ready_peers.size() == player_data.size():
+			#_ready_peers.clear()
+			##call(_ready_method)
+			#server_initialize()
 
 
 ## Inicializacion
 
 func server_initialize():
 	if multiplayer.is_server():
+		_ready_semaphore.setup(colocar_armas_iniciales, player_data.size())
 		var starting_positions = %start_points.get_children()
 		var player_number = 0
 		for id in player_data:
@@ -57,9 +64,6 @@ func server_initialize():
 				"number": player_number
 			})
 			player_number += 1
-			colocar_arma_inicial.rpc(id, ItemManager.new_item_dto_from_path(
-				"res://items/classes/colt_item.tres"
-			))
 
 
 # Esto va a ser llamado en cada peer por PlayerSpawner
@@ -87,6 +91,7 @@ func spawn_player(data) -> Node:
 		player.ready.connect(func():
 			player.respawn_timer.timeout.connect(respawn_player.bind(data.id))
 		, CONNECT_ONE_SHOT)
+	player.ready.connect(_ready_semaphore.notify, CONNECT_ONE_SHOT)
 	# configurar la UI con el jugador actual
 	if data.id == multiplayer.get_unique_id():
 		#client_player = player
@@ -94,6 +99,13 @@ func spawn_player(data) -> Node:
 		%UI.player = player
 		%UI.tienda.players = players
 	return player
+
+# Hay que darle a cada player un arma con su id unico registrado en el servidor. Como el servidor debe ser el que dé el id (y no el player que se lo pida) debe estar fuera del spawner, y como setear el arma de un jugador es una operación pública que deben conocer todos los clientes, hay que esperar hasta que todos los clientes estén cargados, para evitar condiciones de carrera
+func colocar_armas_iniciales():
+	if multiplayer.is_server():
+		for id in players:
+			players[id].inventario.server_add_item(
+				ItemManager.new_item_dto_from_path("res://items/classes/colt_item.tres"))
 
 
 ## Armas
@@ -104,11 +116,6 @@ func spawn_bullet(data) -> Node:
 	bala.position = shooter.weapon.cannon.get_global_position()
 	bala.shoot(data.direction, shooter)
 	return bala
-
-
-@rpc("authority", "call_local")
-func colocar_arma_inicial(player_id: int, item_dto: Dictionary):
-	players[player_id].add_item(Item.from_dto(item_dto))
 
 
 func _on_player_weapon_changed(weapon: Weapon):
@@ -124,8 +131,8 @@ func _on_player_weapon_changed(weapon: Weapon):
 
 func _on_player_dead(killer_id, dead_id):
 	if multiplayer.is_server():
-		#players[killer_id].dinero.value += 400
-		#players[dead_id].dinero.value -= 600
+		players[killer_id].inventario.modificar_dinero(600)
+		players[dead_id].inventario.modificar_dinero(-400)
 		_on_dead.rpc_id(dead_id, killer_id)
 		_on_kill.rpc_id(killer_id, dead_id)
 		_on_player_killed.rpc(killer_id, dead_id)
@@ -149,15 +156,15 @@ func _on_player_dead(killer_id, dead_id):
 
 @rpc("authority", "call_local")
 func _on_dead(killer_id: int):
-	var myid = multiplayer.get_unique_id()
-	players[myid].dinero.value -= 600
+	#var myid = multiplayer.get_unique_id()
+	#players[myid].inventario.dinero.value -= 600
 	%UI.set_dead_screen(players[killer_id].get_colored_player_name())
 
 
 @rpc("authority", "call_local")
 func _on_kill(dead_id: int):
-	var myid = multiplayer.get_unique_id()
-	players[myid].dinero.value += 400
+	#var myid = multiplayer.get_unique_id()
+	#players[myid].inventario.dinero.value += 400
 	anuncio.emit("Has matado a {0}".format([
 		players[dead_id].get_colored_player_name()
 	]))

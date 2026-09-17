@@ -37,5 +37,5 @@ func _on_update_ammo(new_ammo: int):
 func setup_visibility(value: bool):
 	%reload_button.visible = value
 	%aim_button.visible = value
-	%shoot_button.visible = value
+	%shoot_button.visible = false
 	%AmmoLabel.visible = value
