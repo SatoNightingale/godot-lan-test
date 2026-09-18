@@ -72,6 +72,19 @@ layout_mode = 2
 text = "4242"
 alignment = 2
 
+[node name="HSeparator2" type="HSeparator" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer" unique_id=1127829501]
+layout_mode = 2
+theme_override_constants/separation = 10
+theme_override_styles/separator = SubResource("StyleBoxEmpty_2v7s5")
+
+[node name="Save" type="Button" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer" unique_id=1333436379]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+text = "Guardar"
+
 [connection signal="tree_exiting" from="." to="." method="_on_tree_exiting"]
 [connection signal="text_submitted" from="CenterContainer/PanelContainer/MarginContainer/VBoxContainer/GridContainer/nombre" to="." method="_on_nombre_text_submitted"]
 [connection signal="text_submitted" from="CenterContainer/PanelContainer/MarginContainer/VBoxContainer/GridContainer/puerto" to="." method="_on_puerto_text_submitted"]
+[connection signal="pressed" from="CenterContainer/PanelContainer/MarginContainer/VBoxContainer/Save" to="." method="_on_save_pressed"]

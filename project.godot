@@ -11,7 +11,7 @@ config_version=5
 [application]
 
 config/name="Prueba LAN"
-config/version="1.3.2"
+config/version="0.4.0"
 run/main_scene="uid://7c5qi7ecxocq"
 config/features=PackedStringArray("4.6", "Forward Plus")
 boot_splash/show_image=false
@@ -25,6 +25,7 @@ PatchSystem="*uid://7w37r2vsmrjn"
 Configurations="*uid://l5c4wgitfdam"
 ItemManager="*uid://dre4woh5meh76"
 Network="*uid://c8nrfbdxgge2b"
+ConsoleLogger="*uid://b6sotjiruqdpn"
 
 [display]
 
@@ -35,6 +36,7 @@ window/stretch/aspect="expand"
 
 [editor]
 
+export/convert_text_resources_to_binary=false
 version_control/plugin_name="GitPlugin"
 version_control/autoload_on_startup=true
 

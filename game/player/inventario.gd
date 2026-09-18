@@ -65,7 +65,7 @@ func add_item(item_dto: Dictionary):
 	var item = Item.new_from_dto(item_dto)
 	items.append(item)
 	# para que la weapon solo se setee una vez, y no dos veces (cliente y servidor) hacemos que solo el cliente emita la llamada para validar
-	# TODO: Si el servidor es quien valida en su misma ejecucion (de modo que todo ocurre localmente en el) 
+	# TODO: Si el servidor es quien valida en su misma ejecucion (de modo que todo ocurre localmente en el...) 
 	if local_player and item.object is Weapon:
 		# weapon se setea para todo el mundo, pero el servidor debe validar
 		request_set_weapon.rpc_id(1, item_dto.id)

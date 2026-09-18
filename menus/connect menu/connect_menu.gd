@@ -10,10 +10,6 @@ func _ready() -> void:
 		setup_virtual_keyboard_elevation()
 
 
-func initialize():
-	pass
-
-
 func setup_virtual_keyboard_elevation():
 	%ipedit.editing_toggled.connect(_on_field_editing_toggled.bind(%ipedit))
 	%portedit.editing_toggled.connect(_on_field_editing_toggled.bind(%portedit))
@@ -27,14 +23,11 @@ func setup_virtual_keyboard_elevation():
 	#%nameedit.focus_exited.connect(margin_restart_callable)
 
 
-func _on_connect_pressed() -> void:
-	if %ipedit.text == "":
-		error.emit("Especifique una direccion IP")
-		return
-	if not %ipedit.text.is_valid_ip_address():
+func _on_join_pressed() -> void:
+	var ip = %ipedit.text if not %ipedit.text.is_empty() else "127.0.0.1"
+	if not ip.is_valid_ip_address():
 		error.emit("Direccion ip invalida")
 		return
-	var ip = %ipedit.text if not %ipedit.text.is_empty() else "localhost"
 	var port = %portedit.text.to_int() if not %portedit.text.is_empty() else Configurations.default_port
 	request_conectar.emit(ip, port)
 

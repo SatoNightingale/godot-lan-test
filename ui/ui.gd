@@ -5,7 +5,6 @@ extends CanvasLayer
 @onready var anunciador: Anunciador = %label_anuncios
 @onready var menu_pausa: MenuPausa = %"menu pausa"
 @onready var tienda: Tienda = %Tienda
-#var tienda: Tienda
 
 var player_data
 
@@ -22,18 +21,15 @@ var player : Player:
 var respawn_timer: Timer
 
 
-#func _process(_delta: float) -> void:
-	#if %respawn_screen.visible:
-		#var time_left := ceili(respawn_timer.time_left)
-		#if time_left != int(%respawn_count.text):
-			#%respawn_count.text = str(time_left)
+func _ready() -> void:
+	ConsoleLogger.set_console(%console)
 
 
 func set_dead_screen(killer_name: String):
 	%respawn_screen.show()
 	%virtual_controls.hide()
 	%killer_name.text = killer_name + " te ha matado"
-	%perdida.text = "¡-{0} de oro!".format([1000])
+	%perdida.text = "¡-{0} de oro!".format([400])
 	var update_respawn_seconds = func(seconds):
 		%respawn_countdown.text = str(seconds)
 	var tween = create_tween()
@@ -54,13 +50,6 @@ func actualizar_bajas():
 func actualizar_muertes():
 	%muertes.text = "Muertes: {0}".format(
 		[str(player_data[multiplayer.get_unique_id()].deaths)])
-
-#func on_player_killed(killer_id: int, dead_id: int):
-	#if multiplayer.get_unique_id() == killer_id:
-		#%bajas.text = "Bajas: " + str(player_data[killer_id].kills)
-	#if multiplayer.get_unique_id() == dead_id:
-		##%UI.set_dead_screen(player_data[killer_id].name)
-		#%muertes.text = "Muertes: " + str(player_data[dead_id].deaths)
 
 
 @rpc("authority", "call_local")
@@ -86,3 +75,7 @@ func _on_defeated_screen_gui_input(_event: InputEvent) -> void:
 	#if event is InputEventMouseButton:
 		#event.pressed
 	pass
+
+
+func _on_toggle_console_toggled(toggled_on: bool) -> void:
+	%console.visible = toggled_on

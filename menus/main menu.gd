@@ -17,6 +17,10 @@ var player_data: Dictionary
 func _ready() -> void:
 	# leer configuraciones
 	Configurations.read_config()
+	# botones
+	%boton_crear.pressed.connect(Network.host)
+	%boton_conectar.pressed.connect(change_scene.bind(connect_menu))
+	%boton_config.pressed.connect(change_scene.bind(settings))
 	# conectar señales multiplayer
 	Network.server_created.connect(on_hosted)
 	Network.client_created.connect(on_connected)
@@ -29,10 +33,6 @@ func _ready() -> void:
 	init_scenes()
 	# version
 	%version_label.text = ProjectSettings.get_setting("application/config/version")
-	# botones
-	%boton_crear.pressed.connect(Network.host)
-	%boton_conectar.pressed.connect(change_scene.bind(connect_menu))
-	%boton_config.pressed.connect(change_scene.bind(settings))
 	# sistema de parcheo
 	%boton_parche.pressed.connect(%patch_finder.popup_file_dialog)
 	%patch_finder.file_selected.connect(func(path):
@@ -47,8 +47,8 @@ func _ready() -> void:
 	if OS.get_name() == "Android" or OS.get_name() == "iOS":
 		theme = load("res://menus/tema_movil.tres")
 	# tareas de debugeo
-	if OS.has_feature("editor"):
-		debug_tasks()
+	#if OS.has_feature("editor"):
+		#debug_tasks()
 
 
 func init_scenes():
@@ -62,11 +62,10 @@ func init_scenes():
 		if multiplayer.is_server():
 			main.change_to_game(player_data.duplicate())
 	)
-	waiting_room.tree_exiting.connect(_on_waiting_room_disconnect)
 
 
 func debug_tasks():
-	var args = parse_arguments()
+	var args = main.program_args
 	if "host" in args or "player" in args:
 		#var peer = ENetMultiplayerPeer.new()
 		if "host" in args:
@@ -111,12 +110,16 @@ func _register_player(nombre: String):
 
 
 func change_scene(scene: Node):
+	if scene == _active_scene:
+		return
 	if _active_scene != null:
+		if _active_scene.has_method("deinitialize"):
+			_active_scene.call("deinitialize")
 		%menu_container.remove_child(_active_scene)
 	if scene != null:
 		%menu_container.add_child(scene)
 		if scene.has_method("initialize"):
-			scene.initialize()
+			scene.call("initialize")
 	_active_scene = scene
 
 
@@ -138,21 +141,3 @@ func _on_server_disconnected():
 	error_popup.emit("El servidor se ha desconectado", "Desconexion")
 	player_data.clear()
 	change_scene(null)
-
-
-func _on_waiting_room_disconnect():
-	player_data.clear()
-	#change_scene(null)
-
-
-func parse_arguments() -> Dictionary:
-	var arguments = {}
-	for argument in OS.get_cmdline_args():
-		if argument.contains("="):
-			var key_value = argument.split("=")
-			arguments[key_value[0].trim_prefix("--")] = key_value[1]
-		else:
-			# Options without an argument will be present in the dictionary,
-			# with the value set to an empty string.
-			arguments[argument.trim_prefix("--")] = ""
-	return arguments

@@ -38,6 +38,12 @@ func initialize():
 		%ip.show()
 
 
+## Esto NO se llama cuando se inicia el juego, sino cuando esta escena en el menu es depuesta por otra
+func deinitialize():
+	multiplayer.multiplayer_peer = OfflineMultiplayerPeer.new()
+	player_data.clear()
+
+
 func on_player_data_updated(id: int, data):
 	_player_items[id] = {
 		"name": data.name,
