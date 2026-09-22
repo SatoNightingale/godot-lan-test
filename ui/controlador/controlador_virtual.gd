@@ -5,7 +5,7 @@ var player: Player:
 	set(_player):
 		player = _player
 		player.weapon_changed.connect(_on_player_weapon_changed)
-		player.glance_mode_changed.connect(_on_player_glance_mode_changed)
+		player.glance_mode.changed.connect(_on_player_glance_mode_changed)
 		setup_visibility(player.weapon != null)
 		if player.weapon != null:
 			_on_player_weapon_changed(player.weapon)

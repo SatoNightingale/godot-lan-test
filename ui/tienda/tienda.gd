@@ -1,9 +1,11 @@
 class_name Tienda extends Control
 
 
-# Seria interesante poner este script en un nodo que tome las pulsaciones del mouse (como el Panel Container) y asi poder recibir directamente los dropeos sin tener que meterle un script a shop_tabs
-
 var players: Dictionary[int, Player]
+
+@onready var slot_maps: Dictionary[Inventario.SlotRole, ItemSlot] = {
+	Inventario.SlotRole.MAIN_WEAPON: %arma_actual
+}
 
 var inventario: Inventario:
 	set(value):
@@ -19,9 +21,14 @@ var inventario: Inventario:
 		for slot in slots:
 			slot.tienda = self
 		# Player popula los slots que se refieren a items de su inventario
-		inventario.weapon_item.connect_init(func(new_weapon):
-			%arma_actual.set_item(new_weapon)
-		)
+		for inv_slot_role in slot_maps:
+			inventario.public_items[inv_slot_role].item \
+			.connect_init(func(new_weapon):
+				slot_maps[inv_slot_role].set_item(new_weapon)
+			)
+		#inventario.weapon_item.connect_init(func(new_weapon):
+			#%arma_actual.set_item(new_weapon)
+		#)
 
 
 func _ready() -> void:
@@ -35,19 +42,12 @@ func debug_tasks():
 	player.ready.connect(func():
 		inventario = player.inventario
 		inventario.server_add_item(ItemManager.new_item_dto_from_path(
-		"res://items/classes/ak47_item.tres"))
+		"res://items/classes/ak47_item.tres"), Inventario.SlotRole.MAIN_WEAPON)
 	)
 
 
-# Podria hacerse que los cambios en el inventario por compra y venta
-# solo se vieran en el servidor y en el cliente afectado, haciendo
-# que en las funciones request_ el servidor llame a comprar y vender
-# en el cliente con rpc_id(multiplayer.get_remote_sender_id()) 
-# Esto liberaria un poco de trafico y mejoraria la confidencialidad,
-# si bien los cambios en el estado del player afectado (p. ej. si se cambio de arma) tendrian que comunicarse a los demas peers de todas formas
-
 @rpc("any_peer", "call_local")
-func request_compra(info_path: String):
+func request_compra(info_path: String, slot_role: Inventario.SlotRole):
 	if multiplayer.is_server():
 		if ItemManager.item_info_exists(info_path):
 			var player_id = multiplayer.get_remote_sender_id()
@@ -56,8 +56,10 @@ func request_compra(info_path: String):
 			if transaction_inventory.dinero.value >= info.precio:
 				# crear el item con su id unico
 				var dto = ItemManager.new_item_dto(info)
-				transaction_inventory.modificar_dinero(-dto.precio, player_id)
-				transaction_inventory.server_add_item(dto)
+				transaction_inventory.modificar_dinero(
+					-dto.precio, player_id)
+				transaction_inventory.server_add_item(dto, slot_role)
+				#transaction_inventory.request_set_public_slot(dto.id, slot_role)
 			else:
 				printerr("Jugador con id: ", player_id, " intentando hacer una compra del objeto id '", info.resource_path, "' para el cual no tiene suficiente dinero")
 
@@ -70,7 +72,8 @@ func request_venta(item_id: int):
 		var selling = transaction_inventory.get_item(item_id)
 		if selling:
 			var item_data = {"id": item_id, "precio": selling.precio}
-			transaction_inventory.modificar_dinero(item_data.precio, player_id)
+			transaction_inventory.modificar_dinero(
+				+item_data.precio, player_id)
 			transaction_inventory.server_take_item(item_id)
 		else:
 			printerr("el jugador no tiene el item con id: ", item_id)
@@ -79,6 +82,8 @@ func request_venta(item_id: int):
 func try_comprar(info: ItemInfo):
 	# Esto todavia no es rpc, por lo que suponemos que todo va a ser legal
 	if inventario.dinero.value >= info.precio:
+		# Cuando hacemos esta llamada no sabemos si el request va a ser aceptado o no, pero necesitariamos hacer algunas cosas (como fijar el item en el slot correspondiente) en caso de que sea aceptado y otras en caso de que no lo sea
+		# La opcion facil es pasarle la decision al servidor, y asi nos aseguramos que las acciones realizadas no dependan del cliente. Sin embargo, habria que pasarle al servidor demasiada informacion, y redefinir sus metodos para que abarquen las nuevas responsabilidades.
 		request_compra.rpc(info.resource_path)
 	else:
 		# emitir mensaje de "tas arrancao"
@@ -94,6 +99,8 @@ func try_comprar(info: ItemInfo):
 func set_button_money(value: int):
 	%open_shop.text = str(value)
 
+
+# Seria interesante poner este script en un nodo que tome las pulsaciones del mouse (como el Panel Container) y asi poder recibir directamente los dropeos sin tener que meterle un script a shop_tabs
 
 func _on_shop_gui_input(event: InputEvent) -> void:
 	if (event is InputEventMouseButton and (

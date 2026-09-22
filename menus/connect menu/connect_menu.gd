@@ -11,6 +11,7 @@ func _ready() -> void:
 
 
 func setup_virtual_keyboard_elevation():
+	# TODO: esto sigue jodiendo en las builds de movil...
 	%ipedit.editing_toggled.connect(_on_field_editing_toggled.bind(%ipedit))
 	%portedit.editing_toggled.connect(_on_field_editing_toggled.bind(%portedit))
 	%nameedit.editing_toggled.connect(_on_field_editing_toggled.bind(%nameedit))

@@ -4,7 +4,7 @@ class_name Player extends CharacterBody2D
 signal weapon_changed(new_weapon: Weapon)
 signal dead(killer_id: int)
 signal revived
-signal glance_mode_changed(value: bool)
+#signal glance_mode_changed(value: bool)
 
 const player_colors = {
 	0: Color.BLUE,
@@ -13,7 +13,7 @@ const player_colors = {
 	3: Color.YELLOW
 }
 
-@export var weapon: Weapon:
+var weapon: Weapon:
 	set(new_weapon):
 		if weapon:
 			remove_child(weapon)
@@ -41,14 +41,15 @@ const player_colors = {
 
 @onready var inventario : Inventario = $Inventario
 
-var glance_mode := false:
-	set(value):
-		if value != glance_mode:
-			glance_mode = value
-			_camera.position_smoothing_enabled = glance_mode
-			glance_mode_changed.emit(glance_mode)
-			if !glance_mode:
-				_camera.offset = Vector2.ZERO
+var glance_mode = Observable.new(false,
+func(value):
+	if value != glance_mode:
+		glance_mode = value
+		_camera.position_smoothing_enabled = glance_mode
+		#glance_mode_changed.emit(glance_mode)
+		if !glance_mode:
+			_camera.offset = Vector2.ZERO
+)
 
 var player_id: int
 var player_name: String
@@ -125,6 +126,7 @@ func _physics_process(_delta):
 		return
 	if not alive:
 		return
+	# No sera mejor que este camera_dir y este move_dir sean sincronziadas con un Synchronizer y que su efecto se aplique en el servidor?
 	var camera_dir = Input.get_vector("look_left", "look_right", "look_up", "look_down")
 	var move_dir = Input.get_vector("move_left", "move_right", "move_up", "move_down")
 	control_movement(move_dir)

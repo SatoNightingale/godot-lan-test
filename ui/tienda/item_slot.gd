@@ -25,6 +25,7 @@ enum ItemSource {
 
 var tienda: Tienda
 var item: Item
+var inventory_role: Inventario.SlotRole
 var _source: ItemSource
 
 func set_item(_item: Item):
@@ -52,6 +53,13 @@ func _get_drag_data(_at_position: Vector2) -> Variant:
 		var drag_data
 		if _source == ItemSource.INVENTORY:
 			drag_data = {"source": _source, "item_id": item.id}
+			#drag_data = {
+				#"source": _source,
+				#"item": {
+					#"id": item.id,
+					#"role": inventory_role
+				#}
+			#}
 		else: if _source == ItemSource.SHOP:
 			drag_data = {"source": _source, "item_info": info}
 		return drag_data
@@ -69,7 +77,12 @@ func _can_drop_data(_at_position: Vector2, data: Variant) -> bool:
 func _drop_data(_at_position: Vector2, data: Variant) -> void:
 	# comprar
 	if data.source == ItemSource.SHOP and self._source == ItemSource.INVENTORY:
-		tienda.try_comprar(data["item_info"])
+		# añadir aqui el rol de este mismo slot (este es el que recibe el dropeo)
+		#data = {
+			#"info": data["item_info"],
+			#"dest_role": inventory_role
+		#}
+		tienda.try_comprar(data["item_info"]) # data
 	# vender
 	if data.source == ItemSource.INVENTORY and self._source == ItemSource.SHOP:
-		tienda.request_venta.rpc_id(1, data["item_id"])
+		tienda.request_venta.rpc_id(1, data["item_id"]) # data["item"]

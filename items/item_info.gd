@@ -1,5 +1,8 @@
 class_name ItemInfo extends Resource
 
+## La estructura de Item - ItemInfo ya esta practicamente obsoleta, puesto que con los DTO ambos son intercambiables.
+## En un futuro deberia eliminarse ItemInfo y dejar solo Item para construir los recursos de items
+
 ## ItemInfo solo puede estar guardado como un archivo de recursos, nunca dentro de una escena, pues de lo contrario no podria construirse un item a partir de el
 
 @export var nombre: String

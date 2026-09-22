@@ -13,9 +13,10 @@ var player : Player:
 		player = _player
 		controlador.player = player
 		respawn_timer = player.respawn_timer
-		player.ready.connect(func(): 
-			tienda.inventario = player.inventario
-		)
+		if player.is_node_ready():
+			_on_player_ready()
+		else:
+			player.ready.connect(_on_player_ready)
 		#respawn_timer.timeout.connect(set_game_screen)
 
 var respawn_timer: Timer
@@ -23,6 +24,10 @@ var respawn_timer: Timer
 
 func _ready() -> void:
 	ConsoleLogger.set_console(%console)
+
+
+func _on_player_ready():
+	tienda.inventario = player.inventario
 
 
 func set_dead_screen(killer_name: String):

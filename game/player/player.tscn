@@ -3,6 +3,7 @@
 [ext_resource type="Script" uid="uid://byhjvhlcdawq8" path="res://game/player/player.gd" id="1_iidce"]
 [ext_resource type="Texture2D" uid="uid://bh4qxte6rbxb" path="res://game/player/player_scaled.png" id="2_a4w0n"]
 [ext_resource type="Script" uid="uid://1ynng4hbiccf" path="res://game/player/inventario.gd" id="3_8soms"]
+[ext_resource type="Script" uid="uid://dl7gc7x12on6a" path="res://game/player/slot inventario.gd" id="4_a4w0n"]
 
 [sub_resource type="Gradient" id="Gradient_b2mth"]
 offsets = PackedFloat32Array(0, 0.33, 0.66, 1)
@@ -25,6 +26,12 @@ radius = 19.0263
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_b2mth"]
 radius = 21.0
 height = 48.0
+
+[sub_resource type="Resource" id="Resource_a4w0n"]
+script = ExtResource("4_a4w0n")
+tipo = "Weapon"
+observable_setter_name = "set_weapon_item"
+metadata/_custom_type_script = "uid://dl7gc7x12on6a"
 
 [sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_onrkg"]
 properties/0/path = NodePath(".:position")
@@ -86,6 +93,9 @@ one_shot = true
 [node name="Inventario" type="Node" parent="." unique_id=112562946 node_paths=PackedStringArray("player")]
 script = ExtResource("3_8soms")
 player = NodePath("..")
+public_items = Dictionary[int, ExtResource("4_a4w0n")]({
+0: SubResource("Resource_a4w0n")
+})
 metadata/_custom_type_script = "uid://1ynng4hbiccf"
 
 [node name="ClientSynchronizer" type="MultiplayerSynchronizer" parent="." unique_id=386237442]

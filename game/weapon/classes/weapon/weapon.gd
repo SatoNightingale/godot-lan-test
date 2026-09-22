@@ -10,7 +10,7 @@ signal wielded(args: Array)
 ## Modificador de la velocidad del player cuando esta usando el arma
 @export var wielding_slowdown := 0.66
 
-# Yo pensaria incluso en una ralentizacion permanente por tener el arma
+# Yo pensaria incluso en una ralentizacion permanente por tener el arma equipada
 
 var player: Player: set = set_player
 

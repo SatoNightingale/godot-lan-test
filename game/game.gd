@@ -14,8 +14,6 @@ var players: Dictionary[int, Player]
 
 @onready var _ready_semaphore : MultiplayerSemaphore = $MultiplayerSemaphore
 
-#var _ready_peers : Array[int]
-
 #var client_player : Player
 
 
@@ -33,18 +31,6 @@ func _ready():
 	else:
 		multiplayer.server_disconnected.connect(_on_server_disconnected)
 	_ready_semaphore.notify()
-	#_player_ready.rpc_id(1, multiplayer.get_unique_id())
-
-
-#@rpc("any_peer", "call_local")
-#func _player_ready(id: int):
-	#if multiplayer.is_server():
-		#if id not in _ready_peers:
-			#_ready_peers.append(id)
-		#if _ready_peers.size() == player_data.size():
-			#_ready_peers.clear()
-			##call(_ready_method)
-			#server_initialize()
 
 
 ## Inicializacion
@@ -105,7 +91,7 @@ func colocar_armas_iniciales():
 	if multiplayer.is_server():
 		for id in players:
 			players[id].inventario.server_add_item(
-				ItemManager.new_item_dto_from_path("res://items/classes/colt_item.tres"))
+				ItemManager.new_item_dto_from_path("res://items/classes/colt_item.tres"), Inventario.SlotRole.MAIN_WEAPON)
 
 
 ## Armas

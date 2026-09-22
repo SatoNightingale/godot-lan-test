@@ -1,5 +1,9 @@
 class_name Item extends RefCounted
 
+## Esto devuelve el nombre de la clase a la que directamente pertenece cada objeto instanciado. Sobreescribir en cada subclase
+func get_item_class() -> StringName:
+	return "Item"
+
 ## ID unico que identifica al item. El servidor lo establece antes de crearlo y luego se lo pasa a todos los peers, de modo que para una sincronizacion "legitima" todos los clientes deben tener los mismos items con los mismos id's en cada player
 var id: int = 0
 # un poco desperdicio que item tenga nombre y precio (mismas propiedades de item_info) pero bueh...

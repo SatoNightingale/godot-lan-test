@@ -79,6 +79,8 @@ func calcular_dano(player: Player) -> float:
 	var dist_linea_recta = pos_emisor.distance_to(player.global_position)
 	# cateto opuesto
 	var dist_to_center = abs(tan(linea_recta.angle_to(bullet_dir))) * dist_linea_recta
+	## Y esta talla no es mas facil y directa?
+	##var dist_to_center = global_position.distance_to(player.global_position)
 	var tasa_desviacion = dist_to_center / player.shape_radius_approx
 	#print("dist_to_center: ", dist_to_center, ", tasa desv: ", tasa_desviacion)
 	# La tasa de desviacion disminuye el resultado final típicamente hasta el 50%, pero pueden darse casos donde esta sea mayor que 1 (anomalías de cálculo), lo cual reduciría aún más el daño del tiro, pero nunca por debajo de 0
