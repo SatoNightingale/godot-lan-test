@@ -74,7 +74,6 @@ layout_mode = 2
 theme_override_constants/separation = 10
 
 [node name="shop" type="VBoxContainer" parent="shop_screen/PanelContainer/MarginContainer/HBoxContainer" unique_id=397729292]
-custom_minimum_size = Vector2(330, 0)
 layout_mode = 2
 
 [node name="Label" type="Label" parent="shop_screen/PanelContainer/MarginContainer/HBoxContainer/shop" unique_id=771354315]
@@ -88,6 +87,7 @@ layout_mode = 2
 size_flags_vertical = 3
 tab_alignment = 1
 current_tab = 0
+clip_tabs = false
 script = ExtResource("3_epoqs")
 tienda = NodePath("../../../../../..")
 
@@ -124,14 +124,14 @@ info = ExtResource("5_qqngu")
 layout_mode = 2
 info = ExtResource("6_3aut5")
 
-[node name="Municiones" type="ScrollContainer" parent="shop_screen/PanelContainer/MarginContainer/HBoxContainer/shop/shop_tabs" unique_id=1265771868]
+[node name="Munición" type="ScrollContainer" parent="shop_screen/PanelContainer/MarginContainer/HBoxContainer/shop/shop_tabs" unique_id=1265771868]
 visible = false
 layout_mode = 2
 horizontal_scroll_mode = 0
 vertical_scroll_mode = 4
 metadata/_tab_index = 1
 
-[node name="grid" type="GridContainer" parent="shop_screen/PanelContainer/MarginContainer/HBoxContainer/shop/shop_tabs/Municiones" unique_id=301026415]
+[node name="grid" type="GridContainer" parent="shop_screen/PanelContainer/MarginContainer/HBoxContainer/shop/shop_tabs/Munición" unique_id=301026415]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3

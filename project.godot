@@ -49,10 +49,16 @@ enabled=PackedStringArray("res://addons/rpc-await/plugin.cfg", "res://addons/vir
 
 folder_colors={
 "res://game/": "red",
+"res://game/bullet/": "yellow",
+"res://game/player/": "blue",
+"res://game/weapon/": "orange",
 "res://items/": "yellow",
 "res://maps/": "green",
+"res://menus/": "blue",
 "res://tests/": "pink",
 "res://ui/": "gray",
+"res://ui/controlador/": "green",
+"res://ui/tienda/": "orange",
 "res://utils/": "purple"
 }
 

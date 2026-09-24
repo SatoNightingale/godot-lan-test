@@ -17,3 +17,6 @@ offset = Vector2(30, 0)
 
 [node name="cannon" parent="sprite" index="0" unique_id=1996995724]
 position = Vector2(43, 0)
+
+[node name="reload_timer" parent="." index="4" unique_id=1383800656]
+wait_time = 4.0

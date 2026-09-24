@@ -1,10 +1,8 @@
 class_name Player extends CharacterBody2D
 
-# TODO: Para no poner una señal _changed para cada propiedad que debe ser observada, sería bueno crear una clase observable que se ocupe de esto (similar a una Property)
-signal weapon_changed(new_weapon: Weapon)
+
 signal dead(killer_id: int)
 signal revived
-#signal glance_mode_changed(value: bool)
 
 const player_colors = {
 	0: Color.BLUE,
@@ -15,17 +13,24 @@ const player_colors = {
 
 var weapon: Weapon:
 	set(new_weapon):
-		if weapon:
-			remove_child(weapon)
-			#weapon.queue_free()
-		weapon = new_weapon
-		if new_weapon:
-			new_weapon.player = self
-			weapon_changed.emit(new_weapon)
-			if new_weapon.get_parent() == null:
-				add_child(new_weapon)
-			else:
-				new_weapon.reparent(self, false)
+		weapon_prop.value = new_weapon
+	get():
+		return weapon_prop.value
+
+var weapon_prop := Observable.new(null,
+func(new_weapon, _old_weapon):
+	if new_weapon:
+		if new_weapon.get_parent() == null:
+			add_child(new_weapon)
+		else:
+			new_weapon.reparent(self, false)
+, func(new_weapon, old_weapon):
+	if old_weapon:
+		remove_child(old_weapon)
+		#weapon.queue_free()
+	if new_weapon:
+		new_weapon.player = self
+)
 
 @export var base_speed := 240.0 # 200.0 puede servir como velocidad de caminata
 
@@ -46,7 +51,6 @@ func(value):
 	if value != glance_mode:
 		glance_mode = value
 		_camera.position_smoothing_enabled = glance_mode
-		#glance_mode_changed.emit(glance_mode)
 		if !glance_mode:
 			_camera.offset = Vector2.ZERO
 )
@@ -60,7 +64,11 @@ var speed := base_speed
 var vida := vida_max:
 	set(value):
 		vida = value
-		queue_redraw()
+		%lifebar.visible = vida < vida_max
+		var vida_scaled = remap(vida, 0, vida_max, 0, 1)
+		%lifebar.value = vida_scaled
+		%lifebar.modulate = _lifebar_gradient.sample(vida_scaled)
+
 var dinero := Observable.new(3000.0)
 var direction: Vector2
 var alive := true
@@ -134,15 +142,6 @@ func _physics_process(_delta):
 	if Input.is_action_just_pressed("aim"):
 		glance_mode = !glance_mode
 	move_and_slide()
-
-
-func _draw() -> void:
-	if vida < vida_max:
-		var vida_scale = remap(vida, 0, vida_max, 0, 1)
-		var bar_start = Vector2(-15, -30)
-		var bar_end = bar_start + Vector2.RIGHT * vida / 100 * 40
-		var bar_color = _lifebar_gradient.sample(vida_scale)
-		draw_line(bar_start, bar_end, bar_color, 4)
 
 
 @rpc("call_local")

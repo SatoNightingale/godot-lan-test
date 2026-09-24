@@ -1,6 +1,9 @@
 # Godot 4+ specific ignores
 .godot/
 android/
+addons/godot-git-plugin/
+addons/virtual_joystick/previews/
+addons/virtual_joystick/tests/
 .export/
 PAT_token
 .github/workflows/release.old.yaml

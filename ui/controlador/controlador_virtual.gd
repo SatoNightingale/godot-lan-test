@@ -4,18 +4,18 @@ class_name ControladorVirtual extends Control
 var player: Player:
 	set(_player):
 		player = _player
-		player.weapon_changed.connect(_on_player_weapon_changed)
+		#player.weapon_changed.connect(_on_player_weapon_changed)
+		player.weapon_prop.connect_init(_on_player_weapon_changed)
 		player.glance_mode.changed.connect(_on_player_glance_mode_changed)
 		setup_visibility(player.weapon != null)
-		if player.weapon != null:
-			_on_player_weapon_changed(player.weapon)
+		#if player.weapon != null:
+			#_on_player_weapon_changed(player.weapon)
 
 
 func _on_player_weapon_changed(weapon: Weapon):
 	setup_visibility(weapon != null)
-	if weapon is FireWeapon:
-		#%shoot_button.setup(weapon.get_node("shoot_timer"), weapon.bullet_fired)
-		%reload_button.setup(weapon.get_node("reload_timer"), weapon.reloading)
+	if weapon != null and weapon is FireWeapon:
+		%reload_button.setup(weapon.reload_cooldown, weapon.reloading)
 		_on_update_ammo(weapon.ammo)
 		weapon.update_ammo.connect(_on_update_ammo)
 

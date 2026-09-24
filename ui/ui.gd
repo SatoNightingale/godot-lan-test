@@ -17,7 +17,6 @@ var player : Player:
 			_on_player_ready()
 		else:
 			player.ready.connect(_on_player_ready)
-		#respawn_timer.timeout.connect(set_game_screen)
 
 var respawn_timer: Timer
 

@@ -1,8 +1,15 @@
 extends Node2D
 
 func _ready() -> void:
-	$player.weapon = load("res://game/weapon/revolver/revolver.tscn").instantiate()
-	$player.weapon.bullet_fired.connect(on_bullet_fired)
+	$player.player_id = 1
+	$player2.player_id = 2
+	$player.inventario.server_add_item(
+		ItemManager.new_item_dto_from_path("res://items/classes/colt_item.tres"), Inventario.SlotRole.MAIN_WEAPON)
+	#$player.weapon = load("res://game/weapon/revolver/revolver.tscn").instantiate()
+	$player.weapon_prop.connect_init(func(new_weapon):
+		if new_weapon:
+			new_weapon.bullet_fired.connect(on_bullet_fired)
+	)
 	$UI.player = $player
 
 

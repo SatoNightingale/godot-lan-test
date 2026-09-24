@@ -70,9 +70,7 @@ func spawn_player(data) -> Node:
 	player.player_number = data["number"]
 	# conectar señales del juego
 	if multiplayer.is_server(): # solo se ejecutan en el servidor
-		player.weapon_changed.connect(_on_player_weapon_changed)
-		if player.weapon != null:
-			_on_player_weapon_changed(player.weapon)
+		player.weapon_prop.connect_init(_on_player_weapon_changed)
 		player.dead.connect(_on_player_dead.bind(data.id))
 		player.ready.connect(func():
 			player.respawn_timer.timeout.connect(respawn_player.bind(data.id))
@@ -117,8 +115,8 @@ func _on_player_weapon_changed(weapon: Weapon):
 
 func _on_player_dead(killer_id, dead_id):
 	if multiplayer.is_server():
-		players[killer_id].inventario.modificar_dinero(600)
-		players[dead_id].inventario.modificar_dinero(-400)
+		players[killer_id].inventario.modificar_dinero(600, killer_id)
+		players[dead_id].inventario.modificar_dinero(-400, dead_id)
 		_on_dead.rpc_id(dead_id, killer_id)
 		_on_kill.rpc_id(killer_id, dead_id)
 		_on_player_killed.rpc(killer_id, dead_id)

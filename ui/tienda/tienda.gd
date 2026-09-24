@@ -47,7 +47,7 @@ func debug_tasks():
 
 
 @rpc("any_peer", "call_local")
-func request_compra(info_path: String, slot_role: Inventario.SlotRole):
+func request_compra(info_path: String, slot: Inventario.SlotRole):
 	if multiplayer.is_server():
 		if ItemManager.item_info_exists(info_path):
 			var player_id = multiplayer.get_remote_sender_id()
@@ -58,8 +58,7 @@ func request_compra(info_path: String, slot_role: Inventario.SlotRole):
 				var dto = ItemManager.new_item_dto(info)
 				transaction_inventory.modificar_dinero(
 					-dto.precio, player_id)
-				transaction_inventory.server_add_item(dto, slot_role)
-				#transaction_inventory.request_set_public_slot(dto.id, slot_role)
+				transaction_inventory.server_add_item(dto, slot)
 			else:
 				printerr("Jugador con id: ", player_id, " intentando hacer una compra del objeto id '", info.resource_path, "' para el cual no tiene suficiente dinero")
 
@@ -79,12 +78,12 @@ func request_venta(item_id: int):
 			printerr("el jugador no tiene el item con id: ", item_id)
 
 
-func try_comprar(info: ItemInfo):
+func try_comprar(info: ItemInfo, target_role: Inventario.SlotRole):
 	# Esto todavia no es rpc, por lo que suponemos que todo va a ser legal
 	if inventario.dinero.value >= info.precio:
 		# Cuando hacemos esta llamada no sabemos si el request va a ser aceptado o no, pero necesitariamos hacer algunas cosas (como fijar el item en el slot correspondiente) en caso de que sea aceptado y otras en caso de que no lo sea
 		# La opcion facil es pasarle la decision al servidor, y asi nos aseguramos que las acciones realizadas no dependan del cliente. Sin embargo, habria que pasarle al servidor demasiada informacion, y redefinir sus metodos para que abarquen las nuevas responsabilidades.
-		request_compra.rpc(info.resource_path)
+		request_compra.rpc(info.resource_path, target_role)
 	else:
 		# emitir mensaje de "tas arrancao"
 		var tween = create_tween()
