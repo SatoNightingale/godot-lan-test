@@ -1,8 +1,6 @@
 class_name Main extends Node
 
 # Para asegurarnos de que tengan cosas como la referencia a main, el metodo configure, etc. seria mejor hacer que hereden de una clase 'GameScreen'
-@export var menu_scene_resource = preload("res://menus/main menu.tscn")
-@export var game_scene_resource = preload("res://game/game.tscn")
 
 @onready var menu_scene = $MenuContainer/Main
 var game_scene: Node
@@ -25,7 +23,7 @@ func _load_game(data):
 	if menu_scene and is_instance_valid(menu_scene):
 		menu_scene.queue_free()
 		menu_scene = null
-	game_scene = game_scene_resource.instantiate()
+	game_scene = load("res://game/game.tscn").instantiate() 
 	game_scene.main = self
 	game_scene.error_popup.connect(error_popup)
 	game_scene.player_data = data
@@ -42,7 +40,7 @@ func _load_menu():
 	if game_scene and is_instance_valid(game_scene):
 		game_scene.queue_free()
 		game_scene = null
-	menu_scene = menu_scene_resource.instantiate()
+	menu_scene = load("res://menus/main menu.tscn").instantiate()
 	menu_scene.main = self
 	menu_scene.error_popup.connect(error_popup)
 	%MenuContainer.add_child(menu_scene)
