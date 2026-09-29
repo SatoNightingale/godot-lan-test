@@ -4,7 +4,7 @@
 [ext_resource type="Texture2D" uid="uid://c6vyarvq5myao" path="res://game/weapon/ak47/AK47.png" id="3_wodgf"]
 
 [node name="ak47" unique_id=693644199 instance=ExtResource("1_xgedx")]
-max_ammo = 20
+max_ammo = 30
 automatica = true
 desviacion = 10.0
 shoot_cooldown = 0.1

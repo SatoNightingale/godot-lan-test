@@ -1,13 +1,13 @@
 [gd_scene format=3 uid="uid://d3yryot1jdjf6"]
 
-[ext_resource type="Texture2D" uid="uid://dsp8pfd5vwbcc" path="res://ui/tienda/money icon.png" id="1_3qafb"]
-[ext_resource type="Script" uid="uid://c58w4bdhnnsr6" path="res://ui/tienda/tienda.gd" id="1_43acv"]
-[ext_resource type="PackedScene" uid="uid://cse6tdwn71it5" path="res://ui/tienda/item_slot.tscn" id="2_tk8sn"]
-[ext_resource type="Script" uid="uid://b4tdmuvqj6rhi" path="res://ui/tienda/shop_tabs_drops.gd" id="3_epoqs"]
-[ext_resource type="Resource" uid="uid://w66t2te8c0jk" path="res://items/classes/colt_item.tres" id="4_epoqs"]
-[ext_resource type="Resource" uid="uid://ckt8nn8nn661m" path="res://items/classes/mp5_item.tres" id="5_qqngu"]
-[ext_resource type="Resource" uid="uid://dxi0dhon41ass" path="res://items/classes/ak47_item.tres" id="6_3aut5"]
-[ext_resource type="SystemFont" uid="uid://xianhjfbqxqw" path="res://ui/tienda/monospace font.tres" id="7_qqngu"]
+[ext_resource type="Texture2D" uid="uid://dsp8pfd5vwbcc" path="res://game/ui/tienda/money icon.png" id="1_3qafb"]
+[ext_resource type="Script" uid="uid://c58w4bdhnnsr6" path="res://game/ui/tienda/tienda.gd" id="1_43acv"]
+[ext_resource type="PackedScene" uid="uid://cse6tdwn71it5" path="res://game/ui/tienda/item_slot.tscn" id="2_tk8sn"]
+[ext_resource type="Script" uid="uid://b4tdmuvqj6rhi" path="res://game/ui/tienda/shop_tabs_drops.gd" id="3_epoqs"]
+[ext_resource type="Resource" uid="uid://860hr8372obm" path="res://items/classes/colt_item.tres" id="4_epoqs"]
+[ext_resource type="Resource" uid="uid://c4jlf1ikbpox6" path="res://items/classes/mp5_item.tres" id="5_qqngu"]
+[ext_resource type="Resource" uid="uid://bjb2mciiaxcav" path="res://items/classes/ak47_item.tres" id="6_3aut5"]
+[ext_resource type="SystemFont" uid="uid://xianhjfbqxqw" path="res://game/ui/tienda/monospace font.tres" id="7_qqngu"]
 
 [node name="Tienda" type="Control" unique_id=756692496]
 layout_mode = 3
@@ -113,15 +113,15 @@ columns = 2
 
 [node name="ficha arma" parent="shop_screen/PanelContainer/MarginContainer/HBoxContainer/shop/shop_tabs/Armas/MarginContainer/grid" unique_id=2102563384 groups=["shop_slots"] instance=ExtResource("2_tk8sn")]
 layout_mode = 2
-info = ExtResource("4_epoqs")
+item = ExtResource("4_epoqs")
 
 [node name="ficha arma2" parent="shop_screen/PanelContainer/MarginContainer/HBoxContainer/shop/shop_tabs/Armas/MarginContainer/grid" unique_id=1612048529 groups=["shop_slots"] instance=ExtResource("2_tk8sn")]
 layout_mode = 2
-info = ExtResource("5_qqngu")
+item = ExtResource("5_qqngu")
 
 [node name="ficha arma3" parent="shop_screen/PanelContainer/MarginContainer/HBoxContainer/shop/shop_tabs/Armas/MarginContainer/grid" unique_id=2122567846 groups=["shop_slots"] instance=ExtResource("2_tk8sn")]
 layout_mode = 2
-info = ExtResource("6_3aut5")
+item = ExtResource("6_3aut5")
 
 [node name="Munición" type="ScrollContainer" parent="shop_screen/PanelContainer/MarginContainer/HBoxContainer/shop/shop_tabs" unique_id=1265771868]
 visible = false

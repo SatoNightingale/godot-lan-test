@@ -7,11 +7,10 @@ class ConsoleLoggerBackend extends Logger:
 	var console: RichTextLabel:
 		set(cons):
 			console = cons
-			for message in accum_msgs:
+			for message in messages:
 				console.append_text(message)
-			accum_msgs.clear()
 	
-	var accum_msgs: Array[String]
+	var messages: Array[String]
 	
 	# Note that this method is not called for messages that use
 	# `push_error()` and `push_warning()`, even though these are printed to stderr.
@@ -19,10 +18,9 @@ class ConsoleLoggerBackend extends Logger:
 		# Do something with `message`.
 		# `error` is `true` for messages printed to the standard error stream (stderr) with `print_error()`.
 		var to_print = message if not error else "[color=c45959][b]ERROR[/b]: {0}[/color]".format([message])
+		messages.append(to_print)
 		if console:
 			console.append_text(to_print + "\n")
-		else:
-			accum_msgs.append(to_print)
 		# Note that this method will be called from threads other than the main thread, possibly at the same
 		# time, so you will need to have some kind of thread-safety as part of it, like a Mutex.
 		pass

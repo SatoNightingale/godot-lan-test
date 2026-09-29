@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://d3t35id8teo7x"
-path="res://.godot/imported/joystick_tip_bullet.svg-29580455e5c64b43a48f357bc60c814e.ctex"
+uid="uid://dlcyg7dbwn4n2"
+path="res://.godot/imported/console.svg-6f1c43187a51443c6d8372f15b351a24.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://ui/controlador/icons/joystick_tip_bullet.svg"
-dest_files=["res://.godot/imported/joystick_tip_bullet.svg-29580455e5c64b43a48f357bc60c814e.ctex"]
+source_file="res://game/ui/console.svg"
+dest_files=["res://.godot/imported/console.svg-6f1c43187a51443c6d8372f15b351a24.ctex"]
 
 [params]
 

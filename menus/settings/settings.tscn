@@ -1,6 +1,7 @@
 [gd_scene format=3 uid="uid://dr55mysc7igl0"]
 
 [ext_resource type="Script" uid="uid://cqf0cormp2q47" path="res://menus/settings/settings.gd" id="1_2e4a5"]
+[ext_resource type="StyleBox" uid="uid://bgf7akwmqdo5b" path="res://menus/separador invisible.tres" id="2_n0cus"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_2v7s5"]
 
@@ -75,7 +76,7 @@ alignment = 2
 [node name="HSeparator2" type="HSeparator" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer" unique_id=1127829501]
 layout_mode = 2
 theme_override_constants/separation = 10
-theme_override_styles/separator = SubResource("StyleBoxEmpty_2v7s5")
+theme_override_styles/separator = ExtResource("2_n0cus")
 
 [node name="Save" type="Button" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer" unique_id=1333436379]
 unique_name_in_owner = true

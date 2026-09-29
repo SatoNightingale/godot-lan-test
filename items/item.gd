@@ -1,42 +1,100 @@
-class_name Item extends RefCounted
+class_name Item extends Resource
 
-## Esto devuelve el nombre de la clase a la que directamente pertenece cada objeto instanciado. Sobreescribir en cada subclase
-func get_item_class() -> StringName:
-	return "Item"
+## Items tienen una triple funcion:
+## 1. Tipos genericos de items, guardados como recursos y usados por ItemManager para generar nuevos items
+## 2. Items en el inventario o equipados, donde tienen un id unico y pueden contener estado
+## 3. Envoltura como item de objetos equipados (p. ej. armas) donde se guarda su estado, permitiendo la interaccion con el sistema de items
+## Esta triple función determina una división en sus propiedades: la misma clase tiene propiedades de tipo (inmutables, compartidas entre todas las instancias: nombre, precio, max_stack) y propiedades de instancia (propias de cada instancia del item: id, cantidad). Lo hacemos de este modo para evitar un árbol duplicado de herencia: por ejemplo, si WeaponItem contiene la propiedad ammo (instancia) y WeaponItemType contiene max_ammo (tipo) entonces estamos obligados a especificar un ItemType por cada Item, duplicando el árbol de herencia de Item, lo cual es engorroso. La desventaja es que se sobreacumulan datos en la única clase Item que queda, pero tampoco es demasiado problema.
+
+
+## Cada vez que se vaya a transferir un item por la red, debe llamarse a to_dto y el receptor debe convertirlo de vuelta a Item con new_from_dto. Esto significa que en el DTO que viaja debe ir toda la informacion relevante de estado del item, necesaria para reproducir el item tal y como estaba antes de ser convertido en dto, pero creando de nuevo los datos serializables (que no se pueden transferir y no van en el DTO).
+## Ambas funciones (to_dto y new_from_dto) deben ser, por tanto, sobreescritas en las clases heredadas, para personalizar los procedimientos. El DTO debe contener alguna informacion acerca de qué clase lo generó y debe establecerse algún medio para que esa misma clase sea llamada para reproducirlo (porque new_from_dto se llama estáticamente aunque to_dto es de instancia)
+## ItemInfo es (era) una estructura para cumplir la 1ra y la 4ta funcion. Sin embargo, el problema con ellos es que deben reproducir la jerarquia de herencia de Item. Por ejemplo, en Item debe ir la cantidad actual de balas de un arma, pero en ItemInfo debe ir el maximo de balas que esta admite. Esto implica que hay un WeaponItem y un WeaponItemInfo, es decir, una jerarquia duplicada. Opté por simplificar las cosas y guardar todo en Item, aunque esto pueda sobrecargar un tanto la clase.
+## Como usamos este enfoque dual, el mismo objeto tiene propiedades que pertenecen a la clase o tipo de item y son compartidas por todos los items de esta clase, y propiedades de la instancia que pertenecen a cada item en particular y varían entre item. Sería bueno encontrar un modo de que las propiedades de la clase no puedan ser modificados por el item particular.
+
+
+## Propiedades de clase
+
+## Ruta al recurso que sirve de modelo o clase del item. Funciona como id del tipo de item, que ItemManager setea cuando lo carga desde el disco. Cada item se construye mediante ItemManager a partir de uno de estos recursos. 
+var item_type_path: String
+## Nombre del item que se mostrara en el inventario
+@export var nombre: String
+## Precio del item para operaciones de venta
+@export var precio: float
+## Máximo que se puede stackear el item
+@export var max_stack: int = 1
+## Ruta del icono que identifica este item en la tienda o el inventario
+@export_file var icon_path: String
+## Ruta a la escena que contiene el objeto que representa este item
+@export_file("*.tscn") var item_scene_path: String
+
+
+## Propiedades de instancia
 
 ## ID unico que identifica al item. El servidor lo establece antes de crearlo y luego se lo pasa a todos los peers, de modo que para una sincronizacion "legitima" todos los clientes deben tener los mismos items con los mismos id's en cada player
-var id: int = 0
-# un poco desperdicio que item tenga nombre y precio (mismas propiedades de item_info) pero bueh...
-## Nombre del item que se mostrara en el inventario
-var nombre: String
-## Precio del item para operaciones de venta
-var precio: float
+var id: int = 0:
+	set(value):
+		if id == 0: # El ID es de solo lectura, se escribe solo al crearse
+			id = value
+
 ## Referencia al objeto que el item representa en el inventario. 
-var object: Object = null
-## Ruta al recurso que identifica al item en la tienda. Cada item se construye mediante ItemManager a partir de uno de estos recursos
-var info_resource: String
-## Ruta a la escena que contiene el objeto que representa este item
-var item_scene_path: String
+var object: Object = null:
+	set(value): 
+		# Si la clase (o subclase) permite este objeto, lo seteamos
+		if _validate_object(value):
+			object = value
+		else:
+			printerr("El el objeto pasado no es valido")
 
+func _validate_object(_object):
+	return true
 
+## Cantidad de elementos stackeados de este item
+var cantidad: int = 1
+
+## Debe haber propiedades de instancia del item (ej. cantidad de stackeo) y propiedades de instancia del objeto (ej. balas actuales del arma). La diferencia es que para acceder a las del objeto, hay que consultar al objeto donde estan almacenadas, ya que este es la unica fuente de verdad.
+
+## Genera un DTO con los datos de instancia necesarios para que este item pueda ser reproducido en otro peer remoto
 func to_dto() -> Dictionary:
 	return {
+		"type_id": item_type_path,
 		"id": id,
-		"nombre": nombre,
-		"precio": precio,
-		"info_resource": info_resource,
-		"item_scene_path": item_scene_path
+		"cantidad": cantidad
 	}
 
 # Esto existe porque el item tiene que registrarse en el servidor y crearse en los clientes. Con esta funcion se crea el dto transferido. Este dto, por otra parte, debe ser un diccionario, puesto que los rpc no serializan objetos
 # Si hubiera subclases de item, dto puede venir con un campo que indique la subclase desde la que se llamo a to_dto, lo que permitiria mandarselo a la herencia de este metodo en esa subclase y asi construir el item con datos personalizados (pero siempre serializables)
 static func new_from_dto(dto: Dictionary) -> Item:
 	var item = Item.new()
+	var item_type = ItemManager.get_item_type(dto.type_id)
+	item.item_type_path = dto.type_id
+	# A partir de aqui, le dejamos al tipo de item generar la nueva instancia. Con esto podemos acceder a los datos de tipo nativamente
+	return item_type.inicializar_item(item, dto)
+
+## Función que llama el item modelo de tipo (cargado desde ItemManager) para instanciar un nuevo item a partir de sus datos de clase y de un DTO con los datos de instancia
+func inicializar_item(new_item: Item, dto: Dictionary):
+	# Propiedades de tipo
+	_copy_type_properties(new_item)
+	# Propiedades de instancia
+	_copy_instance_properties(new_item, dto)
+	_generate_object(new_item, dto)
+	return new_item
+
+## Copia de forma rápida todas las variables del script que estén marcadas como exportadas. En la práctica estas son casi siempre las variables de tipo, las que se muestran en el inspector
+func _copy_type_properties(item: Item):
+	for property in get_property_list():
+		# propiedades exportadas del script
+		if property.usage & PROPERTY_USAGE_SCRIPT_VARIABLE and property.usage & PROPERTY_USAGE_EDITOR:
+			#print(property.name)
+			item.set(property.name, get(property.name))
+
+## Aqui se copian datos de instancia que pertenezcan al item en sí (id, cantidad...), no al object, puesto que estas se almacenan en el object, que es la única fuente de verdad (además, puede haber setters personalizados para estas propiedades, lo cual complejizaría aún más la operación, pues estos setters pueden intentar acceder a un object que todavía no está creado). Para inicializar el object, sobreescribir _generate_object
+func _copy_instance_properties(item: Item, dto: Dictionary):
 	item.id = dto.id
-	item.nombre = dto.nombre
-	item.precio = dto.precio
-	item.info_resource = dto.info_resource
-	item.item_scene_path = dto.item_scene_path
-	if not dto.item_scene_path.is_empty():
-		item.object = load(dto.item_scene_path).instantiate()
-	return item
+	item.cantidad = dto.cantidad
+
+## Genera y asigna la propiedad object, instanciando la escena indicada en la propiedad class_item_scene_path. Se puede extender para inicializar el objeto una vez creado con los datos del DTO
+@warning_ignore("unused_parameter")
+func _generate_object(item: Item, dto: Dictionary):
+	if not item_scene_path.is_empty():
+		item.object = load(item_scene_path).instantiate()

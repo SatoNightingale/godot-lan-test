@@ -72,19 +72,27 @@ func modif_recorrido(x) -> float:
 
 
 func calcular_dano(player: Player) -> float:
-	# El daño de bala disminuye según lo lejos que impactó la bala del centro del personaje. La distancia del impacto al centro se calcula según la tangente del angulo de tiro (cateto opuesto / cateto adyacente = distancia de impacto / longitud de la linea al centro del player). La relación entre esta distancia y el radio (aproximado por exceso) del hitbox del player da la tasa de desviación. Un disparo perfectamente centrado tendrá una tasa de desviación de 0
-	var bullet_dir = pos_emisor.direction_to(global_position)
-	var linea_recta = pos_emisor.direction_to(player.global_position)
-	# cateto adyacente
-	var dist_linea_recta = pos_emisor.distance_to(player.global_position)
-	# cateto opuesto
-	var dist_to_center = abs(tan(linea_recta.angle_to(bullet_dir))) * dist_linea_recta
-	## Y esta talla no es mas facil y directa?
-	##var dist_to_center = global_position.distance_to(player.global_position)
-	var tasa_desviacion = dist_to_center / player.shape_radius_approx
-	#print("dist_to_center: ", dist_to_center, ", tasa desv: ", tasa_desviacion)
-	# La tasa de desviacion disminuye el resultado final típicamente hasta el 50%, pero pueden darse casos donde esta sea mayor que 1 (anomalías de cálculo), lo cual reduciría aún más el daño del tiro, pero nunca por debajo de 0
-	var mod_angulo = 0.5 + max(1 - tasa_desviacion, 0) / 2
+	# El angulo (desde el player impactado) que hace la linea desde el centro hacia el impacto de la bala con la linea recta al disparador
+	var linea_recta = player.global_position.direction_to(pos_emisor)
+	var dir_impacto = player.global_position.direction_to(global_position)
+	# 0 <= angulo <= 90
+	# 0 -> 1, 90 -> 0
+	var factor_desviacion = abs(cos(linea_recta.angle_to(dir_impacto)))
+	var mod_angulo = 0.5 + factor_desviacion / 2
+	## El daño de bala disminuye según lo lejos que impactó la bala del centro del personaje. La distancia del impacto al centro se calcula según la tangente del angulo de tiro (cateto opuesto / cateto adyacente = distancia de impacto / longitud de la linea al centro del player). La relación entre esta distancia y el radio (aproximado por exceso) del hitbox del player da la tasa de desviación. Un disparo perfectamente centrado tendrá una tasa de desviación de 0
+	#var bullet_dir = pos_emisor.direction_to(global_position)
+	#var linea_recta = pos_emisor.direction_to(player.global_position)
+	## cateto adyacente
+	#var dist_linea_recta = pos_emisor.distance_to(player.global_position)
+	## cateto opuesto
+	#var dist_to_center = abs(tan(linea_recta.angle_to(bullet_dir))) * dist_linea_recta
+	### Y esta talla no es mas facil y directa?
+	###var dist_to_center = global_position.distance_to(player.global_position)
+	#var tasa_desviacion = dist_to_center / player.shape_radius_approx
+	##print("dist_to_center: ", dist_to_center, ", tasa desv: ", tasa_desviacion)
+	## La tasa de desviacion disminuye el resultado final típicamente hasta el 50%, pero pueden darse casos donde esta sea mayor que 1 (anomalías de cálculo), lo cual reduciría aún más el daño del tiro, pero nunca por debajo de 0
+	#var mod_angulo = 0.5 + max(1 - tasa_desviacion, 0) / 2
+	
 	var mod_recorrido = modif_recorrido(recorrido)
 	#var mod_recorrido = curva_dano.sample(recorrido / max_alcance)
 	print("> base: ", base_damage, ", recorrido: ", mod_recorrido, ", angulo: ", mod_angulo, " -> total: ", base_damage * mod_recorrido * mod_angulo)

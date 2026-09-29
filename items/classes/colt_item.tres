@@ -1,11 +1,15 @@
-[gd_resource type="Resource" script_class="ItemInfo" format=3 uid="uid://w66t2te8c0jk"]
+[gd_resource type="Resource" script_class="FireWeaponItem" format=3 uid="uid://860hr8372obm"]
 
-[ext_resource type="Script" uid="uid://d3tgi6xiu3i6w" path="res://items/item_info.gd" id="1_yawc1"]
+[ext_resource type="PackedScene" uid="uid://b16301nsg01q4" path="res://game/bullet/bullet.tscn" id="1_bjxn3"]
+[ext_resource type="Script" uid="uid://b0vl8sc7ikk5d" path="res://game/weapon/classes/fire_weapon/fire weapon item.gd" id="2_53ryn"]
 
 [resource]
-script = ExtResource("1_yawc1")
+script = ExtResource("2_53ryn")
+max_ammo = 6
+damage = 80.0
+after_wield_slowdown_time = 0.33
 nombre = "Colt"
 precio = 1500.0
-icon_texture_path = "uid://cvj5vk257m4n5"
+icon_path = "uid://cvj5vk257m4n5"
 item_scene_path = "uid://dtsq5gpig8f7m"
-metadata/_custom_type_script = "uid://d3tgi6xiu3i6w"
+metadata/_custom_type_script = "uid://b0vl8sc7ikk5d"

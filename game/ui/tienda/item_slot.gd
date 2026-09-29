@@ -8,14 +8,14 @@ enum ItemSource {
 	SHOP
 }
 
-@export var info: ItemInfo:
+@export var item: Item:
 	set(value):
-		info = value
-		if info:
-			%textura.texture = load(info.icon_texture_path)
-			%nombre.text = info.nombre
+		item = value
+		if item:
+			%textura.texture = load(item.icon_path)
+			%nombre.text = item.nombre
 			if _source == ItemSource.SHOP:
-				%precio.text = str(int(info.precio))
+				%precio.text = str(int(item.precio))
 			else:
 				%precio.text = ""
 		else:
@@ -24,16 +24,8 @@ enum ItemSource {
 			%precio.text = ""
 
 var tienda: Tienda
-var item: Item
 var inventory_role: Inventario.SlotRole
 var _source: ItemSource
-
-func set_item(_item: Item):
-	item = _item
-	if item != null:
-		info = ItemManager.get_item_info(item.info_resource)
-	else:
-		info = null
 
 
 func _ready() -> void:
@@ -41,12 +33,12 @@ func _ready() -> void:
 		_source = ItemSource.INVENTORY
 	if is_in_group("shop_slots"):
 		_source = ItemSource.SHOP
-	if info != null:
-		info = info # llamar al setter para inicializar el slot
+	if item != null:
+		item = item # llamar al setter para inicializar el slot
 
 
 func _get_drag_data(_at_position: Vector2) -> Variant:
-	if info != null:
+	if item != null:
 		var preview = $panel.duplicate()
 		preview.get_node("precio").hide()
 		set_drag_preview(preview)
@@ -54,7 +46,7 @@ func _get_drag_data(_at_position: Vector2) -> Variant:
 		if _source == ItemSource.INVENTORY:
 			drag_data = {"source": _source, "item_id": item.id}
 		else: if _source == ItemSource.SHOP:
-			drag_data = {"source": _source, "item_info": info}
+			drag_data = {"source": _source, "item": item}
 		return drag_data
 	else:
 		return null
@@ -71,7 +63,7 @@ func _drop_data(_at_position: Vector2, data: Variant) -> void:
 	# comprar
 	if data.source == ItemSource.SHOP and self._source == ItemSource.INVENTORY:
 		# añadir aqui el rol de este mismo slot (este es el que recibe el dropeo)
-		tienda.try_comprar(data["item_info"], inventory_role)
+		tienda.try_comprar(data["item"], inventory_role)
 	# vender
 	if data.source == ItemSource.INVENTORY and self._source == ItemSource.SHOP:
 		tienda.request_venta.rpc_id(1, data["item_id"])

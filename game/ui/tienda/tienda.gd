@@ -1,7 +1,9 @@
 class_name Tienda extends Control
 
+# Pienso que deben estar en scripts separados los frontends de tienda y de inventario, asi como los backends de uno y otro.
+# Aqui esta el backend y el frontend de la tienda, y el frontend del inventario
 
-var players: Dictionary[int, Player]
+var inventarios: Dictionary[int, Inventario]
 
 @onready var slot_maps: Dictionary[Inventario.SlotRole, ItemSlot] = {
 	Inventario.SlotRole.MAIN_WEAPON: %arma_actual
@@ -24,66 +26,72 @@ var inventario: Inventario:
 		for inv_slot_role in slot_maps:
 			inventario.public_items[inv_slot_role].item \
 			.connect_init(func(new_weapon):
-				slot_maps[inv_slot_role].set_item(new_weapon)
+				slot_maps[inv_slot_role].item = new_weapon
 			)
-		#inventario.weapon_item.connect_init(func(new_weapon):
-			#%arma_actual.set_item(new_weapon)
-		#)
+
+
+func init_inventarios(players: Dictionary[int, Player]):
+	for id in players:
+		inventarios[id] = players[id].inventario
 
 
 func _ready() -> void:
-	pass
-	#if OS.has_feature("editor"):
-		#debug_tasks()
+	if get_tree().current_scene == self:
+		debug_tasks()
 
 
 func debug_tasks():
-	var player = Player.new()
+	var player = load("res://game/player/player.tscn").instantiate()
 	player.ready.connect(func():
+		inventarios[1] = player.inventario
 		inventario = player.inventario
-		inventario.server_add_item(ItemManager.new_item_dto_from_path(
-		"res://items/classes/ak47_item.tres"), Inventario.SlotRole.MAIN_WEAPON)
+		inventario.server_add_item(ItemManager.new_item_dto(
+			"res://items/classes/ak47_item.tres"), 
+			Inventario.SlotRole.MAIN_WEAPON)
 	)
+	add_child(player)
 
 
 @rpc("any_peer", "call_local")
-func request_compra(info_path: String, slot: Inventario.SlotRole):
+func request_compra(item_path: String, slot: Inventario.SlotRole):
 	if multiplayer.is_server():
-		if ItemManager.item_info_exists(info_path):
+		if ItemManager.item_type_exists(item_path):
 			var player_id = multiplayer.get_remote_sender_id()
-			var transaction_inventory = players[player_id].inventario
-			var info = ItemManager.get_item_info(info_path)
-			if transaction_inventory.dinero.value >= info.precio:
-				# crear el item con su id unico
-				var dto = ItemManager.new_item_dto(info)
+			var transaction_inventory = inventarios[player_id]
+			var type = ItemManager.get_item_type(item_path)
+			if transaction_inventory.dinero.value >= type.precio:
+				# sellar el item con su id unico
+				#var dto = ItemManager.new_item_dto(item_path)
+				ItemManager.registrar_item(type)
+				var dto = type.to_dto()
 				transaction_inventory.modificar_dinero(
-					-dto.precio, player_id)
+					-type.precio, player_id)
 				transaction_inventory.server_add_item(dto, slot)
 			else:
-				printerr("Jugador con id: ", player_id, " intentando hacer una compra del objeto id '", info.resource_path, "' para el cual no tiene suficiente dinero")
+				printerr("Jugador con id: ", player_id, " intentando hacer una compra del objeto id '", type.item_type_path, "' para el cual no tiene suficiente dinero")
 
 
 @rpc("any_peer", "call_local")
 func request_venta(item_id: int):
 	if multiplayer.is_server():
 		var player_id = multiplayer.get_remote_sender_id()
-		var transaction_inventory = players[player_id].inventario
+		var transaction_inventory = inventarios[player_id]
 		var selling = transaction_inventory.get_item(item_id)
 		if selling:
-			var item_data = {"id": item_id, "precio": selling.precio}
+			#var item_data = {"id": item_id, "precio": selling.precio}
 			transaction_inventory.modificar_dinero(
-				+item_data.precio, player_id)
+				+selling.precio, player_id)
 			transaction_inventory.server_take_item(item_id)
 		else:
 			printerr("el jugador no tiene el item con id: ", item_id)
 
 
-func try_comprar(info: ItemInfo, target_role: Inventario.SlotRole):
+func try_comprar(item: Item, target_role: Inventario.SlotRole):
 	# Esto todavia no es rpc, por lo que suponemos que todo va a ser legal
-	if inventario.dinero.value >= info.precio:
+	if inventario.dinero.value >= item.precio:
 		# Cuando hacemos esta llamada no sabemos si el request va a ser aceptado o no, pero necesitariamos hacer algunas cosas (como fijar el item en el slot correspondiente) en caso de que sea aceptado y otras en caso de que no lo sea
 		# La opcion facil es pasarle la decision al servidor, y asi nos aseguramos que las acciones realizadas no dependan del cliente. Sin embargo, habria que pasarle al servidor demasiada informacion, y redefinir sus metodos para que abarquen las nuevas responsabilidades.
-		request_compra.rpc(info.resource_path, target_role)
+		request_compra.rpc(item.resource_path, target_role)
 	else:
 		# emitir mensaje de "tas arrancao"
 		var tween = create_tween()

@@ -37,7 +37,7 @@ func _ready():
 
 func server_initialize():
 	if multiplayer.is_server():
-		_ready_semaphore.setup(colocar_armas_iniciales, player_data.size())
+		_ready_semaphore.setup(_on_every_player_ready, player_data.size())
 		var starting_positions = %start_points.get_children()
 		var player_number = 0
 		for id in player_data:
@@ -81,15 +81,20 @@ func spawn_player(data) -> Node:
 		#client_player = player
 		%UI.player_data = player_data
 		%UI.player = player
-		%UI.tienda.players = players
+		#%UI.tienda.players = players
 	return player
 
-# Hay que darle a cada player un arma con su id unico registrado en el servidor. Como el servidor debe ser el que dé el id (y no el player que se lo pida) debe estar fuera del spawner, y como setear el arma de un jugador es una operación pública que deben conocer todos los clientes, hay que esperar hasta que todos los clientes estén cargados, para evitar condiciones de carrera
-func colocar_armas_iniciales():
+
+func _on_every_player_ready():
+	%UI.tienda.init_inventarios(players)
+	# Hay que darle a cada player un arma con su id unico registrado en el servidor. Como el servidor debe ser el que dé el id (y no el player que se lo pida) debe estar fuera del spawner, y como setear el arma de un jugador es una operación pública que deben conocer todos los clientes, hay que esperar hasta que todos los clientes estén cargados, para evitar condiciones de carrera
 	if multiplayer.is_server():
 		for id in players:
 			players[id].inventario.server_add_item(
-				ItemManager.new_item_dto_from_path("res://items/classes/colt_item.tres"), Inventario.SlotRole.MAIN_WEAPON)
+				ItemManager.new_item_dto("res://items/classes/colt_item.tres"), Inventario.SlotRole.MAIN_WEAPON)
+
+#func colocar_armas_iniciales():
+	#
 
 
 ## Armas

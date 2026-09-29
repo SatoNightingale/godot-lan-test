@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://c52t6vdvvh0th"
-path="res://.godot/imported/pie.svg-7efc1a733b2d5619d855dadee4470f13.ctex"
+uid="uid://c4cl7i21cxvej"
+path="res://.godot/imported/menu_button_light.svg-9fba5df5f5d07d2028f9f01e64f03f75.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://ui/controlador/pie.svg"
-dest_files=["res://.godot/imported/pie.svg-7efc1a733b2d5619d855dadee4470f13.ctex"]
+source_file="res://game/ui/pause menu/menu_button_light.svg"
+dest_files=["res://.godot/imported/menu_button_light.svg-9fba5df5f5d07d2028f9f01e64f03f75.ctex"]
 
 [params]
 
@@ -38,6 +38,6 @@ process/hdr_as_srgb=false
 process/hdr_clamp_exposure=false
 process/size_limit=0
 detect_3d/compress_to=1
-svg/scale=6.0
+svg/scale=0.075
 editor/scale_with_editor_scale=false
 editor/convert_colors_with_editor_theme=false

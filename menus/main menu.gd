@@ -141,3 +141,10 @@ func _on_server_disconnected():
 	error_popup.emit("El servidor se ha desconectado", "Desconexion")
 	player_data.clear()
 	change_scene(null)
+
+
+## Para evitar leaks, porque cuando se le hace queue_free() a esta escena no se eliminan automaticamente estas cositas
+func _exit_tree() -> void:
+	connect_menu.queue_free()
+	waiting_room.queue_free()
+	settings.queue_free()

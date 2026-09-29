@@ -26,7 +26,7 @@ enum SlotRole {
 var public_items = {
 	SlotRole.MAIN_WEAPON: {
 		"tipo": preload("res://game/weapon/classes/weapon/weapon.gd"),
-		"item": null
+		"item": Observable.new(null, set_weapon_item)
 	}
 }
 
@@ -42,16 +42,6 @@ func set_weapon_item(new_item: Item, _old_item):
 			printerr("El item pasado como weapon_item no contiene una Weapon")
 	else:
 		player.weapon = null
-
-func _ready() -> void:
-	# para cada uno de los slots (registrados como propiedades, si hay uno que queda sin registrar es un slot inaccesible)
-	public_items[SlotRole.MAIN_WEAPON].item = Observable.new(null, set_weapon_item)
-	# para todos los slots a la vez (excepto si hay uno sin observable_setter_name)
-	#for slot in public_items:
-		#var item_slot = public_items[slot]
-		#item_slot.item = Observable.new(null, 
-			#Callable.create(self, item_slot.observable_setter_name)
-		#)
 
 
 ## Modifica el dinero en el servidor y en el cliente especificado, si este no es el servidor mismo. No debe llamarse por rpc, porque el internamente lo hace y se corre el riesgo de desincronizacion si se llama primero en un cliente

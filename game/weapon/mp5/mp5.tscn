@@ -4,7 +4,7 @@
 [ext_resource type="Texture2D" uid="uid://bx8oj73yiw85y" path="res://game/weapon/mp5/MP5.png" id="3_hm07i"]
 
 [node name="mp5" unique_id=693644199 instance=ExtResource("1_73yhi")]
-max_ammo = 30
+max_ammo = 20
 automatica = true
 alcance = 500
 shoot_cooldown = 0.07

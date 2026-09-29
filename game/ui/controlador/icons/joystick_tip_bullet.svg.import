@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://deckinjpwwlu2"
-path="res://.godot/imported/bullet-shoot.svg-512fbb48097740a5ca4a83051ee78376.ctex"
+uid="uid://d3t35id8teo7x"
+path="res://.godot/imported/joystick_tip_bullet.svg-75795b5ce44714f84c71efca51d54b18.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://ui/controlador/icons/bullet-shoot.svg"
-dest_files=["res://.godot/imported/bullet-shoot.svg-512fbb48097740a5ca4a83051ee78376.ctex"]
+source_file="res://game/ui/controlador/icons/joystick_tip_bullet.svg"
+dest_files=["res://.godot/imported/joystick_tip_bullet.svg-75795b5ce44714f84c71efca51d54b18.ctex"]
 
 [params]
 

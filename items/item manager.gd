@@ -2,81 +2,86 @@ extends Node
 
 var max_id = 0
 
-var _item_info_cache : Dictionary[String, ItemInfo]
+## Aqui se referencian los modelos de items, recursos guardados en el disco (en res://items/classes/) que funcionan como "clases" para instanciar los items usados en el juego a partir de ellos. No deben ser modificadas, cada instancia generada a partir de ellos debe crearse con duplicate_deep()
+var _item_type_index : Dictionary[String, Item]
+
 var _cache_max_length = 20
 var _cache_order = []
 
 # Si un item esta tirado en el suelo en un cliente cualquiera, ¿cómo le digo al servidor por rpc que pickee ese item para un player? Debe haber una manera general de buscar items por su id
 var _item_db: Dictionary[int, Item]
 
-func new_item_dto(info: ItemInfo) -> Dictionary:
+## Obtiene el dto de un nuevo item a partir de su tipo de item, referenciado por la ruta. El nuevo item vendrá sellado con su id único y con los datos de instancia por defecto, más los datos de su tipo
+func new_item_dto(path: String) -> Dictionary:
 	if multiplayer.is_server():
-		var dto = info.as_item_dto()
-		max_id += 1
-		dto.id = max_id
-		_item_db[dto.id] = Item.new_from_dto(dto)
-		return dto
-	printerr("get_new_item solo puede ser llamado por el servidor")
+		var item = get_item_type(path)
+		if item:
+			registrar_item(item)
+			return item.to_dto()
+	else:
+		printerr("new_item_dto solo puede ser llamado por el servidor")
 	return {}
 
 
-func new_item_dto_from_path(path: String) -> Dictionary:
-	var info = get_item_info(path)
-	return new_item_dto(info) if info != null else {}
+# Toda vez que se cree un item, debe registrarse en el servidor llamando a esta funcion, y el id devuelto debe pasarse a todos los peers
+#@rpc("any_peer", "call_local")
+func registrar_item(item: Item) -> int:
+	if multiplayer.is_server(): # item.id == 0:
+		max_id += 1
+		item.id = max_id
+		_item_db[max_id] = item
+		return max_id
+	return 0
 
 
-## Toda vez que se cree un item, debe registrarse en el servidor llamando a esta funcion, y el id devuelto debe pasarse a todos los peers
-##@rpc("any_peer", "call_local")
-#func registrar_item(item: Dictionary) -> int:
-	#if multiplayer.is_server(): # item.id == 0:
-		#max_id += 1
-		#item.id = max_id
-		#return max_id
-	#return 0
+func item_type_exists(path: String):
+	return path in _item_type_index
 
 
-func item_info_exists(path: String):
-	return path in _item_info_cache
-
-
-func get_item_info(path: String) -> ItemInfo:
-	if not item_info_exists(path):
+## Obtiene un item modelo de tipo (no instancia) usado solo como referencia para acceder a los datos de tipo de un item de su tipo. Nótese que una información valiosa del objeto retornado es su propio tipo (herdado de Item), ya que podría definir DTO's o funciones especiales
+func get_item_type(path: String) -> Item:
+	if not item_type_exists(path):
 		printerr("El item '", path, "' no existe")
 		return null
-	if _item_info_cache[path] != null:
+	if _item_type_index[path] != null:
 		# colocamos al final, como la mas recientemente usada
 		_cache_order.erase(path)
 		_cache_order.append(path)
-		return _item_info_cache[path]
-	var info = load(path)
-	if info:
-		_item_info_cache[path] = info
+		return _item_type_index[path]
+	var item: Item = load(path)
+	if item:
+		item.item_type_path = path
+		_item_type_index[path] = item
 		_cache_order.append(path)
 		# para que la cache no se llene demasiado, liberamos la menos recientemente usada cuando llegue al maximo de capacidad (algoritmo LRU)
 		if _cache_order.size() > _cache_max_length:
 			var oldest_path = _cache_order.pop_front()
-			#_item_info_cache[oldest_path].free()#pero no hay huevos
-			_item_info_cache[oldest_path] = null
-		return info
+			_item_type_index[oldest_path].free() # sí hay huevos
+			_item_type_index[oldest_path] = null
+		return item
 	else:
 		printerr("No se pudo cargar el item '", path ,"'")
 		return null
 
 
 func _ready() -> void:
-	_build_item_index()
+	_build_item_type_index()
 
 
-func _build_item_index():
+func _build_item_type_index():
 	const item_dir = "res://items/classes"
 	var dir = DirAccess.open(item_dir)
 	if dir:
 		dir.list_dir_begin()
 		var file_name = dir.get_next()
 		while not file_name.is_empty():
-			if file_name.ends_with("_item.tres") or file_name.ends_with("_item.res"):
+			print(file_name)
+			if file_name.ends_with("_item.tres") or file_name.ends_with("_item.res") or file_name.ends_with("_item.tres.remap"):
+				if file_name.ends_with(".remap"):
+					file_name = file_name.get_basename()
 				var path = item_dir.path_join(file_name)
-				_item_info_cache[path] = null
+				# Luego cada valor de path se carga y se asigna a medida que se van utilizando
+				_item_type_index[path] = null
 			file_name = dir.get_next()
 	else:
 		printerr("No se pudo cargar el caché de items")

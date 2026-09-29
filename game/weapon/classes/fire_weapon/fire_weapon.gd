@@ -6,13 +6,14 @@ signal bullet_fired(direction: Vector2)
 signal reloading
 
 ## Escena que contiene el tipo de municion que usa el arma
+## (item, ahora)
 @export var municion: PackedScene = preload("res://game/bullet/bullet.tscn")
 ## Marcador para la posicion desde donde las balas son disparadas
 @export var cannon: Marker2D
 ## Municion maxima del arma
-@export var max_ammo := 6
+@export var max_ammo : int
 ## Si el arma es automatica o no. Si es automatica, dispara mientras este presionada la accion de disparar; si no lo es solo dispara una vez cuando se presiona la accion
-@export var automatica := false
+@export var automatica : bool
 ## Alcance de bala del arma
 @export var alcance := 700
 ## Factor de desviación del arma, en grados.
@@ -89,7 +90,7 @@ func request_reload():
 		if not recharging:
 			reload.rpc()
 
-@rpc("call_local")
+@rpc("authority", "call_local")
 func shoot():
 	shoot_semaphore.adquirir_timer($shoot_timer)
 	ammo -= 1
@@ -108,7 +109,7 @@ func shoot():
 	%shot_sound.play()
 
 
-@rpc("call_local")
+@rpc("authority", "call_local")
 func reload():
 	recharging = true
 	shoot_semaphore.adquirir_timer($reload_timer)

@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://dsp8pfd5vwbcc"
-path="res://.godot/imported/money icon.png-8ac61f6521c5eb1f46f604282d431b74.ctex"
+uid="uid://c52t6vdvvh0th"
+path="res://.godot/imported/pie.svg-9a36248d08fa5417a033015cd28f3f4c.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://ui/tienda/money icon.png"
-dest_files=["res://.godot/imported/money icon.png-8ac61f6521c5eb1f46f604282d431b74.ctex"]
+source_file="res://game/ui/controlador/pie.svg"
+dest_files=["res://.godot/imported/pie.svg-9a36248d08fa5417a033015cd28f3f4c.ctex"]
 
 [params]
 
@@ -38,3 +38,6 @@ process/hdr_as_srgb=false
 process/hdr_clamp_exposure=false
 process/size_limit=0
 detect_3d/compress_to=1
+svg/scale=6.0
+editor/scale_with_editor_scale=false
+editor/convert_colors_with_editor_theme=false

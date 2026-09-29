@@ -1,7 +1,7 @@
 [gd_scene format=3 uid="uid://owedt21eosqi"]
 
-[ext_resource type="Script" uid="uid://v7kukw1f6alt" path="res://ui/controlador/cooldown_button.gd" id="3_ttpq0"]
-[ext_resource type="Texture2D" uid="uid://c52t6vdvvh0th" path="res://ui/controlador/pie.svg" id="4_bb5rj"]
+[ext_resource type="Script" uid="uid://v7kukw1f6alt" path="res://game/ui/controlador/cooldown_button.gd" id="3_ttpq0"]
+[ext_resource type="Texture2D" uid="uid://c52t6vdvvh0th" path="res://game/ui/controlador/pie.svg" id="4_bb5rj"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_7mycd"]
 radius = 115.0

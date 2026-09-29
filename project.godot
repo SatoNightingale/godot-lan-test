@@ -11,7 +11,7 @@ config_version=5
 [application]
 
 config/name="Prueba LAN"
-config/version="0.4.0"
+config/version="0.4.1"
 run/main_scene="uid://7c5qi7ecxocq"
 config/features=PackedStringArray("4.6", "Forward Plus")
 boot_splash/show_image=false
@@ -37,7 +37,6 @@ window/stretch/aspect="expand"
 
 [editor]
 
-export/convert_text_resources_to_binary=false
 version_control/plugin_name="GitPlugin"
 version_control/autoload_on_startup=true
 
@@ -48,17 +47,20 @@ enabled=PackedStringArray("res://addons/rpc-await/plugin.cfg", "res://addons/vir
 [file_customization]
 
 folder_colors={
+"res://addons/": "gray",
+"res://android/": "gray",
+"res://build/": "gray",
 "res://game/": "red",
 "res://game/bullet/": "yellow",
 "res://game/player/": "blue",
+"res://game/ui/": "gray",
+"res://game/ui/controlador/": "green",
+"res://game/ui/tienda/": "orange",
 "res://game/weapon/": "orange",
 "res://items/": "yellow",
 "res://maps/": "green",
 "res://menus/": "blue",
 "res://tests/": "pink",
-"res://ui/": "gray",
-"res://ui/controlador/": "green",
-"res://ui/tienda/": "orange",
 "res://utils/": "purple"
 }
 
