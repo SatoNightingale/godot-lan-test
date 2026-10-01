@@ -21,24 +21,22 @@ var weapon_prop := Observable.new(null,
 func(new_weapon, _old_weapon):
 	if new_weapon:
 		if new_weapon.get_parent() == null:
-			add_child(new_weapon)
+			%hand.add_child(new_weapon)
 		else:
-			new_weapon.reparent(self, false)
+			new_weapon.reparent(%hand, false)
 , func(new_weapon, old_weapon):
 	if old_weapon:
-		remove_child(old_weapon)
+		%hand.remove_child(old_weapon)
 		#weapon.queue_free()
 	if new_weapon:
 		new_weapon.player = self
 )
 
-@export var base_speed := 240.0 # 200.0 puede servir como velocidad de caminata
+@export var base_speed := 180.0 # 200.0 puede servir como velocidad de caminata, 240 de velocidad de carrera
 
 @export var respawn_timer : Timer
 
 @export var vida_max := 100.0
-
-@export var base_glance_distance := 100
 
 @export var _lifebar_gradient: Gradient
 
@@ -46,12 +44,17 @@ func(new_weapon, _old_weapon):
 
 @onready var inventario : Inventario = $Inventario
 
-var glance_mode = Observable.new(false,
+@export var base_glance_distance := 100
+
+var camera_dir: Vector2
+var move_dir: Vector2
+
+var glance_mode := Observable.new(false,
 func(value):
 	if value != glance_mode:
 		glance_mode = value
-		_camera.position_smoothing_enabled = glance_mode
-		if !glance_mode:
+		_camera.position_smoothing_enabled = glance_mode.value
+		if !glance_mode.value:
 			_camera.offset = Vector2.ZERO
 )
 
@@ -100,7 +103,8 @@ func initialize(pos: Vector2):
 	direction = Vector2.from_angle(rotation)
 	$shape.set_deferred("disabled", false)
 	$hitbox.set_deferred("monitoring", true)
-	$sprite.self_modulate = player_colors[player_number]
+	%AnimationPlayer.play("RESET")
+	#$sprite.self_modulate = player_colors[player_number]
 
 
 @rpc("authority", "call_local")
@@ -109,24 +113,46 @@ func revive(pos: Vector2):
 	revived.emit()
 
 
-func control_movement(move_dir: Vector2):
+func control_movement():
 	velocity = move_dir.normalized() * speed \
 		if move_dir != Vector2.ZERO \
 		else Vector2.ZERO
 
 
-func control_camera(camera_dir: Vector2, move_dir: Vector2):
+func control_camera():
 	if camera_dir != Vector2.ZERO:
-		rotation = camera_dir.angle()
 		direction = camera_dir
-	else:
-		if move_dir != Vector2.ZERO:
-			rotation = move_dir.angle()
-			direction = move_dir
+	else: if move_dir != Vector2.ZERO:
+		direction = move_dir
 	if move_dir != Vector2.ZERO:
-		glance_mode = false
-	if glance_mode:
+		glance_mode.value = false
+	if glance_mode.value:
 		_camera.offset = base_glance_distance * camera_dir
+
+
+func animation():
+	var dir = camera_dir if camera_dir else move_dir
+	# Que la mano tiemble cuando esta disparando
+	if camera_dir != Vector2.ZERO:
+		%hand.global_rotation = camera_dir.angle()
+	else:
+		%hand.rotation = 0.0
+	# poner scale.x en negativo voltea el nodo horizontalmente junto a todos sus hijos
+	# Sin embargo, cuando se cambia el signo de scale.x, lo que hace Godot internamente es cambiar el signo de scale.y y aplicar una rotacion de 180' (que al final termina siendo lo mismo)
+	if sign(dir.x) != 0 and sign(dir.x) != sign(scale.y):
+			scale.x = -scale.x
+	if move_dir != Vector2.ZERO:
+		if %AnimationPlayer.assigned_animation == "RESET":
+			#%AnimationPlayer.play("walk")
+			play_anim_remote.rpc("walk")
+	else:
+		if %AnimationPlayer.assigned_animation == "walk":
+			#%AnimationPlayer.play("RESET")
+			play_anim_remote.rpc("RESET")
+
+@rpc("any_peer", "call_local")
+func play_anim_remote(anim: String):
+	%AnimationPlayer.play(anim)
 
 
 func _physics_process(_delta):
@@ -135,12 +161,22 @@ func _physics_process(_delta):
 	if not alive:
 		return
 	# No sera mejor que este camera_dir y este move_dir sean sincronziadas con un Synchronizer y que su efecto se aplique en el servidor?
-	var camera_dir = Input.get_vector("look_left", "look_right", "look_up", "look_down")
-	var move_dir = Input.get_vector("move_left", "move_right", "move_up", "move_down")
-	control_movement(move_dir)
-	control_camera(camera_dir, move_dir)
+	# Digamos que mediante Synchronizers, el cliente envia estas dos propiedades (camera_dir, move_dir) y el servidor actualiza el estado de cada player (posicion, rotacion, escala, etc.) y se lo envia a todos los clientes. Eso seria lo más seguro y profesional. Pero qué pasaría 
+	#if local_player:
+	camera_dir = Input.get_vector("look_left", "look_right", "look_up", "look_down")
+	move_dir = Input.get_vector("move_left", "move_right", "move_up", "move_down")
+	control_camera()
+	control_movement()
+	animation()
 	if Input.is_action_just_pressed("aim"):
-		glance_mode = !glance_mode
+		glance_mode.value = !glance_mode.value
+	move_and_slide()
+
+
+@rpc
+func public_control():
+	control_movement()
+	animation()
 	move_and_slide()
 
 
@@ -156,7 +192,8 @@ func die(killer_id: int):
 	alive = false
 	if multiplayer.is_server():
 		dead.emit(killer_id)
-	# animacion de muerte por aqui...
+	# TODO: animacion de muerte por aqui...
+	# Estas lineas en realidad formarian parte de la animacion de muerte
 	visible = false
 	$shape.set_deferred("disabled", true)
 	$hitbox.set_deferred("monitoring", false)
@@ -170,7 +207,7 @@ func start_respawn_timer():
 
 func _on_hitbox_body_entered(body: Node2D):
 	if multiplayer.is_server():
-		if body is Bullet:
+		if body is Bullet and body.dist_segura_player(player_id):
 			damage.rpc(body.calcular_dano(self), body.shooter_id)
 
 

@@ -13,10 +13,14 @@ damage = 50.0
 
 [node name="sprite" parent="." index="0" unique_id=1448784083]
 texture = ExtResource("3_hm07i")
-offset = Vector2(30, 0)
+offset = Vector2(9, -2)
 
 [node name="cannon" parent="sprite" index="0" unique_id=1996995724]
-position = Vector2(43, 0)
+position = Vector2(33, -2)
+
+[node name="shot_sound" parent="." index="1" unique_id=66055893]
+position = Vector2(22, -2)
+pitch_scale = 2.0
 
 [node name="reload_timer" parent="." index="4" unique_id=1383800656]
 wait_time = 4.0

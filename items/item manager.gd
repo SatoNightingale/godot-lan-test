@@ -11,7 +11,7 @@ var _cache_order = []
 # Si un item esta tirado en el suelo en un cliente cualquiera, ¿cómo le digo al servidor por rpc que pickee ese item para un player? Debe haber una manera general de buscar items por su id
 var _item_db: Dictionary[int, Item]
 
-## Obtiene el dto de un nuevo item a partir de su tipo de item, referenciado por la ruta. El nuevo item vendrá sellado con su id único y con los datos de instancia por defecto, más los datos de su tipo
+## Obtiene el dto de un nuevo item a partir de su tipo de item, referenciado por su resource_path. El nuevo item vendrá sellado con su id único y con los datos de instancia por defecto, más los datos de su tipo
 func new_item_dto(path: String) -> Dictionary:
 	if multiplayer.is_server():
 		var item = get_item_type(path)
@@ -75,7 +75,7 @@ func _build_item_type_index():
 		dir.list_dir_begin()
 		var file_name = dir.get_next()
 		while not file_name.is_empty():
-			print(file_name)
+			#print(file_name)
 			if file_name.ends_with("_item.tres") or file_name.ends_with("_item.res") or file_name.ends_with("_item.tres.remap"):
 				if file_name.ends_with(".remap"):
 					file_name = file_name.get_basename()

@@ -1,6 +1,7 @@
 [gd_scene format=3 uid="uid://cubxtvqqbnv2v"]
 
 [ext_resource type="Script" uid="uid://byhjvhlcdawq8" path="res://game/player/player.gd" id="1_iidce"]
+[ext_resource type="Texture2D" uid="uid://b0d10wx1a20k8" path="res://game/player/Shooter Sato/CamAmarillo.png" id="2_4ste8"]
 [ext_resource type="Texture2D" uid="uid://bh4qxte6rbxb" path="res://game/player/player_scaled.png" id="2_a4w0n"]
 [ext_resource type="Script" uid="uid://1ynng4hbiccf" path="res://game/player/inventario.gd" id="3_8soms"]
 [ext_resource type="Texture2D" uid="uid://bw5lsrvrx8acq" path="res://game/player/lifebar.png" id="3_a4w0n"]
@@ -9,6 +10,46 @@
 [sub_resource type="Gradient" id="Gradient_b2mth"]
 offsets = PackedFloat32Array(0, 0.33, 0.66, 1)
 colors = PackedColorArray(1, 0, 0, 1, 1, 0.3764706, 0, 1, 1, 0.5882353, 0, 1, 1, 1, 1, 1)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_anr75"]
+atlas = ExtResource("2_4ste8")
+region = Rect2(0, 0, 32, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_epvkq"]
+atlas = ExtResource("2_4ste8")
+region = Rect2(32, 0, 32, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_5ghna"]
+atlas = ExtResource("2_4ste8")
+region = Rect2(64, 0, 32, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_j0mij"]
+atlas = ExtResource("2_4ste8")
+region = Rect2(96, 0, 32, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_gb4gm"]
+atlas = ExtResource("2_4ste8")
+region = Rect2(128, 0, 32, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_uv2nh"]
+atlas = ExtResource("2_4ste8")
+region = Rect2(160, 0, 32, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_n270p"]
+atlas = ExtResource("2_4ste8")
+region = Rect2(192, 0, 32, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_3ep63"]
+atlas = ExtResource("2_4ste8")
+region = Rect2(224, 0, 32, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_rqcxa"]
+atlas = ExtResource("2_4ste8")
+region = Rect2(256, 0, 32, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_2mv0n"]
+atlas = ExtResource("2_4ste8")
+region = Rect2(288, 0, 32, 48)
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_esygj"]
 animations = [{
@@ -19,25 +60,66 @@ animations = [{
 "loop": true,
 "name": &"p1",
 "speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_anr75")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_epvkq")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_5ghna")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_j0mij")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_gb4gm")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_uv2nh")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_n270p")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_3ep63")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_rqcxa")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_2mv0n")
+}],
+"loop": true,
+"name": &"tipo_0",
+"speed": 10.0
 }]
 
-[sub_resource type="CircleShape2D" id="CircleShape2D_hih7m"]
-radius = 19.0263
+[sub_resource type="CircleShape2D" id="CircleShape2D_4ste8"]
+radius = 12.509996
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_b2mth"]
-radius = 21.0
-height = 48.0
+radius = 14.0
+height = 60.0
 
 [sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_onrkg"]
-properties/0/path = NodePath(".:position")
+properties/0/path = NodePath(".:direction")
 properties/0/spawn = true
 properties/0/replication_mode = 2
-properties/1/path = NodePath(".:rotation")
+properties/1/path = NodePath(".:position")
 properties/1/spawn = true
-properties/1/replication_mode = 2
-properties/2/path = NodePath(".:direction")
+properties/1/replication_mode = 1
+properties/2/path = NodePath(".:rotation")
 properties/2/spawn = true
-properties/2/replication_mode = 2
+properties/2/replication_mode = 1
+properties/3/path = NodePath(".:scale")
+properties/3/spawn = true
+properties/3/replication_mode = 1
+properties/4/path = NodePath("hand:rotation")
+properties/4/spawn = true
+properties/4/replication_mode = 1
 
 [sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_b2mth"]
 properties/0/path = NodePath(".:alive")
@@ -50,6 +132,93 @@ properties/2/path = NodePath(".:vida")
 properties/2/spawn = true
 properties/2/replication_mode = 2
 
+[sub_resource type="Animation" id="Animation_5ghna"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("sprite:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [0]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("hand:position")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(-3, -21)]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath(".:scale")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(1, 1)]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath(".:rotation")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [0.0]
+}
+
+[sub_resource type="Animation" id="Animation_gb4gm"]
+resource_name = "walk_right"
+length = 1.05
+loop_mode = 1
+step = 0.0
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("sprite:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(nan, nan, 0, 0.9980353, inf),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1),
+"update": 0,
+"values": [9, 9, 0, 9, 0]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("hand:position")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(-0.002863191, 0.27883837, 0.5607826, 0.96217334),
+"transitions": PackedFloat32Array(1, 1, 1, 1),
+"update": 0,
+"values": [Vector2(-3, -21), Vector2(-2, -17), Vector2(-3, -21), Vector2(-5, -18)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_uv2nh"]
+_data = {
+&"RESET": SubResource("Animation_5ghna"),
+&"walk": SubResource("Animation_gb4gm")
+}
+
 [node name="player" type="CharacterBody2D" unique_id=1954339528 node_paths=PackedStringArray("respawn_timer", "_camera") groups=["players"]]
 modulate = Color(1, 0.99607843, 1, 1)
 collision_mask = 3
@@ -60,32 +229,32 @@ _lifebar_gradient = SubResource("Gradient_b2mth")
 _camera = NodePath("camara")
 
 [node name="sprite" type="AnimatedSprite2D" parent="." unique_id=829708582]
-texture_filter = 2
-position = Vector2(4, 0)
+texture_filter = 1
+scale = Vector2(1.5, 1.5)
 sprite_frames = SubResource("SpriteFrames_esygj")
-animation = &"p1"
+animation = &"tipo_0"
+offset = Vector2(0, -22)
 
 [node name="shape" type="CollisionShape2D" parent="." unique_id=715889227]
-visible = false
-shape = SubResource("CircleShape2D_hih7m")
+position = Vector2(-0.5, -7.5)
+shape = SubResource("CircleShape2D_4ste8")
 
 [node name="hitbox" type="Area2D" parent="." unique_id=16569471]
-visible = false
-position = Vector2(-7, -0.5)
+position = Vector2(0, -20)
+metadata/_edit_group_ = true
 
 [node name="shape" type="CollisionShape2D" parent="hitbox" unique_id=1799772823]
-position = Vector2(10, 0)
-rotation = -1.5707964
+position = Vector2(0, -2)
 shape = SubResource("CapsuleShape2D_b2mth")
 
 [node name="lifebar" type="TextureProgressBar" parent="." unique_id=848671473]
 unique_name_in_owner = true
 visible = false
 top_level = true
-offset_left = -18.0
-offset_top = -30.0
-offset_right = 22.0
-offset_bottom = -25.0
+offset_left = -20.0
+offset_top = -60.0
+offset_right = 20.0
+offset_bottom = -55.0
 max_value = 1.0
 step = 0.01
 value = 1.0
@@ -113,4 +282,20 @@ replication_config = SubResource("SceneReplicationConfig_onrkg")
 unique_name_in_owner = true
 replication_config = SubResource("SceneReplicationConfig_b2mth")
 
+[node name="hand" type="Marker2D" parent="." unique_id=756596319]
+unique_name_in_owner = true
+position = Vector2(-3, -21)
+metadata/_edit_group_ = true
+
+[node name="hand_aim" type="Marker2D" parent="." unique_id=806319299]
+unique_name_in_owner = true
+visible = false
+position = Vector2(4, -27)
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=882656235]
+unique_name_in_owner = true
+libraries/ = SubResource("AnimationLibrary_uv2nh")
+autoplay = &"RESET"
+
 [connection signal="body_entered" from="hitbox" to="." method="_on_hitbox_body_entered"]
+[connection signal="body_exited" from="hitbox" to="." method="_on_hitbox_body_exited"]

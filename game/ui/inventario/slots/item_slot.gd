@@ -24,6 +24,7 @@ enum ItemSource {
 			%precio.text = ""
 
 var tienda: Tienda
+var front_inventario: InventarioFront
 var inventory_role: Inventario.SlotRole
 var _source: ItemSource
 
@@ -62,8 +63,9 @@ func _can_drop_data(_at_position: Vector2, data: Variant) -> bool:
 func _drop_data(_at_position: Vector2, data: Variant) -> void:
 	# comprar
 	if data.source == ItemSource.SHOP and self._source == ItemSource.INVENTORY:
-		# añadir aqui el rol de este mismo slot (este es el que recibe el dropeo)
-		tienda.try_comprar(data["item"], inventory_role)
+		# Aqui realmente se intercambia de un inventario a otro
+		front_inventario.try_comprar(data["item"], inventory_role)
 	# vender
 	if data.source == ItemSource.INVENTORY and self._source == ItemSource.SHOP:
 		tienda.request_venta.rpc_id(1, data["item_id"])
+	# Antes de hacer este par de acciones, mas bien habria que preguntarse por las especializaciones del slot y la accion que debe realizar en cada caso

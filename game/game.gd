@@ -81,20 +81,19 @@ func spawn_player(data) -> Node:
 		#client_player = player
 		%UI.player_data = player_data
 		%UI.player = player
+		%UI.initialize()
+		# La tienda tiene que estar como que un poco mas cerquita del Game
 		#%UI.tienda.players = players
 	return player
 
 
 func _on_every_player_ready():
-	%UI.tienda.init_inventarios(players)
+	%UI.overlay_inventario.tienda.init_inventarios(players)
 	# Hay que darle a cada player un arma con su id unico registrado en el servidor. Como el servidor debe ser el que dé el id (y no el player que se lo pida) debe estar fuera del spawner, y como setear el arma de un jugador es una operación pública que deben conocer todos los clientes, hay que esperar hasta que todos los clientes estén cargados, para evitar condiciones de carrera
 	if multiplayer.is_server():
 		for id in players:
 			players[id].inventario.server_add_item(
 				ItemManager.new_item_dto("res://items/classes/colt_item.tres"), Inventario.SlotRole.MAIN_WEAPON)
-
-#func colocar_armas_iniciales():
-	#
 
 
 ## Armas

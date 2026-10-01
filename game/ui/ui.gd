@@ -4,29 +4,43 @@ extends CanvasLayer
 @onready var controlador: ControladorVirtual = %virtual_controls
 @onready var anunciador: Anunciador = %label_anuncios
 @onready var menu_pausa: MenuPausa = %"menu pausa"
-@onready var tienda: Tienda = %Tienda
+@onready var overlay_inventario: InventoryUI = %Inventario
 
 var player_data
+#var players: Dictionary[int, Player]
 
-var player : Player:
-	set(_player):
-		player = _player
-		controlador.player = player
-		respawn_timer = player.respawn_timer
-		if player.is_node_ready():
-			_on_player_ready()
-		else:
-			player.ready.connect(_on_player_ready)
+@export var player : Player
+	#set(_player):
+		#player = _player
+		#if _player and is_node_ready():
+			#controlador.player = player
+			#respawn_timer = player.respawn_timer
+			#if player.is_node_ready():
+				#_on_player_ready()
+			#else:
+				#player.ready.connect(_on_player_ready)
 
 var respawn_timer: Timer
 
 
 func _ready() -> void:
 	ConsoleLogger.set_console(%console)
+	#if player:
+		#player = player # llamar al setter para instalar todo
+	
 
 
-func _on_player_ready():
-	tienda.inventario = player.inventario
+func initialize():
+	controlador.player = player
+	respawn_timer = player.respawn_timer
+	if player.is_node_ready():
+		_on_player_ready_initialize()
+	else:
+		player.ready.connect(_on_player_ready_initialize)
+
+func _on_player_ready_initialize():
+	# no te lo puedo creer
+	overlay_inventario.inventory_front.player_inventory = player.inventario
 
 
 func set_dead_screen(killer_name: String):

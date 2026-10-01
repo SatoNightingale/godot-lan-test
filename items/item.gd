@@ -1,9 +1,13 @@
 class_name Item extends Resource
-
+## Representa un item en el juego, lo mismo una instancia de item que un tipo de item (estos ultimos son recursos almacenados en disco)
+##
 ## Items tienen una triple funcion:
 ## 1. Tipos genericos de items, guardados como recursos y usados por ItemManager para generar nuevos items
+##
 ## 2. Items en el inventario o equipados, donde tienen un id unico y pueden contener estado
+##
 ## 3. Envoltura como item de objetos equipados (p. ej. armas) donde se guarda su estado, permitiendo la interaccion con el sistema de items
+##
 ## Esta triple función determina una división en sus propiedades: la misma clase tiene propiedades de tipo (inmutables, compartidas entre todas las instancias: nombre, precio, max_stack) y propiedades de instancia (propias de cada instancia del item: id, cantidad). Lo hacemos de este modo para evitar un árbol duplicado de herencia: por ejemplo, si WeaponItem contiene la propiedad ammo (instancia) y WeaponItemType contiene max_ammo (tipo) entonces estamos obligados a especificar un ItemType por cada Item, duplicando el árbol de herencia de Item, lo cual es engorroso. La desventaja es que se sobreacumulan datos en la única clase Item que queda, pero tampoco es demasiado problema.
 
 
@@ -15,8 +19,10 @@ class_name Item extends Resource
 
 ## Propiedades de clase
 
-## Ruta al recurso que sirve de modelo o clase del item. Funciona como id del tipo de item, que ItemManager setea cuando lo carga desde el disco. Cada item se construye mediante ItemManager a partir de uno de estos recursos. 
+## Ruta al recurso que sirve de modelo o clase del item. Funciona como id del tipo de item, que ItemManager setea cuando lo carga desde el disco. Cada item se construye mediante ItemManager a partir de uno de estos recursos.
 var item_type_path: String
+	#get(): return resource_path
+	#set(_v): pass
 ## Nombre del item que se mostrara en el inventario
 @export var nombre: String
 ## Precio del item para operaciones de venta
@@ -67,7 +73,6 @@ func to_dto() -> Dictionary:
 static func new_from_dto(dto: Dictionary) -> Item:
 	var item = Item.new()
 	var item_type = ItemManager.get_item_type(dto.type_id)
-	item.item_type_path = dto.type_id
 	# A partir de aqui, le dejamos al tipo de item generar la nueva instancia. Con esto podemos acceder a los datos de tipo nativamente
 	return item_type.inicializar_item(item, dto)
 
@@ -82,10 +87,10 @@ func inicializar_item(new_item: Item, dto: Dictionary):
 
 ## Copia de forma rápida todas las variables del script que estén marcadas como exportadas. En la práctica estas son casi siempre las variables de tipo, las que se muestran en el inspector
 func _copy_type_properties(item: Item):
+	item.item_type_path = item_type_path
 	for property in get_property_list():
 		# propiedades exportadas del script
 		if property.usage & PROPERTY_USAGE_SCRIPT_VARIABLE and property.usage & PROPERTY_USAGE_EDITOR:
-			#print(property.name)
 			item.set(property.name, get(property.name))
 
 ## Aqui se copian datos de instancia que pertenezcan al item en sí (id, cantidad...), no al object, puesto que estas se almacenan en el object, que es la única fuente de verdad (además, puede haber setters personalizados para estas propiedades, lo cual complejizaría aún más la operación, pues estos setters pueden intentar acceder a un object que todavía no está creado). Para inicializar el object, sobreescribir _generate_object

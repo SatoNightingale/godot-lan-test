@@ -1,0 +1,122 @@
+[gd_scene format=3 uid="uid://bu8ogvcx133dg"]
+
+[ext_resource type="Script" uid="uid://c58w4bdhnnsr6" path="res://game/ui/inventario/tienda.gd" id="1_y8si5"]
+[ext_resource type="PackedScene" uid="uid://cse6tdwn71it5" path="res://game/ui/inventario/slots/item_slot.tscn" id="2_tk8sn"]
+[ext_resource type="Script" uid="uid://b4tdmuvqj6rhi" path="res://game/ui/inventario/shop_tabs_drops.gd" id="3_epoqs"]
+[ext_resource type="Resource" uid="uid://860hr8372obm" path="res://items/classes/colt_item.tres" id="4_epoqs"]
+[ext_resource type="Resource" uid="uid://c4jlf1ikbpox6" path="res://items/classes/mp5_item.tres" id="5_qqngu"]
+[ext_resource type="Resource" uid="uid://bjb2mciiaxcav" path="res://items/classes/ak47_item.tres" id="6_3aut5"]
+
+[node name="Tienda" type="MarginContainer" unique_id=1725928229]
+anchors_preset = 11
+anchor_left = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -365.0
+grow_horizontal = 0
+grow_vertical = 2
+theme_override_constants/margin_left = 20
+theme_override_constants/margin_top = 20
+theme_override_constants/margin_right = 0
+theme_override_constants/margin_bottom = 20
+script = ExtResource("1_y8si5")
+
+[node name="PanelContainer" type="PanelContainer" parent="." unique_id=1145213938]
+layout_mode = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="PanelContainer" unique_id=1113453164]
+layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
+
+[node name="shop" type="VBoxContainer" parent="PanelContainer/MarginContainer" unique_id=1407570768]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="PanelContainer/MarginContainer/shop" unique_id=1282273106]
+layout_mode = 2
+text = "Tienda"
+horizontal_alignment = 1
+
+[node name="shop_tabs" type="TabContainer" parent="PanelContainer/MarginContainer/shop" unique_id=906859915 node_paths=PackedStringArray("tienda")]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3
+tab_alignment = 1
+current_tab = 0
+clip_tabs = false
+script = ExtResource("3_epoqs")
+tienda = NodePath("../../../..")
+
+[node name="Armas" type="ScrollContainer" parent="PanelContainer/MarginContainer/shop/shop_tabs" unique_id=22871342]
+layout_mode = 2
+horizontal_scroll_mode = 0
+vertical_scroll_mode = 4
+metadata/_tab_index = 0
+
+[node name="MarginContainer" type="MarginContainer" parent="PanelContainer/MarginContainer/shop/shop_tabs/Armas" unique_id=1262827853]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
+
+[node name="grid" type="GridContainer" parent="PanelContainer/MarginContainer/shop/shop_tabs/Armas/MarginContainer" unique_id=1040805256]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+columns = 2
+
+[node name="ficha arma" parent="PanelContainer/MarginContainer/shop/shop_tabs/Armas/MarginContainer/grid" unique_id=1516605172 groups=["shop_slots"] instance=ExtResource("2_tk8sn")]
+layout_mode = 2
+item = ExtResource("4_epoqs")
+
+[node name="ficha arma2" parent="PanelContainer/MarginContainer/shop/shop_tabs/Armas/MarginContainer/grid" unique_id=1360839330 groups=["shop_slots"] instance=ExtResource("2_tk8sn")]
+layout_mode = 2
+item = ExtResource("5_qqngu")
+
+[node name="ficha arma3" parent="PanelContainer/MarginContainer/shop/shop_tabs/Armas/MarginContainer/grid" unique_id=2025864184 groups=["shop_slots"] instance=ExtResource("2_tk8sn")]
+layout_mode = 2
+item = ExtResource("6_3aut5")
+
+[node name="Munición" type="ScrollContainer" parent="PanelContainer/MarginContainer/shop/shop_tabs" unique_id=1541080244]
+visible = false
+layout_mode = 2
+horizontal_scroll_mode = 0
+vertical_scroll_mode = 4
+metadata/_tab_index = 1
+
+[node name="grid" type="GridContainer" parent="PanelContainer/MarginContainer/shop/shop_tabs/Munición" unique_id=869890776]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+columns = 2
+
+[node name="Trampas" type="ScrollContainer" parent="PanelContainer/MarginContainer/shop/shop_tabs" unique_id=370832388]
+visible = false
+layout_mode = 2
+horizontal_scroll_mode = 0
+vertical_scroll_mode = 4
+metadata/_tab_index = 2
+
+[node name="grid" type="GridContainer" parent="PanelContainer/MarginContainer/shop/shop_tabs/Trampas" unique_id=906637523]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+columns = 2
+
+[node name="Misc" type="ScrollContainer" parent="PanelContainer/MarginContainer/shop/shop_tabs" unique_id=1728766107]
+visible = false
+layout_mode = 2
+horizontal_scroll_mode = 0
+vertical_scroll_mode = 4
+metadata/_tab_index = 3
+
+[node name="grid" type="GridContainer" parent="PanelContainer/MarginContainer/shop/shop_tabs/Misc" unique_id=584357337]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+columns = 2

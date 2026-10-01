@@ -60,15 +60,13 @@ func _process(_delta):
 	if player == null:
 		return
 	
-	$sprite.flip_v = abs(global_rotation) > PI / 2
-	
 	if not player.local_player:
 		return
 	
 	var camera_dir = Input.get_vector("look_left", "look_right", "look_up", "look_down")
 	
 	if shoot_semaphore.disponible() and ammo > 0 and (
-	(not player.glance_mode and camera_dir.length_squared() > 0.98)
+	(not player.glance_mode.value and camera_dir.length_squared() > 0.98)
 	or (automatica and Input.is_action_pressed("shoot"))
 	or (not automatica and Input.is_action_just_pressed("shoot"))
 	):

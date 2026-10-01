@@ -1,9 +1,9 @@
 [gd_scene format=3 uid="uid://cmcwg28s1fsot"]
 
 [ext_resource type="Script" uid="uid://cj3tqfaq13vb5" path="res://game/ui/ui.gd" id="1_nancp"]
-[ext_resource type="SystemFont" uid="uid://xianhjfbqxqw" path="res://game/ui/tienda/monospace font.tres" id="2_obcwv"]
+[ext_resource type="SystemFont" uid="uid://xianhjfbqxqw" path="res://common/monospace font.tres" id="2_obcwv"]
 [ext_resource type="PackedScene" uid="uid://cr2x3q1nbty36" path="res://game/ui/controlador/controlador_virtual.tscn" id="2_vkava"]
-[ext_resource type="PackedScene" uid="uid://d3yryot1jdjf6" path="res://game/ui/tienda/tienda.tscn" id="5_tf0e0"]
+[ext_resource type="PackedScene" uid="uid://d3yryot1jdjf6" path="res://game/ui/inventario/inventario overlay.tscn" id="5_tf0e0"]
 [ext_resource type="Texture2D" uid="uid://dlcyg7dbwn4n2" path="res://game/ui/console.svg" id="7_bo1jx"]
 [ext_resource type="Script" uid="uid://dkrm7nukjgc6k" path="res://game/ui/label_anuncios.gd" id="10_eogtg"]
 [ext_resource type="PackedScene" uid="uid://ditdsn1ffgq6o" path="res://game/ui/pause menu/pause_menu.tscn" id="11_bi8hs"]
@@ -149,7 +149,7 @@ text = "Has sido eliminado"
 [node name="menu pausa" parent="." unique_id=466875431 instance=ExtResource("11_bi8hs")]
 unique_name_in_owner = true
 
-[node name="Tienda" parent="." unique_id=756692496 instance=ExtResource("5_tf0e0")]
+[node name="Inventario" parent="." unique_id=756692496 instance=ExtResource("5_tf0e0")]
 unique_name_in_owner = true
 
 [node name="gameover_screen" type="VBoxContainer" parent="." unique_id=194800940]

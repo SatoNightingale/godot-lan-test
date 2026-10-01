@@ -50,18 +50,18 @@ folder_colors={
 "res://addons/": "gray",
 "res://android/": "gray",
 "res://build/": "gray",
+"res://common/": "purple",
 "res://game/": "red",
 "res://game/bullet/": "yellow",
 "res://game/player/": "blue",
 "res://game/ui/": "gray",
 "res://game/ui/controlador/": "green",
-"res://game/ui/tienda/": "orange",
+"res://game/ui/inventario/": "orange",
 "res://game/weapon/": "orange",
 "res://items/": "yellow",
 "res://maps/": "green",
 "res://menus/": "blue",
-"res://tests/": "pink",
-"res://utils/": "purple"
+"res://tests/": "pink"
 }
 
 [input]

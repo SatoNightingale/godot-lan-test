@@ -1,6 +1,10 @@
 class_name Observable extends RefCounted
-## Encapsula una propiedad que puede ser "observada" por otros objetos para actualizarse en cada cambio de esta. Actualmente, el tipo de la propiedad encapsulada no puede ser fijado por script, asi que se recomienda siempre tratar de que las asignaciones al valor de la propiedad sean del mismo tipo que aquel en que se fijo esta inicialmente.
-## Emite la señal changed con el nuevo valor de la propiedad cada vez que esta cambia
+## Encapsula una propiedad que puede ser "observada" por otros objetos para actualizarse en cada cambio de esta.
+## 
+## Actualmente, el tipo de la propiedad encapsulada no puede ser fijado por script, asi que se recomienda siempre tratar de que las asignaciones al valor de la propiedad sean del mismo tipo que aquel en que se fijó esta inicialmente.
+## Emite la señal changed con el nuevo valor de la propiedad cada vez que esta cambia.
+## 
+## [b]NOTA[/b]: al escribir propiedades Observable, se recomienda definir explícitamente su tipo, para que Godot detecte y señale automáticamente problemas comunes como que se use el nombre del Observable en expresiones en lugar de su valor. Esto también podría resolverse declarando junto a la propiedad otra cuyos getters y setters referencien al valor, y así se conserva la posibilidad de observar la propiedad junto con un modo de acceder rápidamente a su contenido; esta duplicación de variables es un trade-off que parece no tener otra alternativa
 
 ## Se dispara cada vez que cambia el valor del observable, y tambien en la inicializacion del mismo. El valor que obtiene por parametro es el nuevo valor que adquiere el observable
 signal changed(value)

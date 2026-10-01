@@ -5,8 +5,8 @@ var player: Player:
 	set(_player):
 		player = _player
 		player.weapon_prop.connect_init(_on_player_weapon_changed)
-		player.glance_mode.changed.connect(_on_player_glance_mode_changed)
-		setup_visibility(player.weapon != null)
+		player.glance_mode.changed.connect(
+			_on_player_glance_mode_changed)
 
 
 func _on_player_weapon_changed(weapon: Weapon):

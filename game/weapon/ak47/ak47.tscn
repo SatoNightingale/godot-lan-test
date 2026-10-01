@@ -12,15 +12,14 @@ reload_cooldown = 4.0
 damage = 45.0
 
 [node name="sprite" parent="." index="0" unique_id=1448784083]
-position = Vector2(-1, 0)
 texture = ExtResource("3_wodgf")
-offset = Vector2(37, 0)
+offset = Vector2(15, -2)
 
 [node name="cannon" parent="sprite" index="0" unique_id=1996995724]
-position = Vector2(59, 0)
+position = Vector2(37, -2)
 
 [node name="shot_sound" parent="." index="1" unique_id=66055893]
-position = Vector2(58, 0)
+position = Vector2(37, -2)
 
 [node name="timer_rafaga" type="Timer" parent="." index="6" unique_id=1896245306]
 wait_time = 0.5

@@ -3,6 +3,7 @@ class_name Bullet extends RigidBody2D
 ## SE SUPONE que el padre de las balas siempre es un nodo anclado al origen (0; 0), que puede fungir como "global"
 
 const dist_quemarropa = 50
+const dist_fogonazo = 30 ## Distancia que la bala tiene que haber recorrido antes de poder dañar al shooter_id que la generó
 
 @export var sprite : Texture2D:
 	set(value):
@@ -15,14 +16,16 @@ const dist_quemarropa = 50
 @export var trail_width := 2
 @export var trail_color: Color = Color("ffc24d")
 
-var max_alcance := 700.0
-var base_damage := 100.0
+@export var max_alcance := 700.0
+@export var base_damage := 100.0
 
 var pos_emisor: Vector2 # hay que actualizar esto cada vez que haya un rebote o cambio de direccion brusco de la bala
 
 var recorrido := 0.0
 var shooter_id: int
 
+#var just_entered := true
+#var shooter_hitbox_entered := false
 
 func _ready() -> void:
 	$trail.width = trail_width
@@ -34,12 +37,11 @@ func _ready() -> void:
 func _physics_process(delta):
 	recorrido += delta * linear_velocity.length()
 	$trail.set_point_position(1, Vector2.LEFT * min(recorrido, trail_length))
-	#if recorrido <= trail_length:
-		#$trail.set_point_position(1, Vector2.LEFT * recorrido)
 	if is_multiplayer_authority() and recorrido >= max_alcance:
 		queue_free()
 
-
+## En armas con cañón corto, como revólveres, la bala colisiona con el player (no con el hitbox, sino con la colisión con el mapa) y cambia la rotación, lo cual se ve sobre todo en la traza de la bala
+## Solucion fácil: extender el cañón
 func shoot(direction: Vector2, who: Player):
 	shooter_id = who.player_id
 	var arma = who.weapon as FireWeapon
@@ -99,6 +101,12 @@ func calcular_dano(player: Player) -> float:
 	return base_damage * mod_recorrido * mod_angulo
 
 
-func _on_body_entered(_body: Node) -> void:
+func _on_body_entered(body: Node) -> void:
 	if is_multiplayer_authority():
+		if body is Player and not dist_segura_player(body.player_id):
+			return
 		queue_free()
+
+
+func dist_segura_player(player_id: int) -> bool:
+	return shooter_id != player_id or recorrido > dist_fogonazo

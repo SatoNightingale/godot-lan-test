@@ -10,10 +10,10 @@ after_wield_slowdown_time = 0.33
 
 [node name="sprite" parent="." index="0" unique_id=1448784083]
 texture = ExtResource("2_xvksq")
-offset = Vector2(28, 0)
+offset = Vector2(8, -6)
 
 [node name="cannon" parent="sprite" index="0" unique_id=1996995724]
-position = Vector2(49, 0)
+position = Vector2(37, -6)
 
 [node name="shoot_timer" parent="." index="3" unique_id=1922823095]
 wait_time = 0.6

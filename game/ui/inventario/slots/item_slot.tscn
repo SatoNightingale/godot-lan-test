@@ -1,7 +1,7 @@
 [gd_scene format=3 uid="uid://cse6tdwn71it5"]
 
-[ext_resource type="Script" uid="uid://df1gsiwxjfrpl" path="res://game/ui/tienda/item_slot.gd" id="1_gn4bl"]
-[ext_resource type="SystemFont" uid="uid://xianhjfbqxqw" path="res://game/ui/tienda/monospace font.tres" id="2_x2jd4"]
+[ext_resource type="Script" uid="uid://df1gsiwxjfrpl" path="res://game/ui/inventario/slots/item_slot.gd" id="1_gn4bl"]
+[ext_resource type="SystemFont" uid="uid://xianhjfbqxqw" path="res://common/monospace font.tres" id="2_x2jd4"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ihdeb"]
 bg_color = Color(0.2509804, 0.2509804, 0.2509804, 1)

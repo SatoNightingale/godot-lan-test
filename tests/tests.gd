@@ -1,11 +1,7 @@
 extends Node2D
 
+
 func _ready() -> void:
-	#var item = Item.new_from_dto({
-		#"type_id": "res://items/classes/colt_item.tres",
-		#"id": 1
-	#})
-	#print(item)
 	$player.player_id = 1
 	$player2.player_id = 2
 	$player.inventario.server_add_item(
@@ -15,11 +11,10 @@ func _ready() -> void:
 		if new_weapon:
 			new_weapon.bullet_fired.connect(on_bullet_fired)
 	)
-	#$UI.player = $player
-	#var player: Player = get_node("player")
-	#var dict = {1: player}
-	$UI.tienda.inventarios[1] = $player.inventario
-	$UI.tienda.inventario = $player.inventario
+	$UI.overlay_inventario.inventory_front.tienda.init_inventarios(
+		{1: $player}
+	)
+	$UI.initialize()
 
 
 func on_bullet_fired(direction: Vector2):

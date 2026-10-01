@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://dsp8pfd5vwbcc"
-path="res://.godot/imported/money icon.png-e77ff585fc133e4fdaceebd53f9c3ae9.ctex"
+uid="uid://dbdpd7l0ya5ti"
+path="res://.godot/imported/PistolaBase.png-f32a5d3ee9bda31c793264b84914b07b.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://game/ui/tienda/money icon.png"
-dest_files=["res://.godot/imported/money icon.png-e77ff585fc133e4fdaceebd53f9c3ae9.ctex"]
+source_file="res://game/player/Shooter Sato/PistolaBase.png"
+dest_files=["res://.godot/imported/PistolaBase.png-f32a5d3ee9bda31c793264b84914b07b.ctex"]
 
 [params]
 

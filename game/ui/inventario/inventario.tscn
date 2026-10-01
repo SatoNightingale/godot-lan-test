@@ -1,0 +1,40 @@
+[gd_scene format=3 uid="uid://cnpqy4gghrohr"]
+
+[ext_resource type="Script" uid="uid://d3nor7wgd6e7u" path="res://game/ui/inventario/inventario front.gd" id="1_wbp3s"]
+[ext_resource type="PackedScene" uid="uid://cse6tdwn71it5" path="res://game/ui/inventario/slots/item_slot.tscn" id="1_x54cv"]
+
+[node name="Inventario" type="PanelContainer" unique_id=1418757297]
+custom_minimum_size = Vector2(0, 300)
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -115.0
+offset_top = -150.0
+offset_right = 115.0
+offset_bottom = 150.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_wbp3s")
+
+[node name="MarginContainer" type="MarginContainer" parent="." unique_id=1407175222]
+layout_mode = 2
+theme_override_constants/margin_left = 15
+theme_override_constants/margin_top = 15
+theme_override_constants/margin_right = 15
+theme_override_constants/margin_bottom = 15
+
+[node name="inventory" type="VBoxContainer" parent="MarginContainer" unique_id=2013681702]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(200, 0)
+layout_mode = 2
+
+[node name="Label" type="Label" parent="MarginContainer/inventory" unique_id=1008648366]
+layout_mode = 2
+text = "Arma actual"
+horizontal_alignment = 1
+
+[node name="arma_actual" parent="MarginContainer/inventory" unique_id=1516605172 groups=["inventory_slots"] instance=ExtResource("1_x54cv")]
+unique_name_in_owner = true
+layout_mode = 2

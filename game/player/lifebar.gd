@@ -1,6 +1,6 @@
 extends TextureProgressBar
 
-@export var offset = Vector2(-18, -30)
+@onready var offset = position
 
 func _process(_delta: float) -> void:
 	position = offset + get_parent().position
