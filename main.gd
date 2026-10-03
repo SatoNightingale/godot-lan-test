@@ -5,7 +5,12 @@ class_name Main extends Node
 @onready var menu_scene = $MenuContainer/Main
 var game_scene: Node
 
-var program_args := parse_arguments()
+var program_args
+
+
+func _init() -> void:
+	program_args = parse_arguments()
+
 
 func _ready() -> void:
 	menu_scene.main = self

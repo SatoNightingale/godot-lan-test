@@ -101,6 +101,7 @@ func initialize(pos: Vector2):
 	position = pos
 	rotation = 0.0
 	direction = Vector2.from_angle(rotation)
+	scale = Vector2.ONE
 	$shape.set_deferred("disabled", false)
 	$hitbox.set_deferred("monitoring", true)
 	%AnimationPlayer.play("RESET")
@@ -138,46 +139,47 @@ func animation():
 	else:
 		%hand.rotation = 0.0
 	# poner scale.x en negativo voltea el nodo horizontalmente junto a todos sus hijos
-	# Sin embargo, cuando se cambia el signo de scale.x, lo que hace Godot internamente es cambiar el signo de scale.y y aplicar una rotacion de 180' (que al final termina siendo lo mismo)
+	# Cuando se cambia el signo de scale.x, lo que hace Godot internamente es cambiar el signo de scale.y y aplicar una rotacion de 180', que al final termina siendo lo mismo
+	# Esto es porque lo que hay detras de esta propiedad es realmente una matriz de transformacion, y como alterar la propiedad individualmente suele tener resultados imprevisibles que pueden no ser los mismos para todos los peers. Por eso aplicamos la transformacion recomendada
 	if sign(dir.x) != 0 and sign(dir.x) != sign(scale.y):
-			scale.x = -scale.x
+		transform *= Transform2D.FLIP_X
+		#scale.x = -scale.x
+		#_flip_sign *= -1
 	if move_dir != Vector2.ZERO:
 		if %AnimationPlayer.assigned_animation == "RESET":
-			#%AnimationPlayer.play("walk")
-			play_anim_remote.rpc("walk")
+			%AnimationPlayer.play("walk")
 	else:
 		if %AnimationPlayer.assigned_animation == "walk":
-			#%AnimationPlayer.play("RESET")
-			play_anim_remote.rpc("RESET")
-
-@rpc("any_peer", "call_local")
-func play_anim_remote(anim: String):
-	%AnimationPlayer.play(anim)
+			%AnimationPlayer.play("RESET")
 
 
 func _physics_process(_delta):
-	if not local_player:
-		return
+	#if not local_player:
+		#return
 	if not alive:
 		return
 	# No sera mejor que este camera_dir y este move_dir sean sincronziadas con un Synchronizer y que su efecto se aplique en el servidor?
-	# Digamos que mediante Synchronizers, el cliente envia estas dos propiedades (camera_dir, move_dir) y el servidor actualiza el estado de cada player (posicion, rotacion, escala, etc.) y se lo envia a todos los clientes. Eso seria lo más seguro y profesional. Pero qué pasaría 
-	#if local_player:
-	camera_dir = Input.get_vector("look_left", "look_right", "look_up", "look_down")
-	move_dir = Input.get_vector("move_left", "move_right", "move_up", "move_down")
-	control_camera()
-	control_movement()
-	animation()
-	if Input.is_action_just_pressed("aim"):
-		glance_mode.value = !glance_mode.value
-	move_and_slide()
+	# Digamos que mediante Synchronizers, el cliente envia estas dos propiedades (camera_dir, move_dir) y el servidor actualiza el estado de cada player (posicion, rotacion, escala, etc.) y se lo envia a todos los clientes mediante su Synchronizer
+	if local_player:
+		camera_dir = Input.get_vector("look_left", "look_right", "look_up", "look_down")
+		move_dir = Input.get_vector("move_left", "move_right", "move_up", "move_down")
+		
+		control_camera()
+		
+		if Input.is_action_just_pressed("aim"):
+			glance_mode.value = !glance_mode.value
+	
+	if multiplayer.is_server():
+		control_movement()
+		move_and_slide()
 
 
-@rpc
-func public_control():
-	control_movement()
+func _process(_delta: float) -> void:
 	animation()
-	move_and_slide()
+
+
+#func _on_client_synchronizer_delta_synchronized() -> void:
+	#animation()
 
 
 @rpc("call_local")
