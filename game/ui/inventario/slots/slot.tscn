@@ -1,0 +1,31 @@
+[gd_scene format=3 uid="uid://xgpidmknlfk7"]
+
+[ext_resource type="StyleBox" uid="uid://d0vx2u8bqqur8" path="res://game/ui/inventario/slots/slot panel.tres" id="1_2tqek"]
+[ext_resource type="SystemFont" uid="uid://xianhjfbqxqw" path="res://common/monospace font.tres" id="2_2tqek"]
+
+[node name="slot" type="PanelContainer" unique_id=702327130]
+custom_minimum_size = Vector2(50, 50)
+offset_bottom = 10.0
+size_flags_horizontal = 4
+size_flags_vertical = 4
+mouse_filter = 1
+theme_override_styles/panel = ExtResource("1_2tqek")
+
+[node name="margin" type="MarginContainer" parent="." unique_id=1906989065]
+layout_mode = 2
+theme_override_constants/margin_bottom = 10
+
+[node name="textura" type="TextureRect" parent="margin" unique_id=1238227759]
+unique_name_in_owner = true
+texture_filter = 1
+layout_mode = 2
+stretch_mode = 5
+
+[node name="cantidad" type="Label" parent="." unique_id=1319853633]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 8
+theme_override_fonts/font = ExtResource("2_2tqek")
+text = "1"

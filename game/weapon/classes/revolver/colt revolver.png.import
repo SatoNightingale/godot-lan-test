@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bfqtqssskbed"
-path="res://.godot/imported/pie.svg-d8767e3984eaf2ebbcc52b8df75614af.ctex"
+uid="uid://cvj5vk257m4n5"
+path="res://.godot/imported/colt revolver.png-da82b4b663f144d4c583b0334007ca11.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://game/weapon/classes/fire_weapon/pie.svg"
-dest_files=["res://.godot/imported/pie.svg-d8767e3984eaf2ebbcc52b8df75614af.ctex"]
+source_file="res://game/weapon/classes/revolver/colt revolver.png"
+dest_files=["res://.godot/imported/colt revolver.png-da82b4b663f144d4c583b0334007ca11.ctex"]
 
 [params]
 
@@ -38,6 +38,3 @@ process/hdr_as_srgb=false
 process/hdr_clamp_exposure=false
 process/size_limit=0
 detect_3d/compress_to=1
-svg/scale=1.0
-editor/scale_with_editor_scale=false
-editor/convert_colors_with_editor_theme=false

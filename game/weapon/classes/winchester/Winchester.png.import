@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://c6vyarvq5myao"
-path="res://.godot/imported/AK47.png-e11a00ab045981627f3dcbf9d79d9766.ctex"
+uid="uid://uw04we5hwepk"
+path="res://.godot/imported/Winchester.png-26432a262814d7352ba9b959ee690261.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://game/weapon/ak47/AK47.png"
-dest_files=["res://.godot/imported/AK47.png-e11a00ab045981627f3dcbf9d79d9766.ctex"]
+source_file="res://game/weapon/classes/winchester/Winchester.png"
+dest_files=["res://.godot/imported/Winchester.png-26432a262814d7352ba9b959ee690261.ctex"]
 
 [params]
 

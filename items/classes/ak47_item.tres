@@ -1,7 +1,7 @@
 [gd_resource type="Resource" script_class="FireWeaponItem" format=3 uid="uid://bjb2mciiaxcav"]
 
 [ext_resource type="PackedScene" uid="uid://b16301nsg01q4" path="res://game/bullet/bullet.tscn" id="1_ngoaq"]
-[ext_resource type="Script" uid="uid://b0vl8sc7ikk5d" path="res://game/weapon/classes/fire_weapon/fire weapon item.gd" id="2_nt8wt"]
+[ext_resource type="Script" uid="uid://b0vl8sc7ikk5d" path="res://game/weapon/fire_weapon/fire weapon item.gd" id="2_nt8wt"]
 
 [resource]
 script = ExtResource("2_nt8wt")

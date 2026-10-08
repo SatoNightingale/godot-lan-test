@@ -1,0 +1,33 @@
+[gd_scene format=3 uid="uid://cse6tdwn71it5"]
+
+[ext_resource type="Script" uid="uid://df1gsiwxjfrpl" path="res://game/ui/inventario/slots/shop_slot.gd" id="1_lj2xo"]
+[ext_resource type="PackedScene" uid="uid://xgpidmknlfk7" path="res://game/ui/inventario/slots/slot.tscn" id="2_bamxw"]
+[ext_resource type="SystemFont" uid="uid://xianhjfbqxqw" path="res://common/monospace font.tres" id="3_sn5nv"]
+
+[node name="shop_slot" type="VBoxContainer" unique_id=1516605172]
+mouse_filter = 0
+theme_override_constants/separation = 1
+script = ExtResource("1_lj2xo")
+
+[node name="panel" parent="." unique_id=702327130 instance=ExtResource("2_bamxw")]
+custom_minimum_size = Vector2(120, 50)
+layout_mode = 2
+
+[node name="precio" type="Label" parent="panel" unique_id=1616020606]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 8
+size_flags_vertical = 8
+theme_override_colors/font_color = Color(1, 0.84313726, 0, 1)
+theme_override_fonts/font = ExtResource("3_sn5nv")
+theme_override_font_sizes/font_size = 12
+horizontal_alignment = 2
+
+[node name="nombre" type="Label" parent="." unique_id=101715052]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 8
+theme_override_font_sizes/font_size = 12
+horizontal_alignment = 1
+
+[editable path="panel"]

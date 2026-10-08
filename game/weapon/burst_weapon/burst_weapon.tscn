@@ -1,7 +1,7 @@
 [gd_scene format=3 uid="uid://bdqs3noeqrfie"]
 
-[ext_resource type="PackedScene" uid="uid://dc5yelyhv1r2x" path="res://game/weapon/classes/fire_weapon/fire_weapon.tscn" id="1_h764v"]
-[ext_resource type="Script" uid="uid://bmll2m4c82b2p" path="res://game/weapon/classes/burst_weapon/burst_weapon.gd" id="2_aknb4"]
+[ext_resource type="PackedScene" uid="uid://dc5yelyhv1r2x" path="res://game/weapon/fire_weapon/fire_weapon.tscn" id="1_h764v"]
+[ext_resource type="Script" uid="uid://bmll2m4c82b2p" path="res://game/weapon/burst_weapon/burst_weapon.gd" id="2_aknb4"]
 
 [node name="rafaga_weapon" unique_id=693644199 instance=ExtResource("1_h764v")]
 script = ExtResource("2_aknb4")

@@ -97,14 +97,16 @@ func _ready():
 func initialize(pos: Vector2):
 	alive = true
 	vida = vida_max
-	visible = true
+	#visible = true
 	position = pos
-	rotation = 0.0
+	#rotation = 0.0
 	direction = Vector2.from_angle(rotation)
-	scale = Vector2.ONE
-	$shape.set_deferred("disabled", false)
-	$hitbox.set_deferred("monitoring", true)
+	#scale = Vector2.ONE
+	#$shape.set_deferred("disabled", false)
+	#$hitbox.set_deferred("monitoring", true)
+	# Puede que RESET nunca se llame
 	%AnimationPlayer.play("RESET")
+	%AnimationPlayer.play("idle")
 	#$sprite.self_modulate = player_colors[player_number]
 
 
@@ -140,26 +142,23 @@ func animation():
 		%hand.rotation = 0.0
 	# poner scale.x en negativo voltea el nodo horizontalmente junto a todos sus hijos
 	# Cuando se cambia el signo de scale.x, lo que hace Godot internamente es cambiar el signo de scale.y y aplicar una rotacion de 180', que al final termina siendo lo mismo
-	# Esto es porque lo que hay detras de esta propiedad es realmente una matriz de transformacion, y como alterar la propiedad individualmente suele tener resultados imprevisibles que pueden no ser los mismos para todos los peers. Por eso aplicamos la transformacion recomendada
+	# Esto es porque lo que hay detras de esta propiedad es realmente una matriz de transformacion, y como alterar la propiedad individualmente suele tener resultados imprevisibles que pueden no ser los mismos para todos los peers, aplicamos la transformacion recomendada
 	if sign(dir.x) != 0 and sign(dir.x) != sign(scale.y):
 		transform *= Transform2D.FLIP_X
 		#scale.x = -scale.x
 		#_flip_sign *= -1
 	if move_dir != Vector2.ZERO:
-		if %AnimationPlayer.assigned_animation == "RESET":
+		if %AnimationPlayer.assigned_animation == "idle":
 			%AnimationPlayer.play("walk")
 	else:
 		if %AnimationPlayer.assigned_animation == "walk":
-			%AnimationPlayer.play("RESET")
+			%AnimationPlayer.play("idle")
 
 
 func _physics_process(_delta):
-	#if not local_player:
-		#return
 	if not alive:
 		return
-	# No sera mejor que este camera_dir y este move_dir sean sincronziadas con un Synchronizer y que su efecto se aplique en el servidor?
-	# Digamos que mediante Synchronizers, el cliente envia estas dos propiedades (camera_dir, move_dir) y el servidor actualiza el estado de cada player (posicion, rotacion, escala, etc.) y se lo envia a todos los clientes mediante su Synchronizer
+	# El cliente envia camera_dir y move_dir mediante su Synchronizer; y el servidor actualiza el estado de cada player (posicion) y se lo envia a todos los clientes mediante su Synchronizer
 	if local_player:
 		camera_dir = Input.get_vector("look_left", "look_right", "look_up", "look_down")
 		move_dir = Input.get_vector("move_left", "move_right", "move_up", "move_down")
@@ -178,10 +177,6 @@ func _process(_delta: float) -> void:
 	animation()
 
 
-#func _on_client_synchronizer_delta_synchronized() -> void:
-	#animation()
-
-
 @rpc("call_local")
 func damage(dn: int, inflicter_id: int):
 	vida -= dn
@@ -196,10 +191,11 @@ func die(killer_id: int):
 		dead.emit(killer_id)
 	# TODO: animacion de muerte por aqui...
 	# Estas lineas en realidad formarian parte de la animacion de muerte
-	visible = false
-	$shape.set_deferred("disabled", true)
-	$hitbox.set_deferred("monitoring", false)
-	#respawn_timer.start()
+	%AnimationPlayer.play(["die_forward", "die_backwards"]
+		.pick_random())
+	#visible = false
+	#$shape.set_deferred("disabled", true)
+	#$hitbox.set_deferred("monitoring", false)
 
 
 @rpc("authority", "call_local")

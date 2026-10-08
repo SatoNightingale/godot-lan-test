@@ -16,8 +16,8 @@ enum SlotRole {
 	_PRIVATE_ROLE_MARK, ## esto solo es para marcar a partir de dónde empiezan los roles privados y no debe ser utilizado como rol de ningun slot o item en ningun caso
 	# privados
 	SECONDARY_WEAPON,
-	MAIN_BULLET,
-	MAIN_GRENADE,
+	EXTRA_WEAPON,
+	MAIN_AMMO,
 	CARRY_SECURE, ## Inventario que no se pierde al morir, pequeño
 	CARRY_INSECURE ## Inventario que se dropea al morir, más grande
 }
@@ -25,7 +25,7 @@ enum SlotRole {
 ## Items del inventario que representan slots "publicos", esto es, visibles y relevantes para todos los peers, y que por tanto deben ser sincronizados aunque los demas items permanezcan locales y ocultos.
 var public_items = {
 	SlotRole.MAIN_WEAPON: {
-		"tipo": preload("res://game/weapon/classes/weapon/weapon.gd"),
+		"tipo": preload("res://game/weapon/weapon/weapon item.gd"),
 		"item": Observable.new(null, set_weapon_item)
 	}
 }
@@ -84,10 +84,8 @@ func add_item(item_dto: Dictionary, slot: SlotRole):
 @rpc("any_peer", "call_local")
 func take_item(id: int):
 	var i = 0
-	var item: Item
 	for it in items:
 		if it.id == id:
-			item = it
 			items.remove_at(i)
 			break
 		i += 1

@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="FireWeaponItem" format=3 uid="uid://i5rv38vvapmy"]
+
+[ext_resource type="PackedScene" uid="uid://b16301nsg01q4" path="res://game/bullet/bullet.tscn" id="1_tpttj"]
+[ext_resource type="Script" uid="uid://b0vl8sc7ikk5d" path="res://game/weapon/fire_weapon/fire weapon item.gd" id="2_2q22w"]
+
+[resource]
+script = ExtResource("2_2q22w")
+max_ammo = 10
+alcance = 1200
+desviacion = 2.0
+nombre = "Winchester"
+precio = 4200.0
+icon_path = "uid://uw04we5hwepk"
+item_scene_path = "uid://ceudgbdqquoiq"
+metadata/_custom_type_script = "uid://b0vl8sc7ikk5d"

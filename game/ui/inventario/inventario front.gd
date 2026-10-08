@@ -1,8 +1,8 @@
 class_name InventarioFront extends Control
 
 
-@onready var slot_maps: Dictionary[Inventario.SlotRole, ItemSlot] = {
-	Inventario.SlotRole.MAIN_WEAPON: %arma_actual
+@onready var slot_maps: Dictionary[Inventario.SlotRole, Slot] = {
+	Inventario.SlotRole.MAIN_WEAPON: %main_weapon
 }
 
 var tienda: Tienda
