@@ -51,3 +51,31 @@ func _generate_object(item: Item, dto: Dictionary):
 		object.reloading_slowdown = reloading_slowdown
 		object.aim_distance = aim_distance
 		object.ammo = dto.ammo
+
+
+func get_tooltip(slot_text: String) -> String:
+	@warning_ignore("incompatible_ternary")
+	return \
+"[font_size=16]{nombre}[/font_size]
+[p][color=gainsboro][indent]{text}[/indent][/color][/p]
+[color=darkorange]Daño: [/color]{damage}
+[color=darkorange]Munición máxima: [/color]{max_ammo}
+[color=darkorange]Automática: [/color]{automatica}
+[color=darkorange]Desviación de bala: [/color]{desviacion}º
+[color=darkorange]Tiempo de recarga: [/color]{reload_cooldown}s
+[color=darkorange]Distancia de apuntado: [/color]{aim_dist}
+[color=darkorange]Alcance: [/color]{alcance}
+[p][font_size=10][color=darkgray]{slot_text}[/color][/font_size][/p]
+" \
+.format({
+	"nombre": nombre,
+	"text": tooltip_text,
+	"damage": damage,
+	"max_ammo": max_ammo,
+	"automatica": "Si" if automatica else "No",
+	"alcance": alcance,
+	"desviacion": desviacion,
+	"reload_cooldown": reload_cooldown,
+	"aim_dist": aim_distance if aim_distance != 0 else "no apunta",
+	"slot_text": slot_text,
+})

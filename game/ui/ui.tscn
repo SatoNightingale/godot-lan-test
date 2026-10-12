@@ -4,6 +4,7 @@
 [ext_resource type="SystemFont" uid="uid://xianhjfbqxqw" path="res://common/monospace font.tres" id="2_obcwv"]
 [ext_resource type="PackedScene" uid="uid://cr2x3q1nbty36" path="res://game/ui/controlador/controlador_virtual.tscn" id="2_vkava"]
 [ext_resource type="PackedScene" uid="uid://d3yryot1jdjf6" path="res://game/ui/inventario/inventario overlay.tscn" id="5_tf0e0"]
+[ext_resource type="Texture2D" uid="uid://dsp8pfd5vwbcc" path="res://game/ui/inventario/money icon.png" id="7_6fpg5"]
 [ext_resource type="Texture2D" uid="uid://dlcyg7dbwn4n2" path="res://game/ui/console.svg" id="7_bo1jx"]
 [ext_resource type="Script" uid="uid://dkrm7nukjgc6k" path="res://game/ui/label_anuncios.gd" id="10_eogtg"]
 [ext_resource type="PackedScene" uid="uid://ditdsn1ffgq6o" path="res://game/ui/pause menu/pause_menu.tscn" id="11_bi8hs"]
@@ -146,11 +147,25 @@ layout_mode = 2
 theme_override_font_sizes/font_size = 24
 text = "Has sido eliminado"
 
-[node name="menu pausa" parent="." unique_id=466875431 instance=ExtResource("11_bi8hs")]
+[node name="menu_pausa" parent="." unique_id=466875431 instance=ExtResource("11_bi8hs")]
 unique_name_in_owner = true
 
 [node name="Inventario" parent="." unique_id=756692496 instance=ExtResource("5_tf0e0")]
 unique_name_in_owner = true
+visible = false
+
+[node name="money_button" type="Button" parent="." unique_id=1472955113]
+unique_name_in_owner = true
+offset_left = 20.0
+offset_top = 20.0
+offset_right = 152.0
+offset_bottom = 62.0
+focus_mode = 0
+theme_override_colors/font_color = Color(1, 0.84313726, 0, 1)
+theme_override_fonts/font = ExtResource("2_obcwv")
+theme_override_font_sizes/font_size = 24
+text = "$dinero"
+icon = ExtResource("7_6fpg5")
 
 [node name="gameover_screen" type="VBoxContainer" parent="." unique_id=194800940]
 unique_name_in_owner = true

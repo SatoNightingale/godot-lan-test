@@ -1,47 +1,52 @@
 @tool
-class_name ShopSlot extends Slot
+class_name ShopSlot extends UISlot
 
-## Como todos los tipos de inventario van a usar esta clase Slot, la necesidad de unificar los tipos de inventario viene de aqui. El slot debe tener cosas como el _drop_data, que lo obliga a interactuar en terminos de tienda y demás.
+## Como todos los tipos de inventario van a usar esta clase UISlot, la necesidad de unificar los tipos de inventario viene de aqui. El slot debe tener cosas como el _drop_data, que lo obliga a interactuar en terminos de tienda y demás.
 ## Y si drop_data fuera una señal, en plan "a mí me dropean cosas, haz lo que tú entiendas con ellas". El inventario que contiene el slot podría recibir esa señal, recibir los datos de dropeo y del inventario de origen. Tanto el inventario que emitió el dropeo, como el que lo recibe, pueden definir funciones de validación personalizadas. 
-## Y no habría que pasar por una autoridad superior para efectuar una compra? Tienda puede no dejarte arrastrar sus slots si no tienes dinero, y que solo de tomarlos se haga la compra. Lo que pasa es que no tiene acceso a tu inventario ni por tanto a tu dinero... o sí?
 
 
-## esto no es bool por la remota posibilidad de añadir un sistema de intercambio multipartito donde pueda haber un nuevo agente que no sea ni la tienda ni el player
-#enum ItemSource {
-	#INVENTORY,
-	#SHOP
-#}
+@export var item: Item:
+	set(value):
+		item = value
+		if inventario:
+			slot.item_prop.value = value
 
-#@export var item: Item: set = set_item
-func set_item(value):
-	super.set_item(value)
-	if item:
-		%nombre.text = item.nombre
-		%precio.text = str(int(item.precio))
-		#if _source == ItemSource.SHOP:
-		#else:
-			#%precio.text = ""
+@export var cantidad: int = 1:
+	set(value):
+		cantidad = value
+		if cantidad != 1: $panel/cantidad.text = str(cantidad)
+		else: $panel/cantidad.text = ""
+
+
+func set_slot(value: Slot):
+	slot = value
+	slot.item_prop.value = item
+	slot.item_prop.connect_init(observar_item)
+
+func set_inventario(value):
+	if value is Tienda:
+		inventario = value
+	else:
+		printerr("Tipo de inventario incorrecto")
+
+
+func observar_item(new_item, old_item):
+	super.observar_item(new_item, old_item)
+	if new_item:
+		new_item.item_type_path = new_item.resource_path
+		%nombre.text = new_item.nombre
+		%precio.text = str(int(new_item.precio))
+		if cantidad != 1:
+			$panel/cantidad.text = str(cantidad)
 	else:
 		%nombre.text = ""
 		%precio.text = ""
+		$panel/cantidad.text = ""
 
 
 func textura() -> TextureRect: return $panel/margin/textura
 func margin() -> MarginContainer: return $panel/margin
 
-
-#var tienda: Tienda
-#var front_inventario: InventarioFront
-#var inventory_role: Inventario.SlotRole
-#var _source: ItemSource
-
-
-#func _ready() -> void:
-	#if is_in_group("inventory_slots"):
-		#_source = ItemSource.INVENTORY
-	#if is_in_group("shop_slots"):
-		#_source = ItemSource.SHOP
-	#super._ready()
 
 func _generar_preview() -> Node:
 	var preview = $panel.duplicate()
@@ -50,13 +55,13 @@ func _generar_preview() -> Node:
 
 
 func _can_drop_data(_at_position: Vector2, data: Variant) -> bool:
-	# si puede realizar la operacion de vender
-	# en data debe estar el inventario que pide la venta
-	#if data.inventario is PlayerInventario:
-	return true
+	# Se puede dropear cualquier cosa en la tienda porque se puede vender cualquier cosa.
+	return data is ItemDTO and data.source_inventory is InventarioPlayer
 
 
 func _drop_data(_at_position: Vector2, data: Variant) -> void:
-	# vender
-	#(inventario as Tienda).request_venta(data.item_id)
-	pass
+	## vender
+	if data.source_inventory != inventario and data.source_inventory is InventarioPlayer:
+		inventario.intercambio.rpc_id(1, \
+			data.source_inventory.get_path(),
+			data.item.to_dto(), slot.slot_id)

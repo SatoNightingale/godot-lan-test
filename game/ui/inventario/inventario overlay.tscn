@@ -1,57 +1,62 @@
 [gd_scene format=3 uid="uid://d3yryot1jdjf6"]
 
 [ext_resource type="Script" uid="uid://duq8ms22um73c" path="res://game/ui/inventario/inventario_overlay.gd" id="1_sham1"]
-[ext_resource type="PackedScene" uid="uid://cnpqy4gghrohr" path="res://game/ui/inventario/inventario.tscn" id="2_ylbcw"]
+[ext_resource type="PackedScene" uid="uid://bbe0oj10vjkww" path="res://game/ui/inventario/inventario mod.tscn" id="2_moblb"]
 [ext_resource type="PackedScene" uid="uid://bu8ogvcx133dg" path="res://game/ui/inventario/tienda.tscn" id="3_5r2pa"]
-[ext_resource type="SystemFont" uid="uid://xianhjfbqxqw" path="res://common/monospace font.tres" id="5_7rnbm"]
-[ext_resource type="Texture2D" uid="uid://dsp8pfd5vwbcc" path="res://game/ui/inventario/money icon.png" id="6_gkds7"]
+[ext_resource type="Script" uid="uid://4j88xjqvskwd" path="res://items/Slot.gd" id="4_sham1"]
 
-[node name="Inventario" type="Control" unique_id=756692496]
-layout_mode = 3
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-mouse_filter = 2
-script = ExtResource("1_sham1")
+[sub_resource type="Resource" id="Resource_sham1"]
+script = ExtResource("4_sham1")
+visibility = 1
 
-[node name="shop_screen" type="ColorRect" parent="." unique_id=254352712]
-unique_name_in_owner = true
-layout_mode = 1
+[sub_resource type="Resource" id="Resource_ylbcw"]
+script = ExtResource("4_sham1")
+visibility = 1
+
+[sub_resource type="Resource" id="Resource_5r2pa"]
+script = ExtResource("4_sham1")
+visibility = 1
+
+[sub_resource type="Resource" id="Resource_bipvj"]
+script = ExtResource("4_sham1")
+visibility = 1
+
+[node name="shop_screen" type="ColorRect" unique_id=254352712]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 color = Color(0.2509804, 0.2509804, 0.2509804, 0.5019608)
+script = ExtResource("1_sham1")
 
-[node name="Inventario" parent="shop_screen" unique_id=1418757297 instance=ExtResource("2_ylbcw")]
+[node name="Inventario_player" parent="." unique_id=1418757297 instance=ExtResource("2_moblb")]
 unique_name_in_owner = true
 layout_mode = 1
 anchors_preset = -1
-anchor_left = 0.35
-anchor_right = 0.35
-offset_left = -207.775
-offset_right = 154.225
-offset_bottom = 181.0
+anchor_left = 0.0
+anchor_right = 0.0
+offset_left = 120.0
+offset_top = -150.0
+offset_bottom = 150.0
+grow_horizontal = 1
 
-[node name="Tienda" parent="shop_screen" unique_id=1407570768 instance=ExtResource("3_5r2pa")]
+[node name="ext_inventory_container" type="Control" parent="." unique_id=712195662]
 unique_name_in_owner = true
 layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
 
-[node name="money_button" type="Button" parent="." unique_id=1864827853]
+[node name="Tienda" parent="ext_inventory_container" unique_id=1407570768 instance=ExtResource("3_5r2pa")]
 unique_name_in_owner = true
-layout_mode = 0
-offset_left = 20.0
-offset_top = 20.0
-offset_right = 152.0
-offset_bottom = 62.0
-focus_mode = 0
-theme_override_colors/font_color = Color(1, 0.84313726, 0, 1)
-theme_override_fonts/font = ExtResource("5_7rnbm")
-theme_override_font_sizes/font_size = 24
-text = "$dinero"
-icon = ExtResource("6_gkds7")
-
-[connection signal="gui_input" from="shop_screen" to="." method="_on_shop_gui_input"]
+layout_mode = 1
+_slots = Dictionary[int, ExtResource("4_sham1")]({
+0: SubResource("Resource_sham1"),
+1: SubResource("Resource_ylbcw"),
+2: SubResource("Resource_5r2pa"),
+3: SubResource("Resource_bipvj")
+})

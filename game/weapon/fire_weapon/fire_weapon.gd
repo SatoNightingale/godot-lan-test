@@ -39,19 +39,22 @@ var shoot_semaphore := SignalSemaphore.new()
 var recharging := false
 
 
-func set_player(value: Player):
-	super.set_player(value)
-	reloading.connect(aplicar_ralentizacion.bind(
-		reloading_slowdown, reload_cooldown))
-	if aim_distance != 0: # si el arma apunta
-		player.base_glance_distance = aim_distance
-	_on_player_revived()
-	player.revived.connect(_on_player_revived)
+func set_player(new_player: Player):
+	if new_player:
+		#if aim_distance != 0: # si el arma apunta
+			#new_player.base_glance_distance = aim_distance
+		_on_player_revived()
+		new_player.revived.connect(_on_player_revived)
+	else:
+		player.revived.disconnect(_on_player_revived)
+	player = new_player
 
 
 func _ready() -> void:
 	super._ready()
 	bullet_fired.connect(wielded.emit)
+	reloading.connect(aplicar_ralentizacion.bind(
+		reloading_slowdown, reload_cooldown))
 	$shoot_timer.wait_time = shoot_cooldown
 	$reload_timer.wait_time = reload_cooldown
 

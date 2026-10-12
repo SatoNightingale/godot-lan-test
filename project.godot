@@ -27,6 +27,7 @@ ItemManager="*uid://dre4woh5meh76"
 Network="*uid://c8nrfbdxgge2b"
 ConsoleLogger="*uid://b6sotjiruqdpn"
 RpcAwait="*uid://b0dicnumx46f8"
+TooltipManager="*uid://tt23xstuvqe8"
 
 [display]
 
@@ -129,6 +130,7 @@ action_test={
 
 [input_devices]
 
+pointing/android/enable_long_press_as_right_click=true
 pointing/emulate_touch_from_mouse=true
 
 [layer_names]

@@ -17,12 +17,10 @@ class_name Item extends Resource
 ## Como usamos este enfoque dual, el mismo objeto tiene propiedades que pertenecen a la clase o tipo de item y son compartidas por todos los items de esta clase, y propiedades de la instancia que pertenecen a cada item en particular y varían entre item. Sería bueno encontrar un modo de que las propiedades de la clase no puedan ser modificados por el item particular.
 
 
-## Propiedades de clase
+#region Propiedades de clase
 
 ## Ruta al recurso que sirve de modelo o clase del item. Funciona como id del tipo de item, que ItemManager setea cuando lo carga desde el disco. Cada item se construye mediante ItemManager a partir de uno de estos recursos.
-var item_type_path: String
-	#get(): return resource_path
-	#set(_v): pass
+@export var item_type_path: String = resource_path
 ## Nombre del item que se mostrara en el inventario
 @export var nombre: String
 ## Precio del item para operaciones de venta
@@ -33,9 +31,23 @@ var item_type_path: String
 @export_file var icon_path: String
 ## Ruta a la escena que contiene el objeto que representa este item
 @export_file("*.tscn") var item_scene_path: String
+## Informacion para añadir en el tooltip del item
+@export_multiline() var tooltip_text: String
 
 
-## Propiedades de instancia
+static func instanciar(item_type: Item) -> Item:
+	var item_instance = item_type.duplicate_deep()
+	item_instance.item_type_path = item_type.item_type_path
+	return item_instance
+
+#func _validate_property(property: Dictionary) -> void:
+	#if property.name == "item_type_path":
+		#print("modified item_type_path")
+		# Esto no duplica ni un carajo
+		#property.usage |= PROPERTY_USAGE_ALWAYS_DUPLICATE
+#endregion
+
+#region Propiedades de instancia
 
 ## ID unico que identifica al item. El servidor lo establece antes de crearlo y luego se lo pasa a todos los peers, de modo que para una sincronizacion "legitima" todos los clientes deben tener los mismos items con los mismos id's en cada player
 var id: int = 0:
@@ -58,7 +70,8 @@ func _validate_object(_object):
 ## Cantidad de elementos stackeados de este item
 var cantidad: int = 1
 
-## Debe haber propiedades de instancia del item (ej. cantidad de stackeo) y propiedades de instancia del objeto (ej. balas actuales del arma). La diferencia es que para acceder a las del objeto, hay que consultar al objeto donde estan almacenadas, ya que este es la unica fuente de verdad.
+#endregion
+
 
 ## Genera un DTO con los datos de instancia necesarios para que este item pueda ser reproducido en otro peer remoto
 func to_dto() -> Dictionary:
@@ -69,12 +82,10 @@ func to_dto() -> Dictionary:
 	}
 
 # Esto existe porque el item tiene que registrarse en el servidor y crearse en los clientes. Con esta funcion se crea el dto transferido. Este dto, por otra parte, debe ser un diccionario, puesto que los rpc no serializan objetos
-# Si hubiera subclases de item, dto puede venir con un campo que indique la subclase desde la que se llamo a to_dto, lo que permitiria mandarselo a la herencia de este metodo en esa subclase y asi construir el item con datos personalizados (pero siempre serializables)
 static func new_from_dto(dto: Dictionary) -> Item:
-	var item = Item.new()
-	var item_type = ItemManager.get_item_type(dto.type_id)
+	var item = instanciar(ItemManager.get_item_type(dto.type_id))
 	# A partir de aqui, le dejamos al tipo de item generar la nueva instancia. Con esto podemos acceder a los datos de tipo nativamente
-	return item_type.inicializar_item(item, dto)
+	return item.inicializar_item(item, dto)
 
 ## Función que llama el item modelo de tipo (cargado desde ItemManager) para instanciar un nuevo item a partir de sus datos de clase y de un DTO con los datos de instancia
 func inicializar_item(new_item: Item, dto: Dictionary):
@@ -87,7 +98,7 @@ func inicializar_item(new_item: Item, dto: Dictionary):
 
 ## Copia de forma rápida todas las variables del script que estén marcadas como exportadas. En la práctica estas son casi siempre las variables de tipo, las que se muestran en el inspector
 func _copy_type_properties(item: Item):
-	item.item_type_path = item_type_path
+	#item.item_type_path = item_type_path
 	for property in get_property_list():
 		# propiedades exportadas del script
 		if property.usage & PROPERTY_USAGE_SCRIPT_VARIABLE and property.usage & PROPERTY_USAGE_EDITOR:
@@ -103,3 +114,16 @@ func _copy_instance_properties(item: Item, dto: Dictionary):
 func _generate_object(item: Item, dto: Dictionary):
 	if not item_scene_path.is_empty():
 		item.object = load(item_scene_path).instantiate()
+
+
+func get_tooltip(slot_text: String) -> String:
+	return \
+"[font_size=16]{nombre}[/font_size]
+[p][color=gainsboro]{text}[/color][/p]
+[p][font_size=10][color=darkgray]{slot_text}[/color][/font_size][/p]
+" \
+.format({
+	"nombre": nombre,
+	"text": tooltip_text,
+	"slot_text": slot_text
+})

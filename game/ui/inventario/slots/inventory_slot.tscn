@@ -2,19 +2,11 @@
 
 [ext_resource type="PackedScene" uid="uid://xgpidmknlfk7" path="res://game/ui/inventario/slots/slot.tscn" id="1_6tf1v"]
 [ext_resource type="Script" uid="uid://da014sy0by8ye" path="res://game/ui/inventario/slots/inventory_slot.gd" id="2_b31hb"]
-[ext_resource type="Resource" uid="uid://i5rv38vvapmy" path="res://items/classes/winchester_item.tres" id="3_6xpds"]
-[ext_resource type="Texture2D" uid="uid://uw04we5hwepk" path="res://game/weapon/classes/winchester/Winchester.png" id="4_dt7yb"]
 
 [node name="slot" unique_id=702327130 instance=ExtResource("1_6tf1v")]
 offset_right = 40.0
 offset_bottom = 40.0
 script = ExtResource("2_b31hb")
-item = ExtResource("3_6xpds")
-elevation = 0
 
-[node name="margin" parent="." index="0" unique_id=1906989065]
-theme_override_constants/margin_bottom = 0
-
-[node name="textura" parent="margin" index="0" unique_id=1238227759]
-texture = ExtResource("4_dt7yb")
+[node name="textura" parent="margin" parent_id_path=PackedInt32Array(1906989065) index="0" unique_id=1238227759]
 expand_mode = 1

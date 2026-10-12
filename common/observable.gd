@@ -7,7 +7,7 @@ class_name Observable extends RefCounted
 ## [b]NOTA[/b]: al escribir propiedades Observable, se recomienda definir explícitamente su tipo, para que Godot detecte y señale automáticamente problemas comunes como que se use el nombre del Observable en expresiones en lugar de su valor. Esto también podría resolverse declarando junto a la propiedad otra cuyos getters y setters referencien al valor, y así se conserva la posibilidad de observar la propiedad junto con un modo de acceder rápidamente a su contenido; esta duplicación de variables es un trade-off que parece no tener otra alternativa
 
 ## Se dispara cada vez que cambia el valor del observable, y tambien en la inicializacion del mismo. El valor que obtiene por parametro es el nuevo valor que adquiere el observable
-signal changed(value)
+signal changed(new_value, old_value)
 
 var value: Variant:
 	set(_value):
@@ -16,11 +16,13 @@ var value: Variant:
 			var continuar
 			if _extra_setter_before.is_valid():
 				continuar = _extra_setter_before.call(_value, value)
-			if continuar != false:
+			if continuar != false: # de este modo, _extra_setter_before puede incluso no retornar nada. Solo si retorna false se aborta el seteo
+				var old_value = value
 				value = _value
-				changed.emit(_value)
+				# Se llama primero el setter en el propio objeto dueño y despues en todos los observadores
 				if _extra_setter_after.is_valid():
-					_extra_setter_after.call(_value, value)
+					_extra_setter_after.call(value, old_value)
+				changed.emit(_value, old_value)
 
 ## Estos setters estan pensados para que el objeto que es dueño de la propiedad pueda personalizar lo que ocurre cuando esta es cambiada (como las funciones set y get de las propiedades normales, no observables). Se definen al inicializar el Observable, y se ejecutan antes y despues de que la variable sea seteada y la señal de cambio emitida, respectivamente. _extra_setter_before tambien puede devolver un valor true o false, impidiendo que la variable se setee si devuelve false
 var _extra_setter_after: Callable = Callable()
@@ -42,4 +44,4 @@ func conectar(callable: Callable):
 ## Conectar la señal de cambio a una función y luego llamar a la función por primera vez. Útil para inicializar valores
 func connect_init(callable: Callable):
 	changed.connect(callable)
-	callable.call(value)
+	callable.call(value, null)

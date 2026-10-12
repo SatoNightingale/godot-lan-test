@@ -5,19 +5,22 @@ var player: Player:
 	set(_player):
 		player = _player
 		player.weapon_prop.connect_init(_on_player_weapon_changed)
-		player.glance_mode.changed.connect(
+		player.glance_mode.conectar(
 			_on_player_glance_mode_changed)
 
 
-func _on_player_weapon_changed(weapon: Weapon):
+func _on_player_weapon_changed(weapon: Weapon, old_weapon: Weapon):
 	setup_visibility(weapon != null)
-	if weapon != null and weapon is FireWeapon:
+	if weapon and weapon is FireWeapon:
 		%reload_button.setup(weapon.reload_cooldown, weapon.reloading)
 		_on_update_ammo(weapon.ammo)
 		weapon.update_ammo.connect(_on_update_ammo)
+	if old_weapon:
+		%reload_button.desetup()
+		old_weapon.update_ammo.disconnect(_on_update_ammo)
 
 
-func _on_player_glance_mode_changed(value: bool):
+func _on_player_glance_mode_changed(value: bool, _old_value):
 	%shoot_button.visible = value
 	# intercambiar las texturas de %aim_button
 	var aux_texture = %aim_button.texture_normal

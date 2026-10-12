@@ -17,7 +17,7 @@ var players: Dictionary[int, Player]
 #var client_player : Player
 
 
-## Recepcion de la escena / Pre-inicializacion
+#region Recepcion de la escena / Pre-inicializacion
 
 func _ready():
 	%PlayerSpawner.spawn_function = spawn_player
@@ -31,9 +31,9 @@ func _ready():
 	else:
 		multiplayer.server_disconnected.connect(_on_server_disconnected)
 	_ready_semaphore.notify()
+#endregion
 
-
-## Inicializacion
+#region Inicializacion
 
 func server_initialize():
 	if multiplayer.is_server():
@@ -50,7 +50,6 @@ func server_initialize():
 				"number": player_number
 			})
 			player_number += 1
-
 
 # Esto va a ser llamado en cada peer por PlayerSpawner
 func spawn_player(data) -> Node:
@@ -81,22 +80,25 @@ func spawn_player(data) -> Node:
 		#client_player = player
 		%UI.player_data = player_data
 		%UI.player = player
-		%UI.initialize()
+		player.ready.connect(%UI.initialize)
+		#%UI.initialize()
 		# La tienda tiene que estar como que un poco mas cerquita del Game
 		#%UI.tienda.players = players
 	return player
 
 
 func _on_every_player_ready():
-	%UI.overlay_inventario.tienda.init_inventarios(players)
+	#%UI.overlay_inventario.tienda.init_inventarios(players)
 	# Hay que darle a cada player un arma con su id unico registrado en el servidor. Como el servidor debe ser el que dé el id (y no el player que se lo pida) debe estar fuera del spawner, y como setear el arma de un jugador es una operación pública que deben conocer todos los clientes, hay que esperar hasta que todos los clientes estén cargados, para evitar condiciones de carrera
 	if multiplayer.is_server():
 		for id in players:
 			players[id].inventario.server_add_item(
-				ItemManager.new_item_dto("res://items/classes/colt_item.tres"), Inventario.SlotRole.MAIN_WEAPON)
+				ItemManager.new_item_dto("res://items/classes/colt_item.tres"), 
+				InventarioPlayer.SlotRole.MAIN_WEAPON
+			)
+#endregion
 
-
-## Armas
+#region Armas
 
 func spawn_bullet(data) -> Node:
 	var shooter = players[data.shooter_id]
@@ -105,22 +107,30 @@ func spawn_bullet(data) -> Node:
 	bala.shoot(data.direction, shooter)
 	return bala
 
+func _on_player_weapon_changed(weapon: Weapon, old_weapon: Weapon):
+	if weapon and weapon is FireWeapon:
+		weapon.bullet_fired.connect(call_bullet_spawner.bind(weapon))
+			#func(direction: Vector2):
+			#%BulletSpawner.spawn({
+				#"shooter_id": weapon.player.player_id,
+				#"direction": direction
+			#}))
+	if old_weapon:
+		old_weapon.bullet_fired.disconnect(call_bullet_spawner)
 
-func _on_player_weapon_changed(weapon: Weapon):
-	if weapon is FireWeapon:
-		weapon.bullet_fired.connect(func(direction: Vector2):
-			%BulletSpawner.spawn({
-				"shooter_id": weapon.player.player_id,
-				"direction": direction
-			}))
+func call_bullet_spawner(direction: Vector2, weapon: Weapon):
+	%BulletSpawner.spawn({
+		"shooter_id": weapon.player.player_id,
+		"direction": direction
+	})
 
-
-## Muertes de players
+#endregion
+#region Muertes de players
 
 func _on_player_dead(killer_id, dead_id):
 	if multiplayer.is_server():
-		players[killer_id].inventario.modificar_dinero(600, killer_id)
-		players[dead_id].inventario.modificar_dinero(-400, dead_id)
+		players[killer_id].inventario.modificar_dinero(600)
+		players[dead_id].inventario.modificar_dinero(-400)
 		_on_dead.rpc_id(dead_id, killer_id)
 		_on_kill.rpc_id(killer_id, dead_id)
 		_on_player_killed.rpc(killer_id, dead_id)
@@ -179,9 +189,9 @@ func respawn_player(id: int):
 	var starting_position = %start_points.get_children().pick_random()
 	var player = players[id]
 	player.revive.rpc(starting_position.position)
+#endregion
 
-
-## Descionexiones
+#region Desconexiones
 ## cuando un peer se desconecta del servidor
 func _on_peer_disconnected(id: int):
 	if id in players:
@@ -202,7 +212,7 @@ func desconectar_partida():
 	multiplayer.multiplayer_peer = OfflineMultiplayerPeer.new()
 	main.change_to_menu()
 	#main.change_screen_path("main_menu")
-
+#endregion
 
 #@rpc("call_local")
 #func restart_game():

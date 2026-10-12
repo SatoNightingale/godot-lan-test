@@ -5,10 +5,15 @@ const modulate_active = Color(1.0, 1.0, 1.0, 0.75)
 const modulate_cooldown = Color(0.5, 0.5, 0.5, 0.75)
 
 var _cooldown := false
+var _activation_signal: Signal
 
 func setup(wait_time: float, activation: Signal):
-	activation.connect(on_activation.bind(wait_time))
+	_activation_signal = activation
+	_activation_signal.connect(on_activation.bind(wait_time))
 
+func desetup():
+	_activation_signal.disconnect(on_activation)
+	_activation_signal = Signal()
 
 func on_activation(...args):
 	if not _cooldown:

@@ -23,9 +23,7 @@ stretch_mode = 5
 
 [node name="cantidad" type="Label" parent="." unique_id=1319853633]
 unique_name_in_owner = true
-visible = false
 layout_mode = 2
 size_flags_horizontal = 0
 size_flags_vertical = 8
 theme_override_fonts/font = ExtResource("2_2tqek")
-text = "1"

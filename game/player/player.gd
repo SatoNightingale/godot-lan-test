@@ -24,12 +24,11 @@ func(new_weapon, _old_weapon):
 			%hand.add_child(new_weapon)
 		else:
 			new_weapon.reparent(%hand, false)
-, func(new_weapon, old_weapon):
+		new_weapon.player = self
+, func(_new_weapon, old_weapon):
 	if old_weapon:
 		%hand.remove_child(old_weapon)
-		#weapon.queue_free()
-	if new_weapon:
-		new_weapon.player = self
+		old_weapon.player = null
 )
 
 @export var base_speed := 180.0 # 200.0 puede servir como velocidad de caminata, 240 de velocidad de carrera
@@ -42,20 +41,28 @@ func(new_weapon, _old_weapon):
 
 @export var _camera: Camera2D
 
-@onready var inventario : Inventario = $Inventario
+@onready var inventario : InventarioPlayer = $Inventario
 
 @export var base_glance_distance := 100
 
 var camera_dir: Vector2
 var move_dir: Vector2
 
+
+var glance_distance: int:
+	get():
+		if weapon and weapon is FireWeapon and weapon.aim_distance > 0:
+			return weapon.aim_distance
+		else:
+			return base_glance_distance
+
 var glance_mode := Observable.new(false,
-func(value):
-	if value != glance_mode:
-		glance_mode = value
-		_camera.position_smoothing_enabled = glance_mode.value
-		if !glance_mode.value:
-			_camera.offset = Vector2.ZERO
+func(value, _old_value):
+	#if value != :
+		#glance_mode.value = value
+	_camera.position_smoothing_enabled = value
+	if !value:
+		_camera.offset = Vector2.ZERO
 )
 
 var player_id: int
@@ -97,16 +104,13 @@ func _ready():
 func initialize(pos: Vector2):
 	alive = true
 	vida = vida_max
-	#visible = true
 	position = pos
-	#rotation = 0.0
 	direction = Vector2.from_angle(rotation)
-	#scale = Vector2.ONE
-	#$shape.set_deferred("disabled", false)
-	#$hitbox.set_deferred("monitoring", true)
 	# Puede que RESET nunca se llame
 	%AnimationPlayer.play("RESET")
-	%AnimationPlayer.play("idle")
+	%AnimationPlayer.animation_finished.connect(func(_anim_name):
+		%AnimationPlayer.play("idle"), CONNECT_ONE_SHOT
+	)
 	#$sprite.self_modulate = player_colors[player_number]
 
 
@@ -130,7 +134,7 @@ func control_camera():
 	if move_dir != Vector2.ZERO:
 		glance_mode.value = false
 	if glance_mode.value:
-		_camera.offset = base_glance_distance * camera_dir
+		_camera.offset = glance_distance * camera_dir
 
 
 func animation():
@@ -189,13 +193,8 @@ func die(killer_id: int):
 	alive = false
 	if multiplayer.is_server():
 		dead.emit(killer_id)
-	# TODO: animacion de muerte por aqui...
-	# Estas lineas en realidad formarian parte de la animacion de muerte
 	%AnimationPlayer.play(["die_forward", "die_backwards"]
 		.pick_random())
-	#visible = false
-	#$shape.set_deferred("disabled", true)
-	#$hitbox.set_deferred("monitoring", false)
 
 
 @rpc("authority", "call_local")

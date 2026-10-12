@@ -16,12 +16,12 @@ var player: Player: set = set_player
 
 func set_player(value: Player):
 	player = value
-	wielded.connect(aplicar_ralentizacion.bind(
-		wielding_slowdown, after_wield_slowdown_time
-	))
 
 
 func _ready() -> void:
+	wielded.connect(aplicar_ralentizacion.bind(
+		wielding_slowdown, after_wield_slowdown_time
+	))
 	$wield_slowdown_timer.timeout.connect(func():
 		player.speed = player.base_speed
 	)

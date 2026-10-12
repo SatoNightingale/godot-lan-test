@@ -14,10 +14,15 @@ var _item_db: Dictionary[int, Item]
 ## Obtiene el dto de un nuevo item a partir de su tipo de item, referenciado por su resource_path. El nuevo item vendrá sellado con su id único y con los datos de instancia por defecto, más los datos de su tipo
 func new_item_dto(path: String) -> Dictionary:
 	if multiplayer.is_server():
-		var item = get_item_type(path)
+		#var item_type = get_item_type(path)
+		#print(item_type.item_type_path)
+		var item = Item.instanciar(get_item_type(path))
+		#print(item.item_type_path)
+		#print(item.nombre, " ", item.precio, " ", item.max_stack)
 		if item:
 			registrar_item(item)
 			return item.to_dto()
+		else: printerr("Error al instanciar item path: ", path)
 	else:
 		printerr("new_item_dto solo puede ser llamado por el servidor")
 	return {}

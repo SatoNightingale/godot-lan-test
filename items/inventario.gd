@@ -1,34 +1,17 @@
-class_name InventarioAbstract extends Node
+class_name Inventario extends Node
 ## Un inventario abstracto, que puede ser lo mismo el inventario de un player que el de un cofre o la tienda.
 ##
 ## Define un conjunto de items y un conjunto de slots. Cualquier item que se vaya a añadir debe ocupar un slot específico, pero el concepto de slot debe ser lo suficientemente flexible como para abarcar slots 'contenedores' o slots dentro de items. En el conjunto de items, sin embargo, deben ir todos los items del inventario, de forma que se puedan añadir o eliminar mediante los métodos básicos, solo conociendo el slot del item. Por eso, en principio el slot es solo la posicion en el arreglo de items que ocupa el item recien añadido
 ##
 ## El inventario tiene poco que hacer si se le manda a añadir un item en un slot que ya tiene un item equipado, o si se le manda a quitar un item de un slot que no tiene nada.
-# Por defecto, todos los slots son publicos, es decir, cualquier cambio en ellos se refleja en todos los clientes. Para habilitar los slots privados, es decir, aquellos cuyos cambios solo se ven en el cliente propietario y en el servidor, se define el id de este cliente propietario. 
-## y la operacion de mover items de un lado a otro del mismo inventario?
+## Por defecto, todos los slots son publicos, es decir, cualquier cambio en ellos se refleja en todos los clientes. Para habilitar los slots privados, es decir, aquellos cuyos cambios solo se ven en el cliente propietario y en el servidor, se define el id de este cliente propietario. 
 
-## Esto aqui existe mas para poder validar que el que realiza la accion sobre el inventario es su dueño, que para nada de slots privados
-## Inventarios sin dueño (cofres sueltos por ahi, etc.) tendran el owner_id en 0 y podrán ser manipulados por cualquiera (supongo...)
-## O quizas habria que verificar si el inventario y el peer que lo modifica tienen una interaccion abierta. Eso es cosa de inventario_overlay
-## Era tan buena idea lo de las sesiones (o eso me parecio) que el owner se hizo innecesario xd
-#var owner_id: int = 0
+## El id del peer dueño del slot, el único (además del servidor) en el cual tienen efecto las operaciones privadas. Cuando es 0 el inventario es público, lo que significa que configurar cualquier slot como privado queda sin efecto y todos los cambios se actualizan en todos los clientes
+var owner_id: int = 0
 
-## Esto solo lo controla el servidor y solo en el adquiere valores. Contiene los ids de todos los peers que tienen una sesion abierta con este inventario, y que por tanto pueden modificarlo
+#region Manejo de sesiones
+## Esto solo lo controla el servidor y solo en el adquiere valores (en los demas peers esta vacío). Contiene los ids de todos los peers que tienen una sesion abierta con este inventario, y que por tanto pueden modificarlo
 var sesiones_abiertas: Array[int]
-
-## Todos los items van a vivir en el diccionario de slots.
-## get_item buscara en ese diccionario (y en sus potenciales sub-diccionarios si el item tiene slots a su vez) para devolver los items
-## take_item tomara el id y buscara de igual forma que get_item, pero seteando a null
-#var _items: Array[Item]
-## Slots publicos deben actualizarse en todos los peers
-## en los slots, el indice es el numero o identificador o 'rol' del slot
-## El indice -1 representa el slot invalido, esta prohibido para los slots
-var _slots: Dictionary[int, Item]
-## Slots privados deben actualizarse solo en el cliente dueño y en el servidor
-
-func set_slot(slot_id: int, item):
-	_slots[slot_id] = item
-
 
 ## Las funciones de abrir y cerrar sesion no son rpc, por tanto solamente el servidor puede llamarlas, y opened_sessions solamente es utilizado en el. En los demas peers, aparece vacio
 func abrir_sesion(peer_id: int):
@@ -45,127 +28,157 @@ func validar_sesion(peer_id) -> bool:
 	else:
 		printerr("El peer ", peer_id, " no tiene una sesion abierta con este inventario")
 		return false
+#endregion
+
+## Todos los items del inventario viven en este diccionario, que les asigna a cada uno un slot. El -1 esta prohibido como indice, porque representa el slot invalido.
+## get_item buscara en ese diccionario (y en sus potenciales sub-diccionarios si el item tiene slots a su vez) para devolver los items
+## take_item tomara el id y buscara de igual forma que get_item, pero seteando a null
+@export var _slots: Dictionary[int, Slot]
+## Slots privados deben actualizarse solo en el cliente dueño y en el servidor
 
 
-func get_item(id: int) -> Item:
-	for slot in _slots:
-		if _slots[slot].id == id:
-			return _slots[slot]
-	return null
-
-func get_slot(item_id: int) -> int:
-	for slot in _slots:
-		if _slots[slot].id == item_id:
-			return slot
-	return -1
-
-func has_item(id: int) -> bool:
-	return get_item(id) != null
+func set_slot(slot_id, item: Item):
+	if slot_id in _slots:
+		if _slots[slot_id].validar_tipo(item):
+			_slots[slot_id].item = item
+		else: printerr("Tipo de item invalido para el slot ", slot_id)
+	else: printerr("Slot no existe: ", slot_id)
 
 
-## Funcion que se encarga de determinar cuando un slot existe en el inventario y cuando es simplemente un numero inventado
-## Esto deberia ser abstract?
-func validar_slot(_slot_id: int):
-	return true
+#region Manejo de items en el servidor
 
-
-func add_item_server(item_dto: Dictionary, slot: int):
+func server_add_item(item_dto: Dictionary, slot_id):
 	if multiplayer.is_server():
-		if validar_slot(slot):
-			## Todos los slots son publicos y se setean en todos los peers
-			_add_item_client.rpc(item_dto, slot)
+		if has_slot(slot_id):
+			var slot = _slots[slot_id]
+			var item = Item.new_from_dto(item_dto)
+			if slot.validar_tipo(item):
+				# Primero: setear en el servidor
+				set_slot(slot_id, item)
+				# Luego en los clientes
+				match slot.visibility:
+					Slot.Visibility.PUBLIC_SLOT: # todos los clientes
+						_add_item_client.rpc(item_dto, slot_id)
+					Slot.Visibility.PRIVATE_SLOT:
+						if owner_id != 1: # cliente dueño, si no es el servidor
+							_add_item_client.rpc_id(owner_id, item_dto, slot_id)
+			else: printerr("El tipo del objeto pasado es invalido: ", item.item_type_path, " vs ", slot.tipo.resource_path)
+		else: printerr("Slot invalido: ", slot_id)
 
 
-func take_item_server(slot: int):
+func server_take_item(slot_id: int):
 	if multiplayer.is_server():
-		if validar_slot(slot):
-			_take_item_client.rpc(slot)
+		if has_slot(slot_id):
+			var slot = _slots[slot_id]
+			_take_item_client(slot_id)
+			match slot.visibility:
+				Slot.Visibility.PUBLIC_SLOT:
+					_take_item_client.rpc(slot_id)
+				Slot.Visibility.PRIVATE_SLOT:
+					_take_item_client.rpc_id(owner_id, slot_id)
+		else:
+			printerr("Slot invalido: ", slot_id)
 
 
-func take_item_id_server(item_id: int):
+func server_take_item_id(item_id: int):
 	if multiplayer.is_server():
-		var slot_id = get_slot(item_id)
+		var slot_id = get_item_slot(item_id)
 		if slot_id != -1:
-			take_item_server(slot_id)
+			server_take_item(slot_id)
 		else:
 			printerr("Item no encontrado: ", item_id)
 
+
+## Mover items de un slot a otro dentro del mismo inventario. No convierte nada en DTO
+@rpc("any_peer", "call_local")
+func mover_item_local(from_slot_id: int, to_slot_id: int):
+	if multiplayer.is_server() and validar_sesion(multiplayer.get_remote_sender_id()):
+		if has_slot(from_slot_id) and has_slot(to_slot_id):
+			var from_slot = _slots[from_slot_id]
+			var to_slot = _slots[to_slot_id]
+			# Validar tipos del item 
+			if from_slot.validar_tipo(to_slot.item) and to_slot.validar_tipo(from_slot.item):
+				# Siempre se refleja el cambio en el servidor
+				mover_item_client(from_slot_id, to_slot_id)
+				# Mover dependiendo de la visibilidad
+				if from_slot.visibility == Slot.Visibility.PUBLIC_SLOT or \
+				to_slot.visibility == Slot.Visibility.PUBLIC_SLOT:
+					# desde o hacia un slot publico. Setearlo en todos los peers
+					mover_item_client.rpc(from_slot_id, to_slot_id)
+				else:
+					# de slot privado a slot privado, solo setearlo local y en el servidor
+					if owner_id != 1: # si no es el servidor
+						mover_item_client.rpc_id(owner_id, from_slot_id, to_slot_id)
+			else: printerr("Tipo de item incompatible con el slot")
+		else: printerr("Id de slot invalido")
+#endregion
+
+
+#region Manejo de items en el cliente
+
+@rpc("authority", "call_remote")
+func _add_item_client(item_dto: Dictionary, slot: int):
+	var item = Item.new_from_dto(item_dto)
+	set_slot(slot, item)
+
+
+@rpc("authority", "call_remote")
+func _take_item_client(slot_id: int):
+	set_slot(slot_id, null)
+
+
+@rpc("authority", "call_remote")
+func mover_item_client(from_slot_id: int, to_slot_id: int):
+	var aux_item = _slots[from_slot_id].item
+	set_slot(from_slot_id, _slots[to_slot_id].item)
+	set_slot(to_slot_id, aux_item)
+
+#endregion
+
+#region Funciones de intercambio
 
 ## Esto se llama en el inventario que recibe el item intercambiado
 @rpc("any_peer", "call_local")
 func intercambio(inv_origen_path: NodePath, item_dto: Dictionary, dest_slot: int):
 	if multiplayer.is_server() and validar_sesion(multiplayer.get_remote_sender_id()):
 		var inventario_origen = get_node(inv_origen_path)
-		if inventario_origen is InventarioAbstract:
+		if inventario_origen is Inventario:
 			var item_recibido = inventario_origen.enviar_item(
 				self, item_dto, dest_slot)
 			if item_recibido:
-				add_item_server(item_dto, dest_slot)
+				server_add_item(item_dto, dest_slot)
 		else:
 			printerr("Ruta al inventario invalida: ", inv_origen_path)
 
 ## Funcion de validacion para intercambios, que se llama en el inventario que envia el item intercambiado. Aqui, por ejemplo, Tienda puede decidir no enviar el item si el player no tiene baro
-func enviar_item(_inv_dest: InventarioAbstract, item_dto: Dictionary, _slot_dest: int):
+func enviar_item(_inv_dest: Inventario, item_dto: Dictionary, _slot_dest: int):
 	if multiplayer.is_server():
 		if has_item(item_dto.id):
-			take_item_server(item_dto.id)
+			server_take_item_id(item_dto.id)
 			return get_item(item_dto.id)
-	else:
-		printerr("enviar_item solo puede llamarse en el servidor")
+	else: printerr("enviar_item solo puede llamarse en el servidor")
 	return null
 
+#endregion
 
-## Mover items de un slot a otro dentro del mismo inventario. No convierte nada en DTO
-@rpc("any_peer", "call_local")
-func mover_item_local(from_slot: int, to_slot: int):
-	if multiplayer.is_server() and validar_sesion(multiplayer.get_remote_sender_id()):
-		if !(validar_slot(from_slot) and validar_slot(to_slot)):
-			printerr("Slots invalidos")
-			return
-		mover_item_client.rpc(from_slot, to_slot)
+#region Funciones de ayuda (helpers)
 
+func get_item(id) -> Item:
+	for slot in _slots:
+		if _slots[slot].item != null and _slots[slot].item.id == id:
+			return _slots[slot].item
+	return null
 
-@rpc("authority", "call_local")
-func mover_item_client(from_slot: int, to_slot: int):
-	var aux = _slots[from_slot]
-	set_slot(from_slot, _slots[to_slot])
-	set_slot(to_slot, aux)
-	#_slots[from_slot] = _slots[to_slot]
-	#_slots[to_slot] = aux
+func get_item_slot(id: int) -> int:
+	for slot in _slots:
+		if _slots[slot].item != null and _slots[slot].item.id == id:
+			return slot
+	return -1
 
+func has_item(id) -> bool:
+	return get_item(id) != null
 
-@rpc("authority", "call_local")
-func _add_item_client(item_dto: Dictionary, slot: int):
-	var item = Item.new_from_dto(item_dto)
-	#if _slots[slot] != null:
-		##_items.append(item)
-	#else:
-		##_items.erase(item.id)
-	set_slot(slot, item)
-	#_slots[slot] = item
+func has_slot(id) -> bool:
+	return id in _slots
 
-
-#@rpc("authority", "call_local")
-#func _take_item_client(id: int):
-	##var i = 0
-	##for it in _items:
-		##if it.id == id:
-			##_items.remove_at(i)
-			##break
-		##i += 1
-	#for slot_id in _slots:
-		#if _slots[slot_id].id == id:
-			#_slots[slot_id] = null
-
-
-@rpc("authority", "call_local")
-func _take_item_client(slot_id: int):
-	#var id = _slots[slot_id]
-	set_slot(slot_id, null)
-	#_slots[slot_id] = null
-	#var i = 0
-	#for it in _items:
-		#if it.id == id:
-			#_items.remove_at(i)
-			#break
-		#i += 1
+#endregion
