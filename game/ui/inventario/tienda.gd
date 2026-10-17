@@ -5,6 +5,7 @@ class_name Tienda extends Inventario
 
 
 func _ready() -> void:
+	# ta raro que los slots de la tienda (al menos los que estan puestos ahi) empiecen en el 5
 	var uislots = get_tree().get_nodes_in_group("shop_slots")
 	var slot_id = 0
 	for uislot in uislots:
@@ -17,52 +18,50 @@ func _ready() -> void:
 		slot_id += 1
 
 
+func get_front() -> Node:
+	return self
+
+# el precio debe multiplicarse por la cantidad?
+
 #@rpc("any_peer", "call_local")
-func request_compra(item_path: String, transaction_inventory: InventarioPlayer): # , slot: InventarioPlayer.SlotRole
+func request_compra(item_path: String, transaction_inventory: InventarioPlayer, cantidad: int) -> Dictionary:
 	if multiplayer.is_server():
 		if ItemManager.item_type_exists(item_path):
-			#var player_id = multiplayer.get_remote_sender_id()
-			#var transaction_inventory = inventarios[player_id]
 			var type = ItemManager.get_item_type(item_path)
 			if transaction_inventory.dinero.value >= type.precio:
 				# sellar el item con su id unico
 				var dto = ItemManager.new_item_dto(item_path)
-				#ItemManager.registrar_item(type)
-				#var dto = type.to_dto()
+				dto.cantidad = cantidad
 				transaction_inventory.modificar_dinero(-type.precio)
-				#transaction_inventory.server_add_item(dto, slot)
 				return dto
 			else:
 				transaction_inventory.call_not_enough_money.rpc_id(
 					transaction_inventory.player_id) # de pinga
-				#printerr("Jugador con id: ", transaction_inventory.player_id, " intentando hacer una compra del objeto id '", type.item_type_path, "' para el cual no tiene suficiente dinero")
 		else:
 			printerr("El item '", item_path, "' no existe")
+	return {}
 
 
 #@rpc("any_peer", "call_local")
-func request_venta(item_id: int, transaction_inventory: InventarioPlayer):
+func request_venta(transaction_inventory: InventarioPlayer, slot_id: int, cantidad: int):
 	if multiplayer.is_server():
-		#var player_id = multiplayer.get_remote_sender_id()
-		#var transaction_inventory = inventarios[player_id]
-		var selling = transaction_inventory.get_item(item_id)
+		var selling := transaction_inventory.get_slot(slot_id).item
 		if selling:
-			#var item_data = {"id": item_id, "precio": selling.precio}
 			transaction_inventory.modificar_dinero(+selling.precio)
-			transaction_inventory.server_take_item_id(item_id)
+			transaction_inventory.server_take_item(slot_id, cantidad)
 		else:
-			printerr("el jugador no tiene el item con id: ", item_id)
+			printerr("el jugador no tiene un item en el slot: ", slot_id, " o el id de slot es invalido")
 
 
 ## Esto se llama en el inventario que recibe el item intercambiado
 ## Por tanto, aqui va la operacion de venta
 @rpc("any_peer", "call_local")
-func intercambio(inv_origen_path: NodePath, item_dto: Dictionary, _dest_slot: int):
+func intercambio(inv_origen_path: NodePath, src_slot_id: int, cantidad: int, _dest_slot_id: int):
 	# and validar_sesion(multiplayer.get_remote_sender_id())
 	if multiplayer.is_server():
 		var inventario_origen = get_node(inv_origen_path)
 		if inventario_origen is InventarioPlayer:
-			request_venta(item_dto.id, inventario_origen)
+			request_venta(inventario_origen, src_slot_id, cantidad)
 			#var item_recibido = inventario_origen.enviar_item(
 				#self, item_dto, dest_slot)
 		else:
@@ -70,19 +69,23 @@ func intercambio(inv_origen_path: NodePath, item_dto: Dictionary, _dest_slot: in
 
 
 ## Compra, basicamente
-func enviar_item(inventario: Inventario, item_dto: Dictionary, _slot_dest: int):
+func enviar_item(inventario: Inventario, src_slot: int, cantidad: int) -> Dictionary:
 	if multiplayer.is_server() and inventario is InventarioPlayer:
-		return request_compra(item_dto.type_id, inventario)
-	else: printerr("enviar_item solo puede llamarse en el servidor y debe ser un InventarioPlayer")
-	return null
+		if has_slot(src_slot):
+			var item_pedido = get_slot(src_slot).item
+			return request_compra(item_pedido.item_type_path, inventario, cantidad)
+		else:
+			printerr("Slot invalido: ", src_slot)
+	else: printerr("enviar_item solo puede llamarse en el servidor y con un InventarioPlayer")
+	return {}
 
 
 # Nadie añade ni toma items de la tienda modificando sus slots
 func server_add_item(_item_dto: Dictionary, _slot_id):
 	printerr("add_item_server no se usa en Tienda")
-func server_take_item(_slot_id: int):
+func server_take_item(_slot_id: int, _cantidad: int):
 	printerr("take_item_server no se usa en Tienda")
-func mover_item_local(_from_slot_id: int, _to_slot_id: int):
+func mover_item_local(_from_slot_id: int, _to_slot_id: int, _cantidad: int):
 	printerr("mover_item_local no se usa en Tienda")
 
 

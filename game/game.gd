@@ -7,6 +7,8 @@ signal error_popup(message: String, title: String)
 
 @export var player_scene = preload("res://game/player/player.tscn")
 
+@export_file var arma_inicial_path
+
 var main: Main
 
 var player_data : Dictionary
@@ -81,9 +83,6 @@ func spawn_player(data) -> Node:
 		%UI.player_data = player_data
 		%UI.player = player
 		player.ready.connect(%UI.initialize)
-		#%UI.initialize()
-		# La tienda tiene que estar como que un poco mas cerquita del Game
-		#%UI.tienda.players = players
 	return player
 
 
@@ -93,7 +92,8 @@ func _on_every_player_ready():
 	if multiplayer.is_server():
 		for id in players:
 			players[id].inventario.server_add_item(
-				ItemManager.new_item_dto("res://items/classes/colt_item.tres"), 
+				ItemManager.new_item_dto(ResourceUID.uid_to_path(
+					arma_inicial_path)), 
 				InventarioPlayer.SlotRole.MAIN_WEAPON
 			)
 #endregion
@@ -110,11 +110,6 @@ func spawn_bullet(data) -> Node:
 func _on_player_weapon_changed(weapon: Weapon, old_weapon: Weapon):
 	if weapon and weapon is FireWeapon:
 		weapon.bullet_fired.connect(call_bullet_spawner.bind(weapon))
-			#func(direction: Vector2):
-			#%BulletSpawner.spawn({
-				#"shooter_id": weapon.player.player_id,
-				#"direction": direction
-			#}))
 	if old_weapon:
 		old_weapon.bullet_fired.disconnect(call_bullet_spawner)
 
@@ -123,8 +118,8 @@ func call_bullet_spawner(direction: Vector2, weapon: Weapon):
 		"shooter_id": weapon.player.player_id,
 		"direction": direction
 	})
-
 #endregion
+
 #region Muertes de players
 
 func _on_player_dead(killer_id, dead_id):

@@ -36,12 +36,18 @@ func _init(initial_value, after_setter := Callable(), before_setter := Callable(
 	changed.emit(value)
 
 
-## Atajo para changed.connect
+## Atajo para changed.connect. Al Callable especificado se le pasará, en ese orden, el valor nuevo de la variable y luego el valor viejo.
 func conectar(callable: Callable):
 	changed.connect(callable)
 
 
-## Conectar la señal de cambio a una función y luego llamar a la función por primera vez. Útil para inicializar valores
+## Conectar la señal de cambio a una función y luego llamar a la función por primera vez. Útil para inicializar valores. [p]Al Callable especificado se le pasará, en ese orden, el valor nuevo de la variable y luego el valor viejo.[/p]
 func connect_init(callable: Callable):
 	changed.connect(callable)
 	callable.call(value, null)
+
+
+## Desconecta la señal de cambio de una función en la que haya estado conectada
+func desconectar(callable: Callable):
+	if changed.is_connected(callable):
+		changed.disconnect(callable)

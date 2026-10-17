@@ -39,7 +39,7 @@ func registrar_item(item: Item) -> int:
 	return 0
 
 
-func item_type_exists(path: String):
+func item_type_exists(path: String) -> bool:
 	return path in _item_type_index
 
 
@@ -74,7 +74,7 @@ func _ready() -> void:
 
 
 func _build_item_type_index():
-	const item_dir = "res://items/classes"
+	const item_dir = "res://items/types"
 	var dir = DirAccess.open(item_dir)
 	if dir:
 		dir.list_dir_begin()
@@ -87,6 +87,40 @@ func _build_item_type_index():
 				var path = item_dir.path_join(file_name)
 				# Luego cada valor de path se carga y se asigna a medida que se van utilizando
 				_item_type_index[path] = null
+				#print(path)
 			file_name = dir.get_next()
 	else:
 		printerr("No se pudo cargar el caché de items")
+
+
+#region Verificacion de parentesco y herencia de items
+
+## Funciones para verificar si el item es instancia de una clase, sea esta un tipo de item o un script del cual el item hereda. Hay variantes para referenciar las clases por los objetos Item y Script o por las rutas a estos recursos
+
+func is_instance_of_type(item: Item, clase: Item) -> bool:
+	return item.item_type_path == clase.item_type_path
+
+func is_instance_of_type_path(item: Item, clase: String) -> bool:
+	return item_type_exists(clase) and \
+		item.item_type_path == clase
+
+func is_instance_of_script(item: Item, clase: Script) -> bool:
+	var base_script: Script = item.get_script()
+	while base_script != null:
+		if base_script == clase:
+			return true
+		base_script = base_script.get_base_script()
+	return false
+
+func is_instance_of_script_path(item: Item, clase: String) -> bool:
+	return is_instance_of_script(item, load(clase) as Script)
+
+func type_is_instance_of_script(type: String, clase: Script) -> bool:
+	var item_type = get_item_type(type)
+	return is_instance_of_script(item_type, clase)
+
+func type_is_instance_of_script_path(type: String, clase: String) -> bool:
+	var item_type = get_item_type(type)
+	return is_instance_of_script_path(item_type, clase)
+
+#endregion

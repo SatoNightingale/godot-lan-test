@@ -1,7 +1,7 @@
 [gd_scene format=3 uid="uid://ceudgbdqquoiq"]
 
 [ext_resource type="PackedScene" uid="uid://dc5yelyhv1r2x" path="res://game/weapon/fire_weapon/fire_weapon.tscn" id="1_jeu3i"]
-[ext_resource type="Texture2D" uid="uid://uw04we5hwepk" path="res://game/weapon/classes/winchester/Winchester.png" id="2_7bpyk"]
+[ext_resource type="Texture2D" uid="uid://uw04we5hwepk" path="res://game/weapon/types/winchester/Winchester.png" id="2_7bpyk"]
 
 [node name="fire_weapon" unique_id=693644199 instance=ExtResource("1_jeu3i")]
 

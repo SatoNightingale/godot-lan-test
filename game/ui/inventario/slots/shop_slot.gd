@@ -11,11 +11,11 @@ class_name ShopSlot extends UISlot
 		if inventario:
 			slot.item_prop.value = value
 
-@export var cantidad: int = 1:
+@export var shop_cantidad: int = 1:
 	set(value):
-		cantidad = value
-		if cantidad != 1: $panel/cantidad.text = str(cantidad)
-		else: $panel/cantidad.text = ""
+		shop_cantidad = value
+		if shop_cantidad != 1: cantidad().text = str(shop_cantidad)
+		else: cantidad().text = ""
 
 
 func set_slot(value: Slot):
@@ -30,22 +30,29 @@ func set_inventario(value):
 		printerr("Tipo de inventario incorrecto")
 
 
-func observar_item(new_item, old_item):
-	super.observar_item(new_item, old_item)
+func observar_item(new_item: Item, _old_item: Item):
 	if new_item:
 		new_item.item_type_path = new_item.resource_path
+		textura().texture = load(new_item.icon_path)
+		cantidad().show()
 		%nombre.text = new_item.nombre
 		%precio.text = str(int(new_item.precio))
-		if cantidad != 1:
-			$panel/cantidad.text = str(cantidad)
 	else:
+		textura().texture = null
+		cantidad().hide()
 		%nombre.text = ""
 		%precio.text = ""
-		$panel/cantidad.text = ""
 
 
 func textura() -> TextureRect: return $panel/margin/textura
 func margin() -> MarginContainer: return $panel/margin
+func cantidad() -> Label: return $panel/cantidad
+
+
+func _generar_item_data() -> ItemDTO:
+	var data = super._generar_item_data()
+	data.cantidad = shop_cantidad
+	return data
 
 
 func _generar_preview() -> Node:
@@ -63,5 +70,5 @@ func _drop_data(_at_position: Vector2, data: Variant) -> void:
 	## vender
 	if data.source_inventory != inventario and data.source_inventory is InventarioPlayer:
 		inventario.intercambio.rpc_id(1, \
-			data.source_inventory.get_path(),
-			data.item.to_dto(), slot.slot_id)
+			data.source_inventory.get_path(), data.src_slot_id,
+			data.cantidad, slot.slot_id)

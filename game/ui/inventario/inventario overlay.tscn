@@ -5,6 +5,14 @@
 [ext_resource type="PackedScene" uid="uid://bu8ogvcx133dg" path="res://game/ui/inventario/tienda.tscn" id="3_5r2pa"]
 [ext_resource type="Script" uid="uid://4j88xjqvskwd" path="res://items/Slot.gd" id="4_sham1"]
 
+[sub_resource type="Resource" id="Resource_wxhpg"]
+script = ExtResource("4_sham1")
+visibility = 1
+
+[sub_resource type="Resource" id="Resource_moblb"]
+script = ExtResource("4_sham1")
+visibility = 1
+
 [sub_resource type="Resource" id="Resource_sham1"]
 script = ExtResource("4_sham1")
 visibility = 1
@@ -17,11 +25,7 @@ visibility = 1
 script = ExtResource("4_sham1")
 visibility = 1
 
-[sub_resource type="Resource" id="Resource_bipvj"]
-script = ExtResource("4_sham1")
-visibility = 1
-
-[node name="shop_screen" type="ColorRect" unique_id=254352712]
+[node name="overlay" type="ColorRect" unique_id=254352712]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -55,8 +59,12 @@ mouse_filter = 2
 unique_name_in_owner = true
 layout_mode = 1
 _slots = Dictionary[int, ExtResource("4_sham1")]({
-0: SubResource("Resource_sham1"),
-1: SubResource("Resource_ylbcw"),
-2: SubResource("Resource_5r2pa"),
-3: SubResource("Resource_bipvj")
+0: SubResource("Resource_wxhpg"),
+1: SubResource("Resource_moblb"),
+2: SubResource("Resource_sham1"),
+3: SubResource("Resource_ylbcw"),
+4: SubResource("Resource_5r2pa")
 })
+
+[connection signal="close" from="." to="." method="_on_close"]
+[connection signal="open" from="." to="." method="_on_open"]

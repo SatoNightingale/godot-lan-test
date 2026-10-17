@@ -1,13 +1,13 @@
 class_name FireWeapon extends Weapon
 
 
-signal update_ammo(new_ammo: int)
+signal update_ammo(loaded_ammo: int, total_ammo: int)
 signal bullet_fired(direction: Vector2)
 signal reloading
+signal no_ammo
 
-## Escena que contiene el tipo de municion que usa el arma
-## (item, ahora)
-@export var municion: PackedScene = preload("res://game/bullet/bullet.tscn")
+var slot_municion: Slot: set = set_slot_municion
+#@export var municion: PackedScene = preload("res://game/bullet/bullet.tscn")
 ## Marcador para la posicion desde donde las balas son disparadas
 @export var cannon: Marker2D
 ## Municion maxima del arma
@@ -28,15 +28,32 @@ signal reloading
 ## Distancia de apuntado del arma. Si es mayor que cero, sobreescribe la distancia de vistazo del player con este valor, haciendo posible mirar a una mayor longitud
 @export var aim_distance := 0
 
-
-var ammo = max_ammo:
-	set(value):
-		ammo = value
-		update_ammo.emit(value)
+## Dos modelos de recarga: o que el arma "eche pa dentro" max_ammo balas cada vez que recargue, quitandoselas de una vez al inventario; o que se las vaya quitando una a una a medida que dispare. En el primer modelo, total_ammo y ammo tendrian mucho mas sentido como propiedades, pero seria dificil rastrear el item de proyectil "echado pa dentro". En el segundo modelo se conoce el item del proyectil y por ejemplo, al vender el arma no se vende con todas sus balas; pero entonces total_ammo y ammo son propiedades meramente frontend
 
 var shoot_semaphore := SignalSemaphore.new()
 
 var recharging := false
+
+func set_slot_municion(value: Slot):
+	if slot_municion:
+		slot_municion.item_prop.desconectar(new_ammo_update)
+	slot_municion = value
+	if slot_municion:
+		slot_municion.item_prop.connect_init(new_ammo_update)
+
+func new_ammo_update(new_ammo: Item, _old_ammo):
+	if new_ammo:
+		total_ammo = new_ammo.cantidad
+
+var total_ammo := 0:
+	set(value):
+		total_ammo = value
+		update_ammo.emit(ammo, total_ammo)
+
+var ammo := 0:
+	set(value):
+		ammo = value
+		update_ammo.emit(ammo, total_ammo)
 
 
 func set_player(new_player: Player):
@@ -68,12 +85,21 @@ func _process(_delta):
 	
 	var camera_dir = Input.get_vector("look_left", "look_right", "look_up", "look_down")
 	
-	if shoot_semaphore.disponible() and ammo > 0 and (
-	(not player.glance_mode.value and camera_dir.length_squared() > 0.98)
-	or (automatica and Input.is_action_pressed("shoot"))
-	or (not automatica and Input.is_action_just_pressed("shoot"))
-	):
-		request_shoot.rpc_id(1)
+	if (automatica and Input.is_action_pressed("shoot")) \
+	or (not automatica and Input.is_action_just_pressed("shoot")) \
+	or (not player.glance_mode.value and camera_dir.length_squared() > 0.98):
+		if shoot_semaphore.disponible():
+			if ammo > 0:
+				request_shoot.rpc_id(1)
+			else:
+				no_ammo.emit()
+	
+	#if shoot_semaphore.disponible() and ammo > 0 and (
+	#(not player.glance_mode.value and camera_dir.length_squared() > 0.98)
+	#or (automatica and Input.is_action_pressed("shoot"))
+	#or (not automatica and Input.is_action_just_pressed("shoot"))
+	#):
+		#request_shoot.rpc_id(1)
 	
 	if Input.is_action_just_pressed("reload") and not recharging:
 		request_reload.rpc_id(1)
@@ -83,12 +109,14 @@ func _process(_delta):
 func request_shoot():
 	if multiplayer.is_server():
 		if shoot_semaphore.disponible() and ammo > 0:
+			player.inventario.server_take_item(slot_municion.slot_id, 1)
 			shoot.rpc()
+
 
 @rpc("any_peer", "call_local")
 func request_reload():
 	if multiplayer.is_server():
-		if not recharging:
+		if not recharging and slot_municion.item:
 			reload.rpc()
 
 @rpc("authority", "call_local")
@@ -96,17 +124,17 @@ func shoot():
 	shoot_semaphore.adquirir_timer($shoot_timer)
 	ammo -= 1
 	# la dirección de tiro se desvía aleatoriamente según
-	# el factor de desviación del arma
+	# el factor de dispersión del arma
 	var desv = deg_to_rad(desviacion)
 	var angulo_tiro = Vector2.from_angle(
 		player.direction.angle() + \
-		randf_range(-desv, desv)
+		randf_range(-desv, +desv)
 	)
 	if multiplayer.is_server():
 		bullet_fired.emit(angulo_tiro)
-	$shoot_timer.start()
 	if ammo == 0:
 		reload()
+	$shoot_timer.start()
 	%shot_sound.play()
 
 
@@ -124,11 +152,22 @@ func reload():
 
 
 func _on_player_revived():
-	ammo = max_ammo
+	#ammo = max_ammo
 	shoot_semaphore.liberar()
 	recharging = false
 
 
 func _on_reload_timer_timeout():
+	if slot_municion.item:
+		if slot_municion.item.cantidad < max_ammo:
+			ammo = slot_municion.item.cantidad
+			total_ammo = 0
+		else:
+			ammo = max_ammo
+			total_ammo = slot_municion.item.cantidad - max_ammo
+	else:
+		ammo = 0
+		total_ammo = 0
+		no_ammo.emit()
 	recharging = false
 	ammo = max_ammo

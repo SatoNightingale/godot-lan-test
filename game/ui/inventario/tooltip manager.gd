@@ -1,4 +1,4 @@
-class_name CustomTooltip extends Node
+extends Node
 
 var tooltip: Control
 var touch_timer := Timer.new()

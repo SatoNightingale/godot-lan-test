@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cvj5vk257m4n5"
-path="res://.godot/imported/colt revolver.png-da82b4b663f144d4c583b0334007ca11.ctex"
+path="res://.godot/imported/colt revolver.png-3aca3832a767f7b05eacbdd04ffd4c7e.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://game/weapon/classes/revolver/colt revolver.png"
-dest_files=["res://.godot/imported/colt revolver.png-da82b4b663f144d4c583b0334007ca11.ctex"]
+source_file="res://game/weapon/types/revolver/colt revolver.png"
+dest_files=["res://.godot/imported/colt revolver.png-3aca3832a767f7b05eacbdd04ffd4c7e.ctex"]
 
 [params]
 

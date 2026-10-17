@@ -3,9 +3,9 @@ class_name FireWeaponItem extends WeaponItem
 
 ## Propiedades de clase
 
-## Escena que contiene el tipo de municion que usa el arma
-## (item, ahora)
-@export var municion: PackedScene = preload("res://game/bullet/bullet.tscn")
+## Aqui puede colocarse lo mismo una referencia a un tipo de item que a un script. En el primer caso, el slot requerira única y exclusivamente ese tipo de item; en el segundo, cualquier item de la clase del script
+#@export var municion: PackedScene = preload("res://game/bullet/bullet.tscn")
+@export_file var clase_municion_path: String = "res://game/bullet/bullet item.gd"
 ## Municion maxima del arma
 @export var max_ammo : int
 ## Si el arma es automatica o no. Si es automatica, dispara mientras este presionada la accion de disparar; si no lo es, solo dispara una vez cuando se presiona la accion
@@ -32,16 +32,19 @@ var ammo: int:
 		return object.ammo if object else 0
 
 
+func _validate_object(obj):
+	return obj is FireWeapon
+
+
 func to_dto() -> Dictionary:
 	return super.to_dto().merged({
 		"ammo": ammo
 	})
 
 
-func _generate_object(item: Item, dto: Dictionary):
-	super._generate_object(item, dto)
+func _generate_object(item: Item, dto: Dictionary) -> Object:
+	object = super._generate_object(item, dto)
 	if object is FireWeapon:
-		object.municion = municion
 		object.max_ammo = max_ammo
 		object.automatica = automatica
 		object.alcance = alcance
@@ -51,6 +54,8 @@ func _generate_object(item: Item, dto: Dictionary):
 		object.reloading_slowdown = reloading_slowdown
 		object.aim_distance = aim_distance
 		object.ammo = dto.ammo
+		return object
+	return null
 
 
 func get_tooltip(slot_text: String) -> String:
@@ -60,8 +65,9 @@ func get_tooltip(slot_text: String) -> String:
 [p][color=gainsboro][indent]{text}[/indent][/color][/p]
 [color=darkorange]Daño: [/color]{damage}
 [color=darkorange]Munición máxima: [/color]{max_ammo}
+[color=darkorange]Cadencia de disparo: [/color]{cadencia} balas por minuto
 [color=darkorange]Automática: [/color]{automatica}
-[color=darkorange]Desviación de bala: [/color]{desviacion}º
+[color=darkorange]Dispersión de bala: [/color]{desviacion}º
 [color=darkorange]Tiempo de recarga: [/color]{reload_cooldown}s
 [color=darkorange]Distancia de apuntado: [/color]{aim_dist}
 [color=darkorange]Alcance: [/color]{alcance}
@@ -72,6 +78,7 @@ func get_tooltip(slot_text: String) -> String:
 	"text": tooltip_text,
 	"damage": damage,
 	"max_ammo": max_ammo,
+	"cadencia": int(60 / shoot_cooldown),
 	"automatica": "Si" if automatica else "No",
 	"alcance": alcance,
 	"desviacion": desviacion,

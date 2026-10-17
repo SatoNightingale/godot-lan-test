@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://c6vyarvq5myao"
-path="res://.godot/imported/AK47.png-deaf4f057d20bf03f0554a3c7e5a230c.ctex"
+uid="uid://4sgyr42w4h4t"
+path="res://.godot/imported/ammo-pistol 32px.png-07895a46945489e4ad0e8008e1af9c5f.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://game/weapon/classes/ak47/AK47.png"
-dest_files=["res://.godot/imported/AK47.png-deaf4f057d20bf03f0554a3c7e5a230c.ctex"]
+source_file="res://game/bullet/ammo-pistol 32px.png"
+dest_files=["res://.godot/imported/ammo-pistol 32px.png-07895a46945489e4ad0e8008e1af9c5f.ctex"]
 
 [params]
 

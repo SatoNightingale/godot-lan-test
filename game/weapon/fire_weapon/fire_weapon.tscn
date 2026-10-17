@@ -2,13 +2,11 @@
 
 [ext_resource type="PackedScene" uid="uid://ckhehsw51wwr1" path="res://game/weapon/weapon/weapon.tscn" id="1_2fmv7"]
 [ext_resource type="Script" uid="uid://d4fetufyvgwa8" path="res://game/weapon/fire_weapon/fire_weapon.gd" id="2_xt5wk"]
-[ext_resource type="PackedScene" uid="uid://b16301nsg01q4" path="res://game/bullet/bullet.tscn" id="3_xex5d"]
 [ext_resource type="AudioStream" uid="uid://d3iaupxjkdw84" path="res://game/weapon/pistol.wav" id="4_bpob6"]
 [ext_resource type="Texture2D" uid="uid://bfqtqssskbed" path="res://game/weapon/fire_weapon/pie.svg" id="4_hgrxx"]
 
 [node name="fire_weapon" unique_id=693644199 node_paths=PackedStringArray("cannon") instance=ExtResource("1_2fmv7")]
 script = ExtResource("2_xt5wk")
-municion = ExtResource("3_xex5d")
 cannon = NodePath("sprite/cannon")
 max_ammo = 6
 automatica = false

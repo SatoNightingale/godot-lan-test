@@ -23,10 +23,7 @@ func initialize():
 	%Inventario.player = player
 	%Inventario.money_button = %money_button
 	%Inventario.initialize()
-	%money_button.pressed.connect(func():
-		%Inventario.visible = !%Inventario.visible
-		%virtual_controls.visible = !%Inventario.visible
-	)
+	%Inventario.open.connect(%virtual_controls.hide)
 	%Inventario.close.connect(%virtual_controls.show)
 
 

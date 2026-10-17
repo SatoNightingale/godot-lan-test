@@ -60,6 +60,7 @@ func _ready() -> void:
 			new_slot.visibility = Slot.Visibility.PUBLIC_SLOT
 		if i == SlotRole.MAIN_AMMO:
 			new_slot.visibility = Slot.Visibility.PUBLIC_SLOT
+			new_slot.tipo = preload("res://game/bullet/bullet item.gd")
 		else:
 			new_slot.visibility = Slot.Visibility.PRIVATE_SLOT
 		_slots[i] = new_slot
@@ -69,12 +70,18 @@ func _ready() -> void:
 func _conectar_slots_player():
 	_slots[SlotRole.MAIN_WEAPON].item_prop.conectar(set_weapon_item)
 
-
-func set_weapon_item(new_item: Item, _old_item):
+# Actualizar las balas cuando se setee el slot de balas
+func set_weapon_item(new_item: Item, old_item):
 	if new_item:
-		if new_item.object and new_item.object is Weapon:
+		if new_item.object and new_item is WeaponItem:
 			player.weapon = new_item.object
+			if new_item is FireWeaponItem:
+				new_item.object.slot_municion = _slots[SlotRole.MAIN_AMMO]
+				_slots[SlotRole.MAIN_AMMO].tipo = \
+					load(new_item.clase_municion_path)
 		else:
 			printerr("El item pasado como weapon_item no contiene una Weapon: ", new_item.object)
 	else:
 		player.weapon = null
+	if old_item and old_item.object is FireWeapon:
+		old_item.object.slot_municion = null

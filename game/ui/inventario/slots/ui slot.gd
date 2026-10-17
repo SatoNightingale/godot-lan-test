@@ -7,11 +7,24 @@ func set_slot(value: Slot):
 	slot.item_prop.connect_init(observar_item)
 
 
-func observar_item(new_item, _old_item):
+func observar_item(new_item: Item, old_item: Item):
 	if new_item:
 		textura().texture = load(new_item.icon_path)
+		new_item.cantidad_prop.connect_init(observar_cantidad)
+		cantidad().show()
 	else:
 		textura().texture = null
+		cantidad().hide()
+	if old_item:
+		old_item.cantidad_prop.desconectar(observar_cantidad)
+
+
+func observar_cantidad(new_cantidad, _old_cantidad):
+	if new_cantidad > 1:
+		cantidad().show()
+		cantidad().text = str(new_cantidad)
+	else: if new_cantidad == 1:
+		cantidad().hide()
 
 
 var inventario: Inventario: set = set_inventario
@@ -24,12 +37,14 @@ func set_inventario(value):
 
 class ItemDTO:
 	var source_inventory: Inventario
-	var item: Item
-	var slot_id: int
+	var tipo: String
+	var cantidad: int
+	var src_slot_id: int
 	func _init(ui_slot: UISlot) -> void:
 		source_inventory = ui_slot.inventario
-		item = ui_slot.slot.item
-		slot_id = ui_slot.slot.slot_id
+		tipo = ui_slot.slot.item.item_type_path
+		cantidad = ui_slot.slot.item.cantidad
+		src_slot_id = ui_slot.slot.slot_id
 
 
 @export var elevation := 10:
@@ -40,6 +55,7 @@ class ItemDTO:
 
 @abstract func textura() -> TextureRect;
 @abstract func margin() -> MarginContainer;
+@abstract func cantidad() -> Label;
 
 
 func _ready() -> void:
@@ -62,23 +78,26 @@ func _get_drag_data(_at_position: Vector2) -> Variant:
 
 
 func _can_drop_data(_at_position: Vector2, data: Variant) -> bool:
-	return data is ItemDTO and slot.validar_tipo(data.item)
+	return data is ItemDTO and slot.validar_tipo(data.tipo)
 
 
 ## Al poner un item en un slot (drop) hay que moverlo desde su slot de origen hacia el slot de destino. Por tanto, el data debe contener el slot de origen, junto con su inventario. La operacion de tomar un item de otro inventario (o de este) y colocarlo en este inventario (procedente de otro o de este) es algo de lo que cada inventario se debe ocupar.
 func _drop_data(_at_position: Vector2, data: Variant) -> void:
 	## Frontend
 	# Esto primero por las condiciones de carrera
-	if slot.item: # si el slot no estaba vacio, tomar lo que tenia
-		force_drag(_generar_item_data(), _generar_preview())
+	# Quizas deberiamos quitar la posibilidad de dropear un item aqui si ya hay un item de tipo distinto. Drag n drop en pantalla tactil es muy raro
+	if slot.item and slot.item.item_type_path != data.tipo:
+		return
+		# si el slot no estaba vacio, tomar lo que tenia
+		#force_drag(_generar_item_data(), _generar_preview())
 	## Llamadas al backend
 	if data.source_inventory != inventario: ## De un inventario a otro
 		inventario.intercambio.rpc_id(1, \
-			data.source_inventory.get_path(),
-			data.item.to_dto(), slot.slot_id)
+			data.source_inventory.get_path(), data.src_slot_id,
+			data.cantidad, slot.slot_id)
 	else: ## En el mismo inventario
 		inventario.mover_item_local.rpc_id(1, \
-			data.slot_id, slot.slot_id)
+			data.src_slot_id, slot.slot_id, data.cantidad)
 
 
 func _gui_input(event: InputEvent) -> void:

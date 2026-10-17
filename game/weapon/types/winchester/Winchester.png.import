@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://uw04we5hwepk"
-path="res://.godot/imported/Winchester.png-26432a262814d7352ba9b959ee690261.ctex"
+path="res://.godot/imported/Winchester.png-97eea22ce011598ef595dcff84ee9c58.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://game/weapon/classes/winchester/Winchester.png"
-dest_files=["res://.godot/imported/Winchester.png-26432a262814d7352ba9b959ee690261.ctex"]
+source_file="res://game/weapon/types/winchester/Winchester.png"
+dest_files=["res://.godot/imported/Winchester.png-97eea22ce011598ef595dcff84ee9c58.ctex"]
 
 [params]
 

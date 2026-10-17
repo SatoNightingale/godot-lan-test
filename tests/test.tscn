@@ -8,6 +8,7 @@
 [node name="tests" type="Node2D" unique_id=310234000]
 y_sort_enabled = true
 script = ExtResource("1_ry45r")
+arma_inicial_path = "uid://860hr8372obm"
 
 [node name="player" parent="." unique_id=1954339528 instance=ExtResource("3_uofsi")]
 position = Vector2(426, 250)

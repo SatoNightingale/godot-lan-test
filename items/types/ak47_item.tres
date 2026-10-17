@@ -1,10 +1,9 @@
 [gd_resource type="Resource" script_class="FireWeaponItem" format=3 uid="uid://bjb2mciiaxcav"]
 
-[ext_resource type="PackedScene" uid="uid://b16301nsg01q4" path="res://game/bullet/bullet.tscn" id="1_ngoaq"]
-[ext_resource type="Script" uid="uid://b0vl8sc7ikk5d" path="res://game/weapon/fire_weapon/fire weapon item.gd" id="2_nt8wt"]
+[ext_resource type="Script" uid="uid://b0vl8sc7ikk5d" path="res://game/weapon/fire_weapon/fire weapon item.gd" id="1_lougq"]
 
 [resource]
-script = ExtResource("2_nt8wt")
+script = ExtResource("1_lougq")
 max_ammo = 30
 automatica = true
 desviacion = 10.0
@@ -12,7 +11,7 @@ shoot_cooldown = 0.1
 reload_cooldown = 4.0
 reloading_slowdown = 0.66
 damage = 45.0
-item_type_path = "res://items/classes/ak47_item.tres"
+item_type_path = "res://items/types/ak47_item.tres"
 nombre = "AK-47"
 precio = 4500.0
 icon_path = "uid://c6vyarvq5myao"

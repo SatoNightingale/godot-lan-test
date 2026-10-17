@@ -4,7 +4,7 @@ class_name InventorySlot extends UISlot
 
 func textura() -> TextureRect: return $margin/textura
 func margin() -> MarginContainer: return $margin
-
+func cantidad() -> Label: return %cantidad
 
 func set_inventario(value):
 	if value is InventarioPlayer:
@@ -20,21 +20,17 @@ func _generar_preview() -> Node:
 	return preview
 
 
-#func _can_drop_data(_at_position: Vector2, data: Variant) -> bool:
-	#return true
-
-
-func _drop_data(_at_position: Vector2, data: Variant) -> void:
-	## Frontend
-	# Esto primero por las condiciones de carrera
-	if slot.item: # si el slot no estaba vacio, tomar lo que tenia
-		force_drag(_generar_item_data(), _generar_preview())
-	## Llamadas al backend
-	if data.source_inventory != inventario: ## De un inventario a otro
-		# if data.source_inventory is Tienda: ...
-		inventario.intercambio.rpc_id(1, \
-			data.source_inventory.get_path(),
-			data.item.to_dto(), slot.slot_id)
-	else: ## En el mismo inventario
-		inventario.mover_item_local.rpc_id(1, \
-			data.slot_id, slot.slot_id)
+#func _drop_data(_at_position: Vector2, data: Variant) -> void:
+	### Frontend
+	## Esto primero por las condiciones de carrera
+	#if slot.item: # si el slot no estaba vacio, tomar lo que tenia
+		#force_drag(_generar_item_data(), _generar_preview())
+	### Llamadas al backend
+	#if data.source_inventory != inventario: ## De un inventario a otro
+		## if data.source_inventory is Tienda: ...
+		#inventario.intercambio.rpc_id(1, \
+			#data.source_inventory.get_path(),
+			#data.item.to_dto(), slot.slot_id, data.slot_id)
+	#else: ## En el mismo inventario
+		#inventario.mover_item_local.rpc_id(1, \
+			#data.slot_id, slot.slot_id, data.slot_id)

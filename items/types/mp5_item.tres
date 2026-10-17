@@ -1,17 +1,16 @@
 [gd_resource type="Resource" script_class="FireWeaponItem" format=3 uid="uid://c4jlf1ikbpox6"]
 
-[ext_resource type="PackedScene" uid="uid://b16301nsg01q4" path="res://game/bullet/bullet.tscn" id="1_4cl5p"]
-[ext_resource type="Script" uid="uid://b0vl8sc7ikk5d" path="res://game/weapon/fire_weapon/fire weapon item.gd" id="2_ifkuk"]
+[ext_resource type="Script" uid="uid://b0vl8sc7ikk5d" path="res://game/weapon/fire_weapon/fire weapon item.gd" id="1_sww1a"]
 
 [resource]
-script = ExtResource("2_ifkuk")
+script = ExtResource("1_sww1a")
 max_ammo = 20
 automatica = true
 alcance = 500
 shoot_cooldown = 0.07
 reload_cooldown = 4.0
 damage = 50.0
-item_type_path = "res://items/classes/mp5_item.tres"
+item_type_path = "res://items/types/mp5_item.tres"
 nombre = "MP5"
 precio = 3500.0
 icon_path = "uid://bx8oj73yiw85y"
