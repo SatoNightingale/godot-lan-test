@@ -20,7 +20,8 @@ func _ready() -> void:
 
 func on_bullet_fired(direction: Vector2):
 	var weapon = $player.weapon as FireWeapon
-	var bala = weapon.slot_municion.item.duplicar_object()
+	#var bala = weapon.ammo_scene.instantiate() 
+	var bala = weapon.get_nuevo_proyectil()
 	bala.position = weapon.cannon.get_global_position()
 	bala.shoot(direction, $player)
 	add_child(bala)

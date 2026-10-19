@@ -8,6 +8,8 @@ var player: Player:
 		player.glance_mode.conectar(
 			_on_player_glance_mode_changed)
 
+var ammo_warning_tween: Tween
+
 
 func _on_player_weapon_changed(weapon: Weapon, old_weapon: Weapon):
 	setup_visibility(weapon != null)
@@ -37,27 +39,16 @@ func _on_update_ammo(loaded_ammo: int, total_ammo: int):
 func _no_ammo_warning():
 	# Tomado del 'func tas_arrancao' de inventario front, con modificaciones
 	# Y si hacemos un script que agrupe todas estas cositas genericas que varia gente usa?
-	# emitir mensaje de "tas arrancao"
-	var label_orig_color = %AmmoLabel.get_theme_color("font_color")
-	var tween = create_tween()
-	var toggle_money_color = func():
-		var color = Color.RED if %AmmoLabel.get_theme_color("font_color") == label_orig_color else label_orig_color
-		%AmmoLabel.add_theme_color_override("font_color", color)
-	tween.tween_callback(toggle_money_color)
-	tween.tween_interval(0.5)
-	tween.set_loops(6)
-	#var label_orig_text = %AmmoLabel.text
-	#var label_orig_color = %AmmoLabel.get_theme_color("font_color")
-	#var tween = create_tween()
-	#var warning_text = func():
-		#%AmmoLabel.text = "No tienes munición"
-		#%AmmoLabel.add_theme_color_override("font_color", Color.RED)
-	#var restore = func():
-		#%AmmoLabel.text = label_orig_text
-		#%AmmoLabel.add_theme_color_override("font_color", label_orig_color)
-	#tween.tween_callback(warning_text)
-	#tween.tween_interval(0.75)
-	#tween.tween_callback(restore)
+	if not (ammo_warning_tween and ammo_warning_tween.is_valid()):
+		var label_orig_color = %AmmoLabel.get_theme_color("font_color")
+		var tween = create_tween()
+		var toggle_money_color = func():
+			var color = Color.RED if %AmmoLabel.get_theme_color("font_color") == label_orig_color else label_orig_color
+			%AmmoLabel.add_theme_color_override("font_color", color)
+		tween.tween_callback(toggle_money_color)
+		tween.tween_interval(0.5)
+		tween.set_loops(6)
+		ammo_warning_tween = tween
 
 
 # Cuando no tiene arma, el tip del joystick de apuntar no debe mostrar el icono de bala

@@ -102,8 +102,9 @@ func _on_every_player_ready():
 
 func spawn_bullet(data) -> Node:
 	var shooter = players[data.shooter_id]
-	var bala = shooter.weapon.municion.instantiate()
-	bala.position = shooter.weapon.cannon.get_global_position()
+	var weapon = shooter.weapon as FireWeapon
+	var bala = weapon.get_nuevo_proyectil()
+	bala.position = weapon.cannon.get_global_position()
 	bala.shoot(data.direction, shooter)
 	return bala
 

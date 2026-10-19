@@ -90,7 +90,7 @@ func _process(_delta):
 	or (not player.glance_mode.value and camera_dir.length_squared() > 0.98):
 		if shoot_semaphore.disponible():
 			if ammo > 0:
-				request_shoot.rpc_id(1)
+				shoot.rpc_id(1)
 			else:
 				no_ammo.emit()
 	
@@ -102,44 +102,46 @@ func _process(_delta):
 		#request_shoot.rpc_id(1)
 	
 	if Input.is_action_just_pressed("reload") and not recharging:
-		request_reload.rpc_id(1)
+		reload.rpc_id(1)
 
 
 @rpc("any_peer", "call_local")
-func request_shoot():
+func shoot():
 	if multiplayer.is_server():
 		if shoot_semaphore.disponible() and ammo > 0:
+			shoot_semaphore.adquirir_timer($shoot_timer)
+			# la dirección de tiro se desvía aleatoriamente según el factor de dispersión del arma
+			var desv = deg_to_rad(desviacion)
+			var angulo_tiro = Vector2.from_angle(
+				player.direction.angle() + \
+				randf_range(-desv, +desv)
+			)
+			bullet_fired.emit(angulo_tiro)
 			player.inventario.server_take_item(slot_municion.slot_id, 1)
-			shoot.rpc()
+			ammo -= 1
+			if ammo == 0:
+				reload()
+			$shoot_timer.start()
+			shoot_client.rpc()
 
 
 @rpc("any_peer", "call_local")
-func request_reload():
+func reload():
 	if multiplayer.is_server():
 		if not recharging and slot_municion.item:
-			reload.rpc()
+			reload_client.rpc()
+
 
 @rpc("authority", "call_local")
-func shoot():
-	shoot_semaphore.adquirir_timer($shoot_timer)
-	ammo -= 1
-	# la dirección de tiro se desvía aleatoriamente según
-	# el factor de dispersión del arma
-	var desv = deg_to_rad(desviacion)
-	var angulo_tiro = Vector2.from_angle(
-		player.direction.angle() + \
-		randf_range(-desv, +desv)
-	)
-	if multiplayer.is_server():
-		bullet_fired.emit(angulo_tiro)
-	if ammo == 0:
-		reload()
-	$shoot_timer.start()
+func shoot_client():
+	if player.local_player and player.player_id != 1:
+		shoot_semaphore.adquirir_timer($shoot_timer)
+		$shoot_timer.start()
 	%shot_sound.play()
 
 
 @rpc("authority", "call_local")
-func reload():
+func reload_client():
 	recharging = true
 	shoot_semaphore.adquirir_timer($reload_timer)
 	reloading.emit()
@@ -149,6 +151,10 @@ func reload():
 	var tween = create_tween()
 	tween.tween_property($reload_pie, "value", 100, $reload_timer.wait_time)
 	tween.tween_callback($reload_pie.hide)
+
+
+func get_nuevo_proyectil() -> Node:
+	return slot_municion.item.duplicar_object()
 
 
 func _on_player_revived():

@@ -43,7 +43,8 @@ func conectar(callable: Callable):
 
 ## Conectar la señal de cambio a una función y luego llamar a la función por primera vez. Útil para inicializar valores. [p]Al Callable especificado se le pasará, en ese orden, el valor nuevo de la variable y luego el valor viejo.[/p]
 func connect_init(callable: Callable):
-	changed.connect(callable)
+	if not changed.is_connected(callable):
+		changed.connect(callable)
 	callable.call(value, null)
 
 

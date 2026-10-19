@@ -21,9 +21,19 @@ texture_filter = 1
 layout_mode = 2
 stretch_mode = 5
 
-[node name="cantidad" type="Label" parent="." unique_id=1319853633]
-unique_name_in_owner = true
+[node name="Control" type="Control" parent="." unique_id=1496271032]
 layout_mode = 2
+mouse_filter = 2
+
+[node name="cantidad" type="Label" parent="Control" unique_id=1319853633]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_top = -19.0
+offset_right = 10.0
+grow_vertical = 0
 size_flags_horizontal = 0
 size_flags_vertical = 8
 theme_override_fonts/font = ExtResource("2_2tqek")

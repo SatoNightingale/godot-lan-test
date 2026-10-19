@@ -7,6 +7,7 @@ script = ExtResource("1_jak1u")
 max_ammo = 10
 alcance = 1200
 desviacion = 2.0
+damage = 75.0
 item_type_path = "res://items/types/winchester_item.tres"
 nombre = "Winchester"
 precio = 4200.0

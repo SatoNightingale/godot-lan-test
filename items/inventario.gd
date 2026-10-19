@@ -59,8 +59,7 @@ func server_add_item(item_dto: Dictionary, slot_id):
 			if slot.item:
 				if slot.item.item_type_path == item_dto.type_id:
 					if slot.item.cantidad + item_dto.cantidad <= slot.item.max_stack:
-						# aqui solo es modificar la cantidad
-						# notese que la cantidad tambien debe ser notificada como cambio observable por el slot
+						# solo modificar la cantidad, porque un item del mismo tipo ya esta en el slot
 						call_visibility(_modificar_cantidad, 
 							[slot_id, item_dto.cantidad], slot)
 					else:
@@ -68,27 +67,12 @@ func server_add_item(item_dto: Dictionary, slot_id):
 				else:
 					push_error("No se puede sobreescribir item de tipo ", slot.item.item_type_path, " en slot ", slot_id, " con un item de tipo ", item_dto.type_id)
 					pass
-			else:
-				# aqui se puede anadir nuevo el item
-				# este es el unico caso en el que se puede usar el codigo que tenemos hasta ahora
+			else: # añadir nuevo item
 				if slot.validar_tipo(item_dto.type_id):
 					call_visibility(_add_item_client,
 						[item_dto, slot_id], slot)
 				else:
 					printerr("El tipo del objeto pasado es invalido: ", item_dto.type_id, " vs ", slot.tipo.resource_path)
-			#var item = Item.new_from_dto(item_dto)
-			#if slot.validar_tipo(item):
-				#call_visibility(_add_item_client, [item_dto, slot_id], slot)
-				## Primero: setear en el servidor
-				#set_slot(slot_id, item)
-				## Luego en los clientes
-				#
-				#match slot.visibility:
-					#Slot.Visibility.PUBLIC_SLOT: # todos los clientes
-						#_add_item_client.rpc(item_dto, slot_id)
-					#Slot.Visibility.PRIVATE_SLOT:
-						#if owner_id != 1: # cliente dueño, si no es el servidor
-							#_add_item_client.rpc_id(owner_id, item_dto, slot_id)
 		else: printerr("Slot invalido: ", slot_id)
 
 
@@ -104,12 +88,6 @@ func server_take_item(slot_id: int, cantidad: int):
 					printerr("Cantidad de retiro mayor que la cantidad del item en slot: ", slot_id)
 			else:
 				printerr("No hay item en slot ", slot_id)
-			#_take_item_client(slot_id, cantidad)
-			#match slot.visibility:
-				#Slot.Visibility.PUBLIC_SLOT:
-					#_take_item_client.rpc(slot_id, cantidad)
-				#Slot.Visibility.PRIVATE_SLOT:
-					#_take_item_client.rpc_id(owner_id, slot_id, cantidad)
 		else:
 			printerr("Slot invalido: ", slot_id)
 
@@ -134,20 +112,15 @@ func mover_item_local(from_slot_id: int, to_slot_id: int, cantidad: int):
 			if from_slot.validar_tipo(to_slot.item) and to_slot.validar_tipo(from_slot.item) and \
 			(to_slot.item == null or to_slot.item.item_type_path == from_slot.item.item_type_path):
 				# Mover dependiendo de la visibilidad
-				var mov_item: Item = from_slot.item
-				if mov_item.cantidad > cantidad: # si no se lleva todo el item
+				var mov_item: Item = from_slot.item.duplicar_item()
+				if cantidad < mov_item.cantidad: # si no se lleva todo el item
 					# nuevo item con nuevo id
-					mov_item = mov_item.duplicar_item()
 					ItemManager.registrar_item(mov_item)
 					mov_item.cantidad = cantidad
 				# tomar de un lado
 				call_visibility(_modificar_cantidad,
 					[from_slot_id, -cantidad], from_slot)
 				# añadir en el otro
-				# tres casos: o dest esta vacio, o lo ocupa un item del mismo tipo que mov_item, o lo ocupa un item de tipo distinto. En este ultimo caso, se pueden mover todos los items de un slot hacia otro slot, haciendo un intercambio; lo que no puede pasar es que queden items en el slot de origen y haya que poner ahi el item del slot de destino. Por tanto, solo si se transfieren todos los items de un lado a otro es posible el intercambio
-				# salvo en el caso de que
-				#if to_slot.item and to_slot.item.item_type_path != mov_item.item_type_path and not from_slot.item
-				# luego de haber llamado a modificar_cantidad, es decir, cuando luego de esta llamada se llevo todo el item, y por tanto es posible intercambiarlo con el item en to_slot (no se genero ningun 'tercer' item pues no se dividio from_slot); salvo ese caso, el resto opera exactamente de la misma manera que server_add_item. Excepcion hecha porque aqui el supuesto objetivo es no convertir a dto en los slots privados que no se divididen
 				if to_slot.item and to_slot.item.item_type_path != mov_item.item_type_path and not from_slot.item:
 					set_slot(from_slot_id, to_slot.item)
 					set_slot(to_slot_id, mov_item)
@@ -159,44 +132,6 @@ func mover_item_local(from_slot_id: int, to_slot_id: int, cantidad: int):
 						to_slot, false)
 				else:
 					server_add_item(mov_item.to_dto(), to_slot_id)
-				#if to_slot.item:
-					#if to_slot.item.item_type_path == mov_item.item_type_path:
-						#if to_slot.item.cantidad + mov_item.cantidad <= to_slot.item.max_stack:
-							#call_visibility(_modificar_cantidad, 
-								#[to_slot_id, cantidad], to_slot)
-						#else:
-							#printerr("max_stack superado al realizar traslado del item en slot ", from_slot_id, " (", from_slot.item.cantidad, ") al slot ", to_slot_id, "(", to_slot.item.cantidad, ")")
-					#else: if not from_slot.item: # aqui ya se llamo a _modificar_cantidad y, si se llevaron todos los items, el slot debe haber quedado vacio, por lo que mov_item contiene el item original de from_slot con su cantidad original
-						## Intentar no convertir nada en dto si es en el cliente dueño
-						## Lamentablemente, como las funciones se llaman por rpc a todos los peers, es muy dificil hacer que en el peer dueño no se llame y en todas las demás sí. Por tanto, se queda con los dto's
-						#set_slot(from_slot_id, to_slot.item)
-						#set_slot(to_slot_id, mov_item)
-						#call_visibility(set_slot, 
-							#[from_slot_id, to_slot.item.to_dto()],
-							#from_slot, false)
-						#call_visibility(set_slot, 
-							#[to_slot_id, mov_item.to_dto()],
-							#to_slot, false)
-					#else:
-						#printerr("No se puede trasladar items desde ", from_slot_id, " hasta ", to_slot_id, ". Ambos slots contienen items de tipos distintos, y no hay lugar en ")
-				#else:
-					#set_slot(to_slot_id, mov_item)
-					## si mov_item modifico su cantidad y por tanto creo un nuevo item, debe pasarselo al cliente dueño como dto porque solo el servidor puede crear y proveer un id nuevo. Pero si mov_item no cambio, entonces no hay ninguna necesidad de crear un nuevo item en el cliente dueño, aunque sí en los otros clientes si el slot es público
-					#call_visibility(_add_item_client, 
-						#[to_slot_id, mov_item.to_dto()],
-						#to_slot, false)
-				## VIEJO ##
-				# Siempre se refleja el cambio en el servidor
-				#mover_item_client(from_slot_id, to_slot_id)
-				#if from_slot.visibility == Slot.Visibility.PUBLIC_SLOT or \
-				#to_slot.visibility == Slot.Visibility.PUBLIC_SLOT:
-					## desde o hacia un slot publico. Setearlo en todos los peers
-					## esto debería ser más atómico. Aquí se enteran los clientes, no solo de la modificación en el slot público, sino también en el privado
-					#mover_item_client.rpc(from_slot_id, to_slot_id)
-				#else:
-					## de slot privado a slot privado, solo setearlo local y en el servidor
-					#if owner_id != 1: # si no es el servidor
-						#mover_item_client.rpc_id(owner_id, from_slot_id, to_slot_id)
 			else: printerr("Tipo de item incompatible con el slot")
 		else: printerr("Id de slot invalido")
 
@@ -226,18 +161,6 @@ func _add_item_client(item_dto: Dictionary, slot_id: int):
 	set_slot(slot_id, new_item)
 
 
-#@rpc("authority", "call_remote")
-#func _take_item_client(slot_id: int, cantidad: int):
-	#var item = _slots[slot_id].item
-	#if item:
-		#if item.cantidad >= cantidad:
-			#item.cantidad -= cantidad
-		#else:
-			#printerr("Cantidad de retiro mayor que la cantidad del item en slot: ", slot_id)
-		#if item.cantidad == 0:
-			#set_slot(slot_id, null)
-
-
 @rpc("authority", "call_remote")
 func _modificar_cantidad(slot_id: int, cantidad: int):
 	var item = _slots[slot_id].item
@@ -248,7 +171,6 @@ func _modificar_cantidad(slot_id: int, cantidad: int):
 				item.cantidad = nueva_cantidad
 				if item.cantidad == 0:
 					set_slot(slot_id, null)
-				#slot.set_cantidad(nueva_cantidad)
 			else:
 				printerr("No se puede sobrepasar la cantidad maxima de stack del item (", item.cantidad, " + ", cantidad, " > ", item.max_stack, ")")
 		else:

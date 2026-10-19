@@ -13,11 +13,20 @@ func set_inventario(value):
 		printerr("Tipo de inventario incorrecto")
 
 
-func _generar_preview() -> Node:
+func _generar_preview() -> Control:
 	var preview = duplicate()
 	if slot.item.cantidad == 1:
 		preview.get_node("%cantidad").hide()
 	return preview
+
+
+func as_drag_preview():
+	cantidad().set_anchors_preset(PRESET_TOP_LEFT)
+	cantidad().position = Vector2(-15, -20)
+	position -= Vector2(20, 20)
+
+func set_grab_cantidad(value: int):
+	cantidad().text = str(value)
 
 
 #func _drop_data(_at_position: Vector2, data: Variant) -> void:

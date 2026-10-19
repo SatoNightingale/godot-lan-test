@@ -2,33 +2,12 @@
 
 [ext_resource type="Script" uid="uid://c58w4bdhnnsr6" path="res://game/ui/inventario/tienda.gd" id="1_y8si5"]
 [ext_resource type="PackedScene" uid="uid://cse6tdwn71it5" path="res://game/ui/inventario/slots/shop_slot.tscn" id="2_tk8sn"]
-[ext_resource type="Script" uid="uid://4j88xjqvskwd" path="res://items/Slot.gd" id="2_wr8jy"]
 [ext_resource type="Script" uid="uid://b4tdmuvqj6rhi" path="res://game/ui/inventario/shop_tabs_drops.gd" id="3_epoqs"]
 [ext_resource type="Resource" uid="uid://860hr8372obm" path="res://items/types/colt_item.tres" id="4_ifm18"]
 [ext_resource type="Resource" uid="uid://c4jlf1ikbpox6" path="res://items/types/mp5_item.tres" id="5_y8si5"]
 [ext_resource type="Resource" uid="uid://bjb2mciiaxcav" path="res://items/types/ak47_item.tres" id="6_ifm18"]
 [ext_resource type="Resource" uid="uid://i5rv38vvapmy" path="res://items/types/winchester_item.tres" id="7_kxms0"]
 [ext_resource type="Resource" uid="uid://br1s8k7iav28o" path="res://items/types/bullet_item.tres" id="9_u8r2g"]
-
-[sub_resource type="Resource" id="Resource_u8r2g"]
-script = ExtResource("2_wr8jy")
-visibility = 1
-
-[sub_resource type="Resource" id="Resource_kxms0"]
-script = ExtResource("2_wr8jy")
-visibility = 1
-
-[sub_resource type="Resource" id="Resource_5pc2x"]
-script = ExtResource("2_wr8jy")
-visibility = 1
-
-[sub_resource type="Resource" id="Resource_6ehvy"]
-script = ExtResource("2_wr8jy")
-visibility = 1
-
-[sub_resource type="Resource" id="Resource_lkoch"]
-script = ExtResource("2_wr8jy")
-visibility = 1
 
 [node name="Tienda" type="MarginContainer" unique_id=1725928229]
 anchors_preset = 11
@@ -43,13 +22,6 @@ theme_override_constants/margin_top = 20
 theme_override_constants/margin_right = 0
 theme_override_constants/margin_bottom = 20
 script = ExtResource("1_y8si5")
-_slots = Dictionary[int, ExtResource("2_wr8jy")]({
-0: SubResource("Resource_u8r2g"),
-1: SubResource("Resource_kxms0"),
-2: SubResource("Resource_5pc2x"),
-3: SubResource("Resource_6ehvy"),
-4: SubResource("Resource_lkoch")
-})
 
 [node name="PanelContainer" type="PanelContainer" parent="." unique_id=1145213938]
 layout_mode = 2
@@ -117,7 +89,6 @@ item = ExtResource("6_ifm18")
 [node name="slot4" parent="PanelContainer/MarginContainer/shop/shop_tabs/Armas/MarginContainer/grid" unique_id=432675630 groups=["shop_slots"] instance=ExtResource("2_tk8sn")]
 layout_mode = 2
 item = ExtResource("7_kxms0")
-elevation = 0
 
 [node name="Munición" type="ScrollContainer" parent="PanelContainer/MarginContainer/shop/shop_tabs" unique_id=1541080244]
 layout_mode = 2
@@ -143,8 +114,7 @@ columns = 2
 [node name="slot" parent="PanelContainer/MarginContainer/shop/shop_tabs/Munición/MarginContainer/grid" unique_id=476717922 groups=["shop_slots"] instance=ExtResource("2_tk8sn")]
 layout_mode = 2
 item = ExtResource("9_u8r2g")
-shop_cantidad = 6
-elevation = 3
+shop_cantidad = 30
 
 [node name="Trampas" type="ScrollContainer" parent="PanelContainer/MarginContainer/shop/shop_tabs" unique_id=370832388]
 visible = false

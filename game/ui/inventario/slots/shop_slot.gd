@@ -46,7 +46,7 @@ func observar_item(new_item: Item, _old_item: Item):
 
 func textura() -> TextureRect: return $panel/margin/textura
 func margin() -> MarginContainer: return $panel/margin
-func cantidad() -> Label: return $panel/cantidad
+func cantidad() -> Label: return $panel/Control/cantidad
 
 
 func _generar_item_data() -> ItemDTO:
@@ -55,10 +55,16 @@ func _generar_item_data() -> ItemDTO:
 	return data
 
 
-func _generar_preview() -> Node:
-	var preview = $panel.duplicate()
-	preview.get_node("precio").hide()
+func _generar_preview() -> Control:
+	var preview = duplicate() # $panel.duplicate()
+	preview.get_node("%precio").hide()
 	return preview
+
+
+#func as_drag_slot():
+	#cantidad().set_anchors_preset(PRESET_TOP_LEFT)
+	#cantidad().position = Vector2(-15, -20)
+	#position -= Vector2(20, 20)
 
 
 func _can_drop_data(_at_position: Vector2, data: Variant) -> bool:

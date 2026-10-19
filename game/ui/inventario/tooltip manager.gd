@@ -6,17 +6,33 @@ var _caller: Control
 var _at_position: Vector2
 var _item: Item
 
+const drag_deadzone = 3
+
 
 func _ready() -> void:
 	add_child(touch_timer)
-	touch_timer.timeout.connect(show_tooltip)
+	touch_timer.one_shot = true
 
 
 func request_tooltip(caller: Control, at_position: Vector2, item: Item):
-	touch_timer.start(0.5)
+	touch_timer.start(0.15)
 	_caller = caller
 	_at_position = at_position
 	_item = item
+
+
+func _input(event: InputEvent) -> void:
+	if touch_timer.time_left > 0:
+		if event is InputEventScreenDrag and \
+		event.screen_relative.length() > drag_deadzone: # <=
+			touch_timer.stop()
+		if ((event is InputEventScreenTouch or event is InputEventMouseButton) and event.is_released()):
+			touch_timer.stop()
+			show_tooltip()
+	if tooltip:
+		if ((event is InputEventMouseButton or event is InputEventScreenTouch) and event.pressed) \
+		or (event is InputEventScreenDrag and event.screen_relative.length() > drag_deadzone):
+			erase_tooltip()
 
 
 func create_tooltip(text: String) -> Control:
@@ -40,21 +56,16 @@ func show_tooltip():
 	tooltip = create_tooltip(_item.get_tooltip(_caller.tooltip_text))
 	_caller.add_child(tooltip)
 	tooltip.top_level = true
-	tooltip.position = _caller.global_position + _at_position
+	var tooltip_pos = _caller.global_position + _at_position
+	var view_end = get_viewport().get_visible_rect().size
+	if tooltip_pos.x + tooltip.size.x > view_end.x:
+		tooltip_pos.x = view_end.x - tooltip.size.x
+	if tooltip_pos.y + tooltip.size.y > view_end.y:
+		tooltip_pos.y = view_end.y - tooltip.size.y
+	tooltip.position = tooltip_pos
 
 
 func erase_tooltip():
 	tooltip.get_parent().remove_child(tooltip)
 	tooltip.queue_free()
 	tooltip = null
-
-
-func _input(event: InputEvent) -> void:
-	if not touch_timer.is_stopped():
-		if (event is InputEventScreenDrag and event.screen_relative.length() > 3) or \
-		((event is InputEventScreenTouch or event is InputEventMouseButton) and event.pressed == false):
-				touch_timer.stop()
-	if tooltip:
-		if event is InputEventMouseButton or event is InputEventScreenTouch:
-			if event.pressed:
-				erase_tooltip()
