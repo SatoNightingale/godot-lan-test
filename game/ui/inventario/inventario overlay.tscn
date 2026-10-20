@@ -1,7 +1,7 @@
 [gd_scene format=3 uid="uid://d3yryot1jdjf6"]
 
 [ext_resource type="Script" uid="uid://duq8ms22um73c" path="res://game/ui/inventario/inventario_overlay.gd" id="1_sham1"]
-[ext_resource type="PackedScene" uid="uid://bbe0oj10vjkww" path="res://game/ui/inventario/inventario mod.tscn" id="2_moblb"]
+[ext_resource type="PackedScene" uid="uid://bbe0oj10vjkww" path="res://game/ui/inventario/inventario.tscn" id="2_moblb"]
 [ext_resource type="PackedScene" uid="uid://bu8ogvcx133dg" path="res://game/ui/inventario/tienda.tscn" id="3_5r2pa"]
 [ext_resource type="Script" uid="uid://4j88xjqvskwd" path="res://items/Slot.gd" id="4_sham1"]
 

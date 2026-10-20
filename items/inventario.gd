@@ -108,9 +108,13 @@ func mover_item_local(from_slot_id: int, to_slot_id: int, cantidad: int):
 		if has_slot(from_slot_id) and has_slot(to_slot_id):
 			var from_slot = _slots[from_slot_id]
 			var to_slot = _slots[to_slot_id]
+			if not from_slot.item or cantidad > from_slot.item.cantidad:
+				printerr("Intentando tomar mas items de los que hay en el slot")
+				return
 			# Validar tipos del item 
 			if from_slot.validar_tipo(to_slot.item) and to_slot.validar_tipo(from_slot.item) and \
-			(to_slot.item == null or to_slot.item.item_type_path == from_slot.item.item_type_path):
+			(not to_slot.item or from_slot.item.cantidad == cantidad or \
+			to_slot.item.item_type_path == from_slot.item.item_type_path):
 				# Mover dependiendo de la visibilidad
 				var mov_item: Item = from_slot.item.duplicar_item()
 				if cantidad < mov_item.cantidad: # si no se lleva todo el item

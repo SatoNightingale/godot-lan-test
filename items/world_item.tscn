@@ -1,0 +1,30 @@
+[gd_scene format=3 uid="uid://c3eobowd11bek"]
+
+[ext_resource type="Script" uid="uid://dugtum4140d3r" path="res://items/world_item.gd" id="1_81yck"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_rt6dx"]
+radius = 60.0
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_y8qy7"]
+radius = 25.0
+
+[node name="world_item" type="Node2D" unique_id=332440660]
+script = ExtResource("1_81yck")
+
+[node name="texture" type="Sprite2D" parent="." unique_id=2038373462]
+unique_name_in_owner = true
+texture_filter = 1
+
+[node name="pick_area" type="Area2D" parent="." unique_id=795025513]
+unique_name_in_owner = true
+visible = false
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="pick_area" unique_id=379076339]
+shape = SubResource("CircleShape2D_rt6dx")
+
+[node name="TouchScreenButton" type="TouchScreenButton" parent="." unique_id=708954655]
+unique_name_in_owner = true
+shape = SubResource("CircleShape2D_y8qy7")
+shape_visible = false
+
+[connection signal="pressed" from="TouchScreenButton" to="." method="_on_touch_screen_button_pressed"]

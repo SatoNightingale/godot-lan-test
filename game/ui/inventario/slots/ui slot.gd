@@ -46,12 +46,14 @@ const drag_deadzone = 3
 class ItemDTO:
 	var source_inventory: Inventario
 	var tipo: String
+	var cantidad_orig: int
 	var cantidad: int
 	var src_slot_id: int
 	func _init(ui_slot: UISlot) -> void:
 		source_inventory = ui_slot.inventario
 		tipo = ui_slot.slot.item.item_type_path
 		cantidad = ui_slot.slot.item.cantidad
+		cantidad_orig = cantidad
 		src_slot_id = ui_slot.slot.slot_id
 
 
@@ -83,13 +85,12 @@ func _can_drop_data(_at_position: Vector2, data: Variant) -> bool:
 	return data is ItemDTO and slot.validar_tipo(data.tipo)
 
 
-## Al poner un item en un slot (drop) hay que moverlo desde su slot de origen hacia el slot de destino. Por tanto, el data debe contener el slot de origen, junto con su inventario. La operacion de tomar un item de otro inventario (o de este) y colocarlo en este inventario (procedente de otro o de este) es algo de lo que cada inventario se debe ocupar.
 func _drop_data(_at_position: Vector2, data: Variant) -> void:
 	## Frontend
 	# Esto primero por las condiciones de carrera
 	# Quizas deberiamos quitar la posibilidad de dropear un item si aqui ya hay un item de tipo distinto. Drag n drop en pantalla tactil es muy raro
 	if data is ItemDTO:
-		if slot.item and slot.item.item_type_path != data.tipo:
+		if slot.item and slot.item.item_type_path != data.tipo and data.cantidad < data.cantidad_orig:
 			return
 			# si el slot no estaba vacio, tomar lo que tenia
 			#force_drag(_generar_item_data(), _generar_preview())
@@ -103,7 +104,7 @@ func _drop_data(_at_position: Vector2, data: Variant) -> void:
 				data.src_slot_id, slot.slot_id, data.cantidad)
 
 #region Seleccion de cantidad de items
-
+# Podria simplificarse este rollo con Input.parse_input_events?
 func _gui_input(event: InputEvent) -> void:
 	if event is InputEventScreenTouch or event is InputEventMouseButton:
 		if event.pressed and slot.item:
@@ -117,10 +118,10 @@ func _gui_input(event: InputEvent) -> void:
 
 func _process(delta: float) -> void:
 	if _grabbing and _drag_preview:
-		if _grabbed < slot.item.max_stack:
+		if _grabbed < slot.item.cantidad:
 			_grabbed += delta * (1.5 + (1.0/54.0) * _grabbed**2.5)
-			if _grabbed >= slot.item.max_stack:
-				_grabbed = slot.item.max_stack
+			if _grabbed >= slot.item.cantidad:
+				_grabbed = slot.item.cantidad
 			_drag_preview.set_grab_cantidad(int(_grabbed))
 			_drag_data.cantidad = int(_grabbed)
 

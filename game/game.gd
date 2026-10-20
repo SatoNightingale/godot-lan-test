@@ -94,7 +94,7 @@ func _on_every_player_ready():
 			players[id].inventario.server_add_item(
 				ItemManager.new_item_dto(ResourceUID.uid_to_path(
 					arma_inicial_path)), 
-				InventarioPlayer.SlotRole.MAIN_WEAPON
+				InventarioPlayer.MAIN_WEAPON
 			)
 #endregion
 

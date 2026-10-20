@@ -8,17 +8,10 @@ var _item_type_index : Dictionary[String, Item]
 var _cache_max_length = 20
 var _cache_order = []
 
-# Si un item esta tirado en el suelo en un cliente cualquiera, ¿cómo le digo al servidor por rpc que pickee ese item para un player? Debe haber una manera general de buscar items por su id
-var _item_db: Dictionary[int, Item]
-
 ## Obtiene el dto de un nuevo item a partir de su tipo de item, referenciado por su resource_path. El nuevo item vendrá sellado con su id único y con los datos de instancia por defecto, más los datos de su tipo
 func new_item_dto(path: String) -> Dictionary:
 	if multiplayer.is_server():
-		#var item_type = get_item_type(path)
-		#print(item_type.item_type_path)
 		var item = Item.instanciar(get_item_type(path))
-		#print(item.item_type_path)
-		#print(item.nombre, " ", item.precio, " ", item.max_stack)
 		if item:
 			registrar_item(item)
 			return item.to_dto()
@@ -34,7 +27,7 @@ func registrar_item(item: Item) -> int:
 	if multiplayer.is_server(): # item.id == 0:
 		max_id += 1
 		item.id = max_id
-		_item_db[max_id] = item
+		#_item_db[max_id] = item
 		return max_id
 	return 0
 
@@ -92,6 +85,49 @@ func _build_item_type_index():
 	else:
 		printerr("No se pudo cargar el caché de items")
 
+#region Items de mundo (dropeados en el mapa)
+# Si un item esta tirado en el suelo en un cliente cualquiera, ¿cómo le digo al servidor por rpc que pickee ese item para un player? Debe haber una manera general de buscar items por su id
+#var _item_db: Dictionary[int, Item]
+var _world_items: Dictionary[int, NodePath]
+
+func register_world_items(node_to_scan: Node):
+	if multiplayer.is_server():
+		for child in node_to_scan.get_children():
+			if child is WorldItem:
+				registrar_item(child.item)
+				register_world_item(child)
+			if child.get_child_count() > 0:
+				register_world_items(child)
+
+func register_world_item(world_item: WorldItem):
+	_world_items[world_item.item.id] = world_item.get_path()
+
+@rpc("authority", "call_local")
+func add_world_item(item_dto: Dictionary, ref_node: Node, pos: Vector2, as_child := true):
+	var world_item = preload("res://items/world_item.tscn").instantiate()
+	world_item.item = Item.new_from_dto(item_dto)
+	world_item.position = pos
+	if as_child:
+		ref_node.add_child(world_item, true)
+	else:
+		ref_node.add_sibling(world_item, true)
+	world_item.ready.connect(register_world_item.bind(world_item),
+		CONNECT_ONE_SHOT)
+
+@rpc("authority", "call_local")
+func remove_world_item(item_path: NodePath):
+	var world_item = get_node(item_path)
+	_world_items.erase(world_item.item.id)
+	world_item.get_parent().remove_child(world_item)
+	world_item.queue_free()
+
+#func remove_world_item(world_item: WorldItem):
+	#_world_items.erase(world_item.item.id)
+
+func get_world_item(item_id) -> WorldItem:
+	return get_node(_world_items[item_id]) as WorldItem
+
+#endregion
 
 #region Verificacion de parentesco y herencia de items
 
