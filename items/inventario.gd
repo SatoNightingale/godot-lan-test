@@ -36,6 +36,7 @@ func validar_sesion(peer_id) -> bool:
 @export var _slots: Dictionary[int, Slot]
 ## Slots privados deben actualizarse solo en el cliente dueño y en el servidor
 
+
 @rpc("authority", "call_remote")
 func set_slot(slot_id, item: Item):
 	if slot_id in _slots:
@@ -45,8 +46,10 @@ func set_slot(slot_id, item: Item):
 	else: printerr("Slot no existe: ", slot_id)
 
 
+var front_builder: Callable
+
 func get_front() -> Node:
-	return null
+	return front_builder.call()
 
 
 #region Manejo de items en el servidor
@@ -58,18 +61,17 @@ func server_add_item(item_dto: Dictionary, slot_id):
 			var slot = _slots[slot_id]
 			if slot.item:
 				if slot.item.item_type_path == item_dto.type_id:
-					if slot.item.cantidad + item_dto.cantidad <= slot.item.max_stack:
+					if slot.item.stack_size_valido(slot.item.cantidad + item_dto.cantidad):
 						# solo modificar la cantidad, porque un item del mismo tipo ya esta en el slot
-						call_visibility(_modificar_cantidad, 
+						_call_visibility(_modificar_cantidad, 
 							[slot_id, item_dto.cantidad], slot)
 					else:
 						push_error("No puede sobrepasarse el max_stack de item: ", slot.item.nombre, " en slot ", slot_id, " (", item_dto.cantidad, " + ", slot.item.cantidad, " > ", slot.item.max_stack, ")")
 				else:
 					push_error("No se puede sobreescribir item de tipo ", slot.item.item_type_path, " en slot ", slot_id, " con un item de tipo ", item_dto.type_id)
-					pass
 			else: # añadir nuevo item
 				if slot.validar_tipo(item_dto.type_id):
-					call_visibility(_add_item_client,
+					_call_visibility(_add_item_client,
 						[item_dto, slot_id], slot)
 				else:
 					printerr("El tipo del objeto pasado es invalido: ", item_dto.type_id, " vs ", slot.tipo.resource_path)
@@ -82,7 +84,7 @@ func server_take_item(slot_id: int, cantidad: int):
 			var slot = _slots[slot_id]
 			if slot.item:
 				if slot.item.cantidad >= cantidad:
-					call_visibility(_modificar_cantidad,
+					_call_visibility(_modificar_cantidad,
 						[slot_id, -cantidad], slot)
 				else:
 					printerr("Cantidad de retiro mayor que la cantidad del item en slot: ", slot_id)
@@ -114,7 +116,8 @@ func mover_item_local(from_slot_id: int, to_slot_id: int, cantidad: int):
 			# Validar tipos del item 
 			if from_slot.validar_tipo(to_slot.item) and to_slot.validar_tipo(from_slot.item) and \
 			(not to_slot.item or from_slot.item.cantidad == cantidad or \
-			to_slot.item.item_type_path == from_slot.item.item_type_path):
+			(to_slot.item.item_type_path == from_slot.item.item_type_path \
+			and to_slot.item.stack_size_valido(to_slot.item.cantidad + cantidad))):
 				# Mover dependiendo de la visibilidad
 				var mov_item: Item = from_slot.item.duplicar_item()
 				if cantidad < mov_item.cantidad: # si no se lleva todo el item
@@ -122,16 +125,16 @@ func mover_item_local(from_slot_id: int, to_slot_id: int, cantidad: int):
 					ItemManager.registrar_item(mov_item)
 					mov_item.cantidad = cantidad
 				# tomar de un lado
-				call_visibility(_modificar_cantidad,
+				_call_visibility(_modificar_cantidad,
 					[from_slot_id, -cantidad], from_slot)
 				# añadir en el otro
 				if to_slot.item and to_slot.item.item_type_path != mov_item.item_type_path and not from_slot.item:
 					set_slot(from_slot_id, to_slot.item)
 					set_slot(to_slot_id, mov_item)
-					call_visibility(_add_item_client, 
+					_call_visibility(_add_item_client, 
 						[from_slot_id, to_slot.item.to_dto()],
 						from_slot, false)
-					call_visibility(_add_item_client, 
+					_call_visibility(_add_item_client, 
 						[to_slot_id, mov_item.to_dto()],
 						to_slot, false)
 				else:
@@ -141,18 +144,29 @@ func mover_item_local(from_slot_id: int, to_slot_id: int, cantidad: int):
 
 
 # Aqui podria hacerse que, al llamar a la funcion en el servidor, esta retorne un bool que lleve en si la validacion; y si ese bool es verdadero, se llame tambien en el cliente
-func call_visibility(callable: Callable, args: Array, slot: Slot, call_on_server: bool = true):
+# Problema, porque por rpc no hay callv, o sea, pasar un array con todos los argumentos hace que la funcion remota reciba como argumento solo el array, no su contenido como argumentos separados
+# podria hacerse que el rpc que se llame sea una funcion extra que luego llame al callable pasado y le pase los argumentos como callv. El callable se pasaria al rpc como StringName (obteniendo su nombre con Callable.get_method) y se llamaria en el remoto mediante call()
+# De lo contrario, hay que dejarlo asi, descomponiendo el arreglo y llamandolo con sus elementos individuales, pero entonces los metodos llamados tienen que tener un numero fijo de argumentos
+func _call_visibility(callable: Callable, args: Array, slot: Slot, call_on_server: bool = true):
 	if multiplayer.is_server():
 		# primero en el servidor, si este lo permite
 		if call_on_server:
 			callable.callv(args)
 		# luego en los clientes
-		match slot.visibility:
-			Slot.Visibility.PUBLIC_SLOT: # todos los clientes
-				callable.rpc(args)
-			Slot.Visibility.PRIVATE_SLOT:
-				if owner_id != 1: # cliente dueño, si no es el servidor
-					callable.rpc_id(owner_id, args)
+		if owner_id == 0 or slot.visibility == Slot.PUBLIC_SLOT:
+			# todos los clientes
+			#callable.rpc(args[0], args[1])
+			_call_remote_method.rpc(callable.get_method(), args)
+		else: if slot.visibility == Slot.PRIVATE_SLOT:
+			# cliente dueño, si no es el servidor
+			if owner_id != 1:
+				#callable.rpc_id(owner_id, args[0], args[1])
+				_call_remote_method.rpc_id(owner_id,
+					callable.get_method(), args)
+
+@rpc
+func _call_remote_method(method: StringName, args: Array):
+	callv(method, args)
 
 #endregion
 
@@ -160,7 +174,7 @@ func call_visibility(callable: Callable, args: Array, slot: Slot, call_on_server
 #region Manejo de items en el cliente
 
 @rpc("authority", "call_remote")
-func _add_item_client(item_dto: Dictionary, slot_id: int):	
+func _add_item_client(item_dto: Dictionary, slot_id: int):
 	var new_item = Item.new_from_dto(item_dto)
 	set_slot(slot_id, new_item)
 
@@ -171,7 +185,7 @@ func _modificar_cantidad(slot_id: int, cantidad: int):
 	if item:
 		var nueva_cantidad = item.cantidad + cantidad
 		if nueva_cantidad >= 0:
-			if nueva_cantidad <= item.max_stack:
+			if item.stack_size_valido(nueva_cantidad):
 				item.cantidad = nueva_cantidad
 				if item.cantidad == 0:
 					set_slot(slot_id, null)
@@ -205,8 +219,10 @@ func enviar_item(_inv_dest: Inventario, src_slot: int, cantidad: int) -> Diction
 	if multiplayer.is_server():
 		if has_slot(src_slot) and _slots[src_slot].item:
 			if _slots[src_slot].item.cantidad >= cantidad:
+				var ret = get_slot(src_slot).item.to_dto()
+				ret.cantidad = cantidad
 				server_take_item(src_slot, cantidad)
-				return get_slot(src_slot).item.to_dto()
+				return ret
 			else: printerr("No hay suficientes items en el slot")
 		else: printerr("Slot invalido: ", src_slot)
 	else: printerr("enviar_item solo puede llamarse en el servidor")

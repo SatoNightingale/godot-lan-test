@@ -4,13 +4,17 @@ const PRIVATE_SLOT = 0
 const PUBLIC_SLOT = 1
 
 enum Visibility {
-	PRIVATE_SLOT,
-	PUBLIC_SLOT,
+	PRIVATE_SLOT = 0,
+	PUBLIC_SLOT = 1,
 	#INVALID_SLOT, # id del slot invalido, no existe
 }
 
-@export var tipo: Script
-@export var visibility: Visibility
+@export var tipo: Script = null
+@export var visibility: Visibility = Visibility.PUBLIC_SLOT
+
+@export_group("Datos de inicializacion")
+@export var init_item_type: Item = null
+@export var instance_data: Dictionary[StringName, Variant] = {}
 
 var slot_id: int
 
@@ -21,17 +25,6 @@ var item: Item:
 		return item_prop.value
 
 var item_prop := Observable.new(null)
-
-
-### Como el operador is solo funciona para tipos constantes, e is_instance_of con Scripts no recorre hacia arriba la jerarquia de herencia, tenemos que implementarlo nosotros.
-### Shame on you, Godot Engine
-#func is_instance_of_script(object: Object, script: Script):
-	#var base_script: Script = object.get_script()
-	#while base_script != null:
-		#if base_script == script:
-			#return true
-		#base_script = base_script.get_base_script()
-	#return false
 
 
 func validar_tipo(item_type) -> bool:

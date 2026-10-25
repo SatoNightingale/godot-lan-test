@@ -61,10 +61,8 @@ func _generar_preview() -> Control:
 	return preview
 
 
-#func as_drag_slot():
-	#cantidad().set_anchors_preset(PRESET_TOP_LEFT)
-	#cantidad().position = Vector2(-15, -20)
-	#position -= Vector2(20, 20)
+func as_drag_preview(): pass
+func set_grab_cantidad(_value: int): pass
 
 
 func _can_drop_data(_at_position: Vector2, data: Variant) -> bool:

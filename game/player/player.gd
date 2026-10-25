@@ -79,7 +79,7 @@ var vida := vida_max:
 		%lifebar.value = vida_scaled
 		%lifebar.modulate = _lifebar_gradient.sample(vida_scaled)
 
-var dinero := Observable.new(3000.0)
+@onready var dinero := inventario.dinero
 var direction: Vector2
 var alive := true
 var shape_radius_approx: float ## Radio aproximado del hitbox. Usado para calculos de precision en las colisiones
@@ -181,20 +181,31 @@ func _process(_delta: float) -> void:
 	animation()
 
 
-@rpc("call_local")
+@rpc("authority", "call_local")
 func damage(dn: int, inflicter_id: int):
 	vida -= dn
 	if vida <= 0:
 		die(inflicter_id)
 
 
-#@rpc("call_local")
 func die(killer_id: int):
 	alive = false
+	if multiplayer.is_server() or local_player:
+		# pierdes mas dinero por morir que el que gana el otro por matarte
+		# esto es un factor de balance del juego, para que las partidas no se hagan infinitas; pero podria encontrar una justificacion narrativa en el hecho de que pierdes el dinero que te quito el otro mas el que cuesta 'revivirte'
+		inventario.dinero -= 700
 	if multiplayer.is_server():
 		dead.emit(killer_id)
+		drop_money_on_death()
 	%AnimationPlayer.play(["die_forward", "die_backwards"]
 		.pick_random())
+
+
+func drop_money_on_death():
+	var dinero_item_dto = ItemManager.new_item_dto("res://items/types/money_item.tres")
+	dinero_item_dto.cantidad = 400
+	ItemManager.add_world_item.rpc(dinero_item_dto, get_path(), position, false)
+	## y ya que estamos, sacarle tambien todo lo que tiene en la mochila, pero eso quedara para la proxima aventura
 
 
 @rpc("authority", "call_local")

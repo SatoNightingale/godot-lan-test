@@ -34,6 +34,8 @@ var shoot_semaphore := SignalSemaphore.new()
 
 var recharging := false
 
+## WARNING Caso hipotetico: el jugador dropea la pistola, que se queda con su cantidad de balas (ammo) guardada como dto. Lo coge otro player que no tiene balas equipadas en su ranura. Se le carga la cantidad de balas del player, podria disparar?
+
 func set_slot_municion(value: Slot):
 	if slot_municion:
 		slot_municion.item_prop.desconectar(new_ammo_update)
@@ -58,8 +60,6 @@ var ammo := 0:
 
 func set_player(new_player: Player):
 	if new_player:
-		#if aim_distance != 0: # si el arma apunta
-			#new_player.base_glance_distance = aim_distance
 		_on_player_revived()
 		new_player.revived.connect(_on_player_revived)
 	else:
@@ -93,13 +93,6 @@ func _process(_delta):
 				shoot.rpc_id(1)
 			else:
 				no_ammo.emit()
-	
-	#if shoot_semaphore.disponible() and ammo > 0 and (
-	#(not player.glance_mode.value and camera_dir.length_squared() > 0.98)
-	#or (automatica and Input.is_action_pressed("shoot"))
-	#or (not automatica and Input.is_action_just_pressed("shoot"))
-	#):
-		#request_shoot.rpc_id(1)
 	
 	if Input.is_action_just_pressed("reload") and not recharging:
 		reload.rpc_id(1)
@@ -176,4 +169,3 @@ func _on_reload_timer_timeout():
 		total_ammo = 0
 		no_ammo.emit()
 	recharging = false
-	ammo = max_ammo

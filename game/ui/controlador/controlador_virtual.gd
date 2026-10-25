@@ -22,6 +22,8 @@ func _on_player_weapon_changed(weapon: Weapon, old_weapon: Weapon):
 	if old_weapon:
 		%reload_button.desetup()
 		old_weapon.update_ammo.disconnect(_on_update_ammo)
+		if old_weapon is FireWeapon:
+			old_weapon.no_ammo.disconnect(_no_ammo_warning)
 
 
 func _on_player_glance_mode_changed(value: bool, _old_value):

@@ -8,6 +8,8 @@
 [node name="Game" type="Node2D" unique_id=163096156]
 y_sort_enabled = true
 script = ExtResource("1_7mycd")
+arma_inicial_path = "uid://860hr8372obm"
+world_items_root = NodePath("world_items")
 
 [node name="MultiplayerSemaphore" type="Node" parent="." unique_id=188693820]
 script = ExtResource("2_4fuuu")
@@ -33,6 +35,8 @@ position = Vector2(-487, 2032)
 
 [node name="4" type="Marker2D" parent="start_points" unique_id=1034255195 groups=["start_points"]]
 position = Vector2(-381, 1077)
+
+[node name="world_items" type="Node" parent="." unique_id=1592070127]
 
 [node name="PlayerSpawner" type="MultiplayerSpawner" parent="." unique_id=687198779]
 unique_name_in_owner = true

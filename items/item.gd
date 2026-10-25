@@ -19,7 +19,7 @@ class_name Item extends Resource
 @export var nombre: String
 ## Precio del item para operaciones de venta
 @export var precio: float
-## Máximo que se puede stackear el item
+## Máximo que se puede stackear el item. Con 0 puede stackear infinitamente
 @export var max_stack: int = 1
 ## Ruta del icono que identifica este item en la tienda o el inventario
 @export_file var icon_path: String
@@ -57,10 +57,14 @@ var cantidad: int:
 
 var cantidad_prop := Observable.new(1, Callable(),
 	func(new_cantidad, _old_cantidad):
-		if new_cantidad > max_stack:
+		if not stack_size_valido(new_cantidad):
 			printerr("max_stack superado")
 			return false
 )
+
+func stack_size_valido(size: int):
+	return max_stack == 0 or size <= max_stack
+
 
 ## Referencia al objeto que el item representa en el inventario. 
 var object: Object = null:

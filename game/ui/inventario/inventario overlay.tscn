@@ -36,28 +36,30 @@ script = ExtResource("1_sham1")
 
 [node name="Inventario_player" parent="." unique_id=1418757297 instance=ExtResource("2_moblb")]
 unique_name_in_owner = true
+custom_minimum_size = Vector2(315, 300)
 layout_mode = 1
 anchors_preset = -1
-anchor_left = 0.0
-anchor_right = 0.0
-offset_left = 120.0
-offset_top = -150.0
-offset_bottom = 150.0
-grow_horizontal = 1
+anchor_left = 0.33
+anchor_right = 0.33
+size_flags_vertical = 1
 
-[node name="ext_inventory_container" type="Control" parent="." unique_id=712195662]
+[node name="ext_inventory_container" type="Control" parent="." unique_id=381171560]
 unique_name_in_owner = true
 layout_mode = 1
-anchors_preset = 15
+anchor_left = 0.55
 anchor_right = 1.0
 anchor_bottom = 1.0
-grow_horizontal = 2
+grow_horizontal = 0
 grow_vertical = 2
 mouse_filter = 2
 
 [node name="Tienda" parent="ext_inventory_container" unique_id=1407570768 instance=ExtResource("3_5r2pa")]
 unique_name_in_owner = true
 layout_mode = 1
+anchors_preset = 11
+anchor_left = 1.0
+offset_left = -345.0
+grow_horizontal = 0
 _slots = Dictionary[int, ExtResource("4_sham1")]({
 0: SubResource("Resource_wxhpg"),
 1: SubResource("Resource_moblb"),

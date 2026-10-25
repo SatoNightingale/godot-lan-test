@@ -5,6 +5,9 @@
 [ext_resource type="Resource" uid="uid://860hr8372obm" path="res://items/types/colt_item.tres" id="3_dsb46"]
 [ext_resource type="PackedScene" uid="uid://cubxtvqqbnv2v" path="res://game/player/player.tscn" id="3_uofsi"]
 [ext_resource type="PackedScene" uid="uid://cmcwg28s1fsot" path="res://game/ui/ui.tscn" id="4_ry45r"]
+[ext_resource type="Resource" uid="uid://br1s8k7iav28o" path="res://items/types/bullet_item.tres" id="4_uofsi"]
+[ext_resource type="Resource" uid="uid://d3ei2ayqf5fsl" path="res://items/types/money_item.tres" id="7_jenrn"]
+[ext_resource type="PackedScene" uid="uid://n3hqp88go28g" path="res://maps/props/cofre/cofre.tscn" id="8_mm0ke"]
 
 [node name="tests" type="Node2D" unique_id=310234000]
 y_sort_enabled = true
@@ -14,6 +17,17 @@ arma_inicial_path = "uid://860hr8372obm"
 [node name="world_item" parent="." unique_id=332440660 instance=ExtResource("2_dsb46")]
 position = Vector2(492, 257)
 item = ExtResource("3_dsb46")
+instance_data = Dictionary[String, Variant]({
+"type_id": "res://items/types/colt_item.tres"
+})
+
+[node name="world_item2" parent="." unique_id=97316216 instance=ExtResource("2_dsb46")]
+position = Vector2(535, 261)
+item = ExtResource("4_uofsi")
+instance_data = Dictionary[String, Variant]({
+"cantidad": 30,
+"type_id": "res://items/types/bullet_item.tres"
+})
 
 [node name="player" parent="." unique_id=1954339528 instance=ExtResource("3_uofsi")]
 position = Vector2(426, 250)
@@ -22,3 +36,15 @@ position = Vector2(426, 250)
 position = Vector2(532, 200)
 
 [node name="UI" parent="." unique_id=845416013 instance=ExtResource("4_ry45r")]
+
+[node name="world_item3" parent="." unique_id=1809467857 instance=ExtResource("2_dsb46")]
+position = Vector2(457, 283)
+item = ExtResource("7_jenrn")
+instance_data = Dictionary[String, Variant]({
+"cantidad": 1000.0,
+"type_id": "res://items/types/money_item.tres"
+})
+
+[node name="cofre" parent="." unique_id=2116780314 instance=ExtResource("8_mm0ke")]
+position = Vector2(334.8421, 246.4737)
+cantidad_slots = 9

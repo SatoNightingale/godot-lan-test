@@ -16,7 +16,9 @@ var players: Dictionary[int, Player]
 
 @onready var _ready_semaphore : MultiplayerSemaphore = $MultiplayerSemaphore
 
-#var client_player : Player
+@export var world_items_root: NodePath
+
+#var local_player : Player
 
 
 #region Recepcion de la escena / Pre-inicializacion
@@ -40,6 +42,7 @@ func _ready():
 func server_initialize():
 	if multiplayer.is_server():
 		_ready_semaphore.setup(_on_every_player_ready, player_data.size())
+		ItemManager.register_world_items(get_node(world_items_root))
 		var starting_positions = %start_points.get_children()
 		var player_number = 0
 		for id in player_data:
@@ -79,7 +82,7 @@ func spawn_player(data) -> Node:
 	player.ready.connect(_ready_semaphore.notify, CONNECT_ONE_SHOT)
 	# configurar la UI con el jugador actual
 	if data.id == multiplayer.get_unique_id():
-		#client_player = player
+		#local_player = player
 		%UI.player_data = player_data
 		%UI.player = player
 		player.ready.connect(%UI.initialize)
@@ -96,6 +99,7 @@ func _on_every_player_ready():
 					arma_inicial_path)), 
 				InventarioPlayer.MAIN_WEAPON
 			)
+
 #endregion
 
 #region Armas
@@ -119,19 +123,18 @@ func call_bullet_spawner(direction: Vector2, weapon: Weapon):
 		"shooter_id": weapon.player.player_id,
 		"direction": direction
 	})
+
 #endregion
 
 #region Muertes de players
 
 func _on_player_dead(killer_id, dead_id):
 	if multiplayer.is_server():
-		players[killer_id].inventario.modificar_dinero(600)
-		players[dead_id].inventario.modificar_dinero(-400)
 		_on_dead.rpc_id(dead_id, killer_id)
 		_on_kill.rpc_id(killer_id, dead_id)
 		_on_player_killed.rpc(killer_id, dead_id)
 		var dead = players[dead_id]
-		if dead.dinero.value > 0:
+		if dead.dinero > 0:
 			dead.start_respawn_timer()
 			dead.start_respawn_timer.rpc_id(dead_id)
 		else:
@@ -151,14 +154,14 @@ func _on_player_dead(killer_id, dead_id):
 @rpc("authority", "call_local")
 func _on_dead(killer_id: int):
 	#var myid = multiplayer.get_unique_id()
-	#players[myid].inventario.dinero.value -= 600
+	#players[myid].inventario.dinero -= 600
 	%UI.set_dead_screen(players[killer_id].get_colored_player_name())
 
 
 @rpc("authority", "call_local")
 func _on_kill(dead_id: int):
 	#var myid = multiplayer.get_unique_id()
-	#players[myid].inventario.dinero.value += 400
+	#players[myid].inventario.dinero += 400
 	anuncio.emit("Has matado a {0}".format([
 		players[dead_id].get_colored_player_name()
 	]))

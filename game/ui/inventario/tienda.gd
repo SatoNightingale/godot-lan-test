@@ -5,7 +5,6 @@ class_name Tienda extends Inventario
 
 
 func _ready() -> void:
-	# ta raro que los slots de la tienda (al menos los que estan puestos ahi) empiecen en el 5
 	var uislots = get_tree().get_nodes_in_group("shop_slots")
 	var slot_id = 0
 	for uislot in uislots:
@@ -22,17 +21,20 @@ func get_front() -> Node:
 	return self
 
 # el precio debe multiplicarse por la cantidad?
+# aqui en la tienda no, aqui nosotros ponemos el precio y la cantidad
+# otra cosa es para vender...
+# el precio de venta no se debe tomar de los items, sino de los propios slots de la tienda. Porque el precio de venta del tipo de item, vamos a establecerlo asi, es de la unidad de ese item, no de un stack con un numero arbitrario de elementos. Asi se puede comprar el item al precio de la tienda y venderlo al precio del tipo multiplicado por la cantidad (TODO)
 
 #@rpc("any_peer", "call_local")
 func request_compra(item_path: String, transaction_inventory: InventarioPlayer, cantidad: int) -> Dictionary:
 	if multiplayer.is_server():
 		if ItemManager.item_type_exists(item_path):
 			var type = ItemManager.get_item_type(item_path)
-			if transaction_inventory.dinero.value >= type.precio:
+			if transaction_inventory.dinero >= type.precio:
 				# sellar el item con su id unico
 				var dto = ItemManager.new_item_dto(item_path)
 				dto.cantidad = cantidad
-				transaction_inventory.modificar_dinero(-type.precio)
+				transaction_inventory.dinero -= type.precio
 				return dto
 			else:
 				transaction_inventory.call_not_enough_money.rpc_id(
@@ -47,7 +49,7 @@ func request_venta(transaction_inventory: InventarioPlayer, slot_id: int, cantid
 	if multiplayer.is_server():
 		var selling := transaction_inventory.get_slot(slot_id).item
 		if selling:
-			transaction_inventory.modificar_dinero(+selling.precio)
+			transaction_inventory.dinero += selling.precio
 			transaction_inventory.server_take_item(slot_id, cantidad)
 		else:
 			printerr("el jugador no tiene un item en el slot: ", slot_id, " o el id de slot es invalido")
@@ -89,4 +91,14 @@ func mover_item_local(_from_slot_id: int, _to_slot_id: int, _cantidad: int):
 	printerr("mover_item_local no se usa en Tienda")
 
 
-# Seria interesante poner este script en un nodo que tome las pulsaciones del mouse (como el Panel Container) y asi poder recibir directamente los dropeos sin tener que meterle un script a shop_tabs
+func _can_drop_data(_at_position: Vector2, data: Variant) -> bool:
+	# Se puede dropear cualquier cosa en la tienda porque se puede vender cualquier cosa.
+	return data is UISlot.ItemDTO and data.source_inventory is InventarioPlayer
+
+
+func _drop_data(_at_position: Vector2, data: Variant) -> void:
+	## vender
+	if data.source_inventory != self and data.source_inventory is InventarioPlayer:
+		self.intercambio.rpc_id(1, \
+			data.source_inventory.get_path(), data.src_slot_id,
+			data.cantidad, -1)

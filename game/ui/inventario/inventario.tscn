@@ -1,7 +1,8 @@
 [gd_scene format=3 uid="uid://bbe0oj10vjkww"]
 
 [ext_resource type="Script" uid="uid://d3nor7wgd6e7u" path="res://game/ui/inventario/inventario front.gd" id="1_ds2oy"]
-[ext_resource type="PackedScene" uid="uid://bh8oasmu5dxta" path="res://game/ui/inventario/slots/inventory_slot.tscn" id="2_m7gvh"]
+[ext_resource type="PackedScene" uid="uid://xgpidmknlfk7" path="res://game/ui/inventario/slots/slot.tscn" id="2_i7yia"]
+[ext_resource type="Script" uid="uid://bw0lgros3k7yh" path="res://game/ui/inventario/slots/ui slot.gd" id="3_cfgqn"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_ds2oy"]
 
@@ -76,17 +77,18 @@ layout_mode = 2
 size_flags_horizontal = 0
 size_flags_vertical = 8
 
-[node name="main_bullet" parent="MarginContainer/TabContainer/Equipo/armas/Control/HBoxContainer" unique_id=702327130 groups=["slots"] instance=ExtResource("2_m7gvh")]
+[node name="main_bullet" parent="MarginContainer/TabContainer/Equipo/armas/Control/HBoxContainer" unique_id=702327130 groups=["slots"] instance=ExtResource("2_i7yia")]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(40, 40)
 layout_mode = 2
 size_flags_vertical = 8
+script = ExtResource("3_cfgqn")
 
-[node name="main_weapon" parent="MarginContainer/TabContainer/Equipo/armas/Control/HBoxContainer" unique_id=169525272 groups=["slots"] instance=ExtResource("2_m7gvh")]
+[node name="main_weapon" parent="MarginContainer/TabContainer/Equipo/armas/Control/HBoxContainer" unique_id=2504431 groups=["slots"] instance=ExtResource("2_i7yia")]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(120, 50)
 layout_mode = 2
-tooltip_text = "El arma principal"
+script = ExtResource("3_cfgqn")
 
 [node name="Control2" type="VBoxContainer" parent="MarginContainer/TabContainer/Equipo/armas" unique_id=1713478324]
 layout_mode = 2
@@ -100,15 +102,17 @@ horizontal_alignment = 1
 [node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer/TabContainer/Equipo/armas/Control2" unique_id=1175323340]
 layout_mode = 2
 
-[node name="slot" parent="MarginContainer/TabContainer/Equipo/armas/Control2/HBoxContainer" unique_id=37884517 groups=["slots"] instance=ExtResource("2_m7gvh")]
+[node name="secondary_bullet" parent="MarginContainer/TabContainer/Equipo/armas/Control2/HBoxContainer" unique_id=1638246815 groups=["slots"] instance=ExtResource("2_i7yia")]
 custom_minimum_size = Vector2(40, 40)
 layout_mode = 2
 size_flags_vertical = 8
+script = ExtResource("3_cfgqn")
 
-[node name="secondary_weapon" parent="MarginContainer/TabContainer/Equipo/armas/Control2/HBoxContainer" unique_id=1279114466 groups=["slots"] instance=ExtResource("2_m7gvh")]
+[node name="secondary_weapon" parent="MarginContainer/TabContainer/Equipo/armas/Control2/HBoxContainer" unique_id=1637891463 groups=["slots"] instance=ExtResource("2_i7yia")]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(120, 50)
 layout_mode = 2
+script = ExtResource("3_cfgqn")
 
 [node name="Control3" type="VBoxContainer" parent="MarginContainer/TabContainer/Equipo/armas" unique_id=1092701479]
 layout_mode = 2
@@ -123,15 +127,17 @@ horizontal_alignment = 1
 layout_mode = 2
 alignment = 1
 
-[node name="slot" parent="MarginContainer/TabContainer/Equipo/armas/Control3/HBoxContainer" unique_id=1276414358 groups=["slots"] instance=ExtResource("2_m7gvh")]
+[node name="extra_bullet" parent="MarginContainer/TabContainer/Equipo/armas/Control3/HBoxContainer" unique_id=325240820 groups=["slots"] instance=ExtResource("2_i7yia")]
 custom_minimum_size = Vector2(40, 40)
 layout_mode = 2
 size_flags_vertical = 8
+script = ExtResource("3_cfgqn")
 
-[node name="extra_weapon" parent="MarginContainer/TabContainer/Equipo/armas/Control3/HBoxContainer" unique_id=1627592624 groups=["slots"] instance=ExtResource("2_m7gvh")]
+[node name="extra_weapon" parent="MarginContainer/TabContainer/Equipo/armas/Control3/HBoxContainer" unique_id=1503189936 groups=["slots"] instance=ExtResource("2_i7yia")]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(120, 50)
 layout_mode = 2
+script = ExtResource("3_cfgqn")
 
 [node name="accesorios" type="VBoxContainer" parent="MarginContainer/TabContainer/Equipo" unique_id=1505037330]
 layout_mode = 2
@@ -150,29 +156,29 @@ theme_override_constants/h_separation = 4
 theme_override_constants/v_separation = 4
 columns = 2
 
-[node name="slot" parent="MarginContainer/TabContainer/Equipo/accesorios/accesorios" unique_id=1608128651 groups=["accesorios", "slots"] instance=ExtResource("2_m7gvh")]
+[node name="slot" parent="MarginContainer/TabContainer/Equipo/accesorios/accesorios" unique_id=1602938160 groups=["accesorios", "slots"] instance=ExtResource("2_i7yia")]
 layout_mode = 2
-size_flags_vertical = 8
+script = ExtResource("3_cfgqn")
 
-[node name="slot2" parent="MarginContainer/TabContainer/Equipo/accesorios/accesorios" unique_id=188483174 groups=["accesorios", "slots"] instance=ExtResource("2_m7gvh")]
+[node name="slot2" parent="MarginContainer/TabContainer/Equipo/accesorios/accesorios" unique_id=1823217859 groups=["accesorios", "slots"] instance=ExtResource("2_i7yia")]
 layout_mode = 2
-size_flags_vertical = 8
+script = ExtResource("3_cfgqn")
 
-[node name="slot3" parent="MarginContainer/TabContainer/Equipo/accesorios/accesorios" unique_id=1231876951 groups=["accesorios", "slots"] instance=ExtResource("2_m7gvh")]
+[node name="slot3" parent="MarginContainer/TabContainer/Equipo/accesorios/accesorios" unique_id=1604338631 groups=["accesorios", "slots"] instance=ExtResource("2_i7yia")]
 layout_mode = 2
-size_flags_vertical = 8
+script = ExtResource("3_cfgqn")
 
-[node name="slot4" parent="MarginContainer/TabContainer/Equipo/accesorios/accesorios" unique_id=274826616 groups=["accesorios", "slots"] instance=ExtResource("2_m7gvh")]
+[node name="slot4" parent="MarginContainer/TabContainer/Equipo/accesorios/accesorios" unique_id=551781758 groups=["accesorios", "slots"] instance=ExtResource("2_i7yia")]
 layout_mode = 2
-size_flags_vertical = 8
+script = ExtResource("3_cfgqn")
 
-[node name="slot5" parent="MarginContainer/TabContainer/Equipo/accesorios/accesorios" unique_id=733447106 groups=["accesorios", "slots"] instance=ExtResource("2_m7gvh")]
+[node name="slot5" parent="MarginContainer/TabContainer/Equipo/accesorios/accesorios" unique_id=277505762 groups=["accesorios", "slots"] instance=ExtResource("2_i7yia")]
 layout_mode = 2
-size_flags_vertical = 8
+script = ExtResource("3_cfgqn")
 
-[node name="slot6" parent="MarginContainer/TabContainer/Equipo/accesorios/accesorios" unique_id=133121424 groups=["accesorios", "slots"] instance=ExtResource("2_m7gvh")]
+[node name="slot6" parent="MarginContainer/TabContainer/Equipo/accesorios/accesorios" unique_id=1031057443 groups=["accesorios", "slots"] instance=ExtResource("2_i7yia")]
 layout_mode = 2
-size_flags_vertical = 8
+script = ExtResource("3_cfgqn")
 
 [node name="Mochila" type="VBoxContainer" parent="MarginContainer/TabContainer" unique_id=1960498447]
 visible = false
@@ -195,29 +201,29 @@ layout_mode = 2
 size_flags_vertical = 0
 columns = 3
 
-[node name="slot" parent="MarginContainer/TabContainer/Mochila/PanelContainer2/bolsillo seguro" unique_id=1794331564 groups=["bolsillo_seguro", "slots"] instance=ExtResource("2_m7gvh")]
+[node name="slot" parent="MarginContainer/TabContainer/Mochila/PanelContainer2/bolsillo seguro" unique_id=916435962 groups=["bolsillo_seguro", "slots"] instance=ExtResource("2_i7yia")]
 layout_mode = 2
-size_flags_vertical = 8
+script = ExtResource("3_cfgqn")
 
-[node name="slot2" parent="MarginContainer/TabContainer/Mochila/PanelContainer2/bolsillo seguro" unique_id=1694847627 groups=["bolsillo_seguro", "slots"] instance=ExtResource("2_m7gvh")]
+[node name="slot2" parent="MarginContainer/TabContainer/Mochila/PanelContainer2/bolsillo seguro" unique_id=1895676702 groups=["bolsillo_seguro", "slots"] instance=ExtResource("2_i7yia")]
 layout_mode = 2
-size_flags_vertical = 8
+script = ExtResource("3_cfgqn")
 
-[node name="slot3" parent="MarginContainer/TabContainer/Mochila/PanelContainer2/bolsillo seguro" unique_id=635061058 groups=["bolsillo_seguro", "slots"] instance=ExtResource("2_m7gvh")]
+[node name="slot3" parent="MarginContainer/TabContainer/Mochila/PanelContainer2/bolsillo seguro" unique_id=689191654 groups=["bolsillo_seguro", "slots"] instance=ExtResource("2_i7yia")]
 layout_mode = 2
-size_flags_vertical = 8
+script = ExtResource("3_cfgqn")
 
-[node name="slot4" parent="MarginContainer/TabContainer/Mochila/PanelContainer2/bolsillo seguro" unique_id=700390832 groups=["bolsillo_seguro", "slots"] instance=ExtResource("2_m7gvh")]
+[node name="slot4" parent="MarginContainer/TabContainer/Mochila/PanelContainer2/bolsillo seguro" unique_id=1645622228 groups=["bolsillo_seguro", "slots"] instance=ExtResource("2_i7yia")]
 layout_mode = 2
-size_flags_vertical = 8
+script = ExtResource("3_cfgqn")
 
-[node name="slot5" parent="MarginContainer/TabContainer/Mochila/PanelContainer2/bolsillo seguro" unique_id=29327129 groups=["bolsillo_seguro", "slots"] instance=ExtResource("2_m7gvh")]
+[node name="slot5" parent="MarginContainer/TabContainer/Mochila/PanelContainer2/bolsillo seguro" unique_id=1775794263 groups=["bolsillo_seguro", "slots"] instance=ExtResource("2_i7yia")]
 layout_mode = 2
-size_flags_vertical = 8
+script = ExtResource("3_cfgqn")
 
-[node name="slot6" parent="MarginContainer/TabContainer/Mochila/PanelContainer2/bolsillo seguro" unique_id=1884029559 groups=["bolsillo_seguro", "slots"] instance=ExtResource("2_m7gvh")]
+[node name="slot6" parent="MarginContainer/TabContainer/Mochila/PanelContainer2/bolsillo seguro" unique_id=1177250321 groups=["bolsillo_seguro", "slots"] instance=ExtResource("2_i7yia")]
 layout_mode = 2
-size_flags_vertical = 8
+script = ExtResource("3_cfgqn")
 
 [node name="Label2" type="Label" parent="MarginContainer/TabContainer/Mochila" unique_id=1431404800]
 layout_mode = 2
@@ -237,50 +243,50 @@ size_flags_horizontal = 0
 size_flags_vertical = 4
 columns = 4
 
-[node name="slot" parent="MarginContainer/TabContainer/Mochila/PanelContainer/mochila" unique_id=601656987 groups=["mochila", "slots"] instance=ExtResource("2_m7gvh")]
+[node name="slot" parent="MarginContainer/TabContainer/Mochila/PanelContainer/mochila" unique_id=2145720719 groups=["mochila", "slots"] instance=ExtResource("2_i7yia")]
 layout_mode = 2
-size_flags_vertical = 8
+script = ExtResource("3_cfgqn")
 
-[node name="slot2" parent="MarginContainer/TabContainer/Mochila/PanelContainer/mochila" unique_id=799674814 groups=["mochila", "slots"] instance=ExtResource("2_m7gvh")]
+[node name="slot2" parent="MarginContainer/TabContainer/Mochila/PanelContainer/mochila" unique_id=946527154 groups=["mochila", "slots"] instance=ExtResource("2_i7yia")]
 layout_mode = 2
-size_flags_vertical = 8
+script = ExtResource("3_cfgqn")
 
-[node name="slot3" parent="MarginContainer/TabContainer/Mochila/PanelContainer/mochila" unique_id=1676991796 groups=["mochila", "slots"] instance=ExtResource("2_m7gvh")]
+[node name="slot3" parent="MarginContainer/TabContainer/Mochila/PanelContainer/mochila" unique_id=1336731108 groups=["mochila", "slots"] instance=ExtResource("2_i7yia")]
 layout_mode = 2
-size_flags_vertical = 8
+script = ExtResource("3_cfgqn")
 
-[node name="slot4" parent="MarginContainer/TabContainer/Mochila/PanelContainer/mochila" unique_id=749833012 groups=["mochila", "slots"] instance=ExtResource("2_m7gvh")]
+[node name="slot4" parent="MarginContainer/TabContainer/Mochila/PanelContainer/mochila" unique_id=1268267764 groups=["mochila", "slots"] instance=ExtResource("2_i7yia")]
 layout_mode = 2
-size_flags_vertical = 8
+script = ExtResource("3_cfgqn")
 
-[node name="slot5" parent="MarginContainer/TabContainer/Mochila/PanelContainer/mochila" unique_id=2050770869 groups=["mochila", "slots"] instance=ExtResource("2_m7gvh")]
+[node name="slot5" parent="MarginContainer/TabContainer/Mochila/PanelContainer/mochila" unique_id=110181877 groups=["mochila", "slots"] instance=ExtResource("2_i7yia")]
 layout_mode = 2
-size_flags_vertical = 8
+script = ExtResource("3_cfgqn")
 
-[node name="slot6" parent="MarginContainer/TabContainer/Mochila/PanelContainer/mochila" unique_id=57924194 groups=["mochila", "slots"] instance=ExtResource("2_m7gvh")]
+[node name="slot6" parent="MarginContainer/TabContainer/Mochila/PanelContainer/mochila" unique_id=1607439962 groups=["mochila", "slots"] instance=ExtResource("2_i7yia")]
 layout_mode = 2
-size_flags_vertical = 8
+script = ExtResource("3_cfgqn")
 
-[node name="slot7" parent="MarginContainer/TabContainer/Mochila/PanelContainer/mochila" unique_id=132059297 groups=["mochila", "slots"] instance=ExtResource("2_m7gvh")]
+[node name="slot7" parent="MarginContainer/TabContainer/Mochila/PanelContainer/mochila" unique_id=1569756644 groups=["mochila", "slots"] instance=ExtResource("2_i7yia")]
 layout_mode = 2
-size_flags_vertical = 8
+script = ExtResource("3_cfgqn")
 
-[node name="slot8" parent="MarginContainer/TabContainer/Mochila/PanelContainer/mochila" unique_id=1447766543 groups=["mochila", "slots"] instance=ExtResource("2_m7gvh")]
+[node name="slot8" parent="MarginContainer/TabContainer/Mochila/PanelContainer/mochila" unique_id=1152632330 groups=["mochila", "slots"] instance=ExtResource("2_i7yia")]
 layout_mode = 2
-size_flags_vertical = 8
+script = ExtResource("3_cfgqn")
 
-[node name="slot9" parent="MarginContainer/TabContainer/Mochila/PanelContainer/mochila" unique_id=1447165802 groups=["mochila", "slots"] instance=ExtResource("2_m7gvh")]
+[node name="slot9" parent="MarginContainer/TabContainer/Mochila/PanelContainer/mochila" unique_id=1149907417 groups=["mochila", "slots"] instance=ExtResource("2_i7yia")]
 layout_mode = 2
-size_flags_vertical = 8
+script = ExtResource("3_cfgqn")
 
-[node name="slot10" parent="MarginContainer/TabContainer/Mochila/PanelContainer/mochila" unique_id=473583353 groups=["mochila", "slots"] instance=ExtResource("2_m7gvh")]
+[node name="slot10" parent="MarginContainer/TabContainer/Mochila/PanelContainer/mochila" unique_id=547988394 groups=["mochila", "slots"] instance=ExtResource("2_i7yia")]
 layout_mode = 2
-size_flags_vertical = 8
+script = ExtResource("3_cfgqn")
 
-[node name="slot11" parent="MarginContainer/TabContainer/Mochila/PanelContainer/mochila" unique_id=1063870459 groups=["mochila", "slots"] instance=ExtResource("2_m7gvh")]
+[node name="slot11" parent="MarginContainer/TabContainer/Mochila/PanelContainer/mochila" unique_id=545269996 groups=["mochila", "slots"] instance=ExtResource("2_i7yia")]
 layout_mode = 2
-size_flags_vertical = 8
+script = ExtResource("3_cfgqn")
 
-[node name="slot12" parent="MarginContainer/TabContainer/Mochila/PanelContainer/mochila" unique_id=1535692339 groups=["mochila", "slots"] instance=ExtResource("2_m7gvh")]
+[node name="slot12" parent="MarginContainer/TabContainer/Mochila/PanelContainer/mochila" unique_id=2006471107 groups=["mochila", "slots"] instance=ExtResource("2_i7yia")]
 layout_mode = 2
-size_flags_vertical = 8
+script = ExtResource("3_cfgqn")

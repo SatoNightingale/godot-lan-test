@@ -1,0 +1,12 @@
+[gd_resource type="Resource" script_class="Item" format=3 uid="uid://d3ei2ayqf5fsl"]
+
+[ext_resource type="Script" uid="uid://ccy1i1636urvy" path="res://items/item.gd" id="1_6uhaq"]
+
+[resource]
+script = ExtResource("1_6uhaq")
+item_type_path = "res://items/types/money_item.tres"
+nombre = "Dinero"
+max_stack = 0
+icon_path = "uid://dsp8pfd5vwbcc"
+tooltip_text = "Si esto llega a mostrarse, hay un problema"
+metadata/_custom_type_script = "uid://ccy1i1636urvy"

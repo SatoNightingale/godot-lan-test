@@ -1,0 +1,72 @@
+[gd_scene format=3 uid="uid://n3hqp88go28g"]
+
+[ext_resource type="Texture2D" uid="uid://lk7ayfe0lt6w" path="res://maps/props/cofre/cofre abierto.png" id="1_mqig4"]
+[ext_resource type="Script" uid="uid://dqrf0kfjs3e5o" path="res://maps/props/cofre/cofre.gd" id="1_x3oqh"]
+[ext_resource type="Texture2D" uid="uid://ctrd4sn3qn07n" path="res://maps/props/cofre/cofre cerrado.png" id="2_6fkqk"]
+[ext_resource type="Script" uid="uid://bh372h2ut8rcm" path="res://items/inventario.gd" id="4_0bc2b"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_c0afo"]
+size = Vector2(23, 21)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_x3oqh"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("1_mqig4")
+}],
+"loop": true,
+"name": &"abierto",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("2_6fkqk")
+}],
+"loop": true,
+"name": &"cerrado",
+"speed": 5.0
+}]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_c0afo"]
+radius = 40.0
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_0bc2b"]
+size = Vector2(24, 21)
+
+[node name="cofre" type="StaticBody2D" unique_id=1003589841 node_paths=PackedStringArray("inventario")]
+texture_filter = 1
+script = ExtResource("1_x3oqh")
+inventario = NodePath("Inventario")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1290959395]
+visible = false
+position = Vector2(0, 4)
+shape = SubResource("RectangleShape2D_c0afo")
+
+[node name="sprite" type="AnimatedSprite2D" parent="." unique_id=553778438]
+unique_name_in_owner = true
+y_sort_enabled = true
+position = Vector2(0, -9)
+scale = Vector2(1.5, 1.5)
+sprite_frames = SubResource("SpriteFrames_x3oqh")
+animation = &"cerrado"
+
+[node name="Inventario" type="Node" parent="." unique_id=834375565]
+unique_name_in_owner = true
+script = ExtResource("4_0bc2b")
+metadata/_custom_type_script = "uid://bh372h2ut8rcm"
+
+[node name="interaction_area" type="Area2D" parent="." unique_id=1741010722]
+unique_name_in_owner = true
+visible = false
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="interaction_area" unique_id=1810721044]
+shape = SubResource("CircleShape2D_c0afo")
+
+[node name="button" type="TouchScreenButton" parent="." unique_id=552489692]
+unique_name_in_owner = true
+position = Vector2(0, 4)
+shape = SubResource("RectangleShape2D_0bc2b")
+shape_visible = false
+
+[connection signal="pressed" from="button" to="." method="_on_button_pressed"]

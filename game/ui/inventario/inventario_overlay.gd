@@ -1,6 +1,5 @@
 class_name InventoryUI extends Control
 
-## Esta UI no solo debe encargarse de mostrar el inventario y la tienda, sino que de modo general muestra el inventario del player más cualquier otro inventario con el que este interactúe e intercambie; desde este punto de vista, la tienda o un cofre cualquiera hallado en medio del mapa son un inventario, solo que definen comportamientos distintos de intercambio
 
 signal open
 signal close
@@ -49,15 +48,17 @@ func cerrar():
 	close.emit()
 
 
-#func _process(delta: float) -> void:
-	#if Input.is_action_just_pressed("reload"):
-		#show()
-
 func _gui_input(event: InputEvent) -> void:
 	if event is InputEventMouseButton or \
 	event is InputEventScreenTouch and event.pressed:
 		if event.is_pressed():
 			close.emit()
+
+func _can_drop_data(_at_position: Vector2, data: Variant) -> bool:
+	return data is UISlot.ItemDTO
+
+func _drop_data(_at_position: Vector2, data: Variant) -> void:
+	player.inventario.drop_item.rpc_id(1, data.src_slot_id, data.cantidad)
 
 
 func _on_open() -> void:

@@ -20,12 +20,13 @@ func initialize():
 	# dinero
 	var set_button_money = func(money: int):
 		money_button.text = str(money)
-	set_button_money.call(int(player_inventory.dinero.value))
-	player_inventory.dinero.conectar(func(dinero, _old_dinero):
+	set_button_money.call(int(player_inventory.dinero))
+	player_inventory.dinero_prop.conectar(func(dinero, _old_dinero):
 		var tween = create_tween()
 		tween.tween_method(set_button_money, int(money_button.text), dinero, 0.2)
 	)
-	player_inventory.not_enough_money.connect(_on_not_enough_money)
+	player_inventory.not_enough_money.connect(
+		_on_not_enough_money)
 	# slots
 	conectar_slots()
 
@@ -44,9 +45,12 @@ func conectar_slots():
 				slot.slot = conjunto[slot_id]
 				slot.inventario = player_inventory
 				slot_id += 1
-	conectar_conjuntos.call("accesorios", player_inventory.accesorios)
-	conectar_conjuntos.call("bolsillo_seguro", player_inventory.bolsillo_seguro)
-	conectar_conjuntos.call("mochila", player_inventory.mochila)
+	conectar_conjuntos.call("accesorios", 
+		player_inventory.accesorios)
+	conectar_conjuntos.call("bolsillo_seguro", 
+		player_inventory.bolsillo_seguro)
+	conectar_conjuntos.call("mochila",
+		player_inventory.mochila)
 
 
 func _on_not_enough_money():

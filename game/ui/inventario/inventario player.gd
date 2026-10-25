@@ -20,14 +20,20 @@ func validar_sesion(peer_id) -> bool:
 #@onready var local_player = player.local_player
 
 # Quizas la fuente de verdad tenga que ser el mismo inventario... porque player no usa un cojon su dinero. Pero lo usa Game. Quizas player pueda tener una propiedad shortcut como esta. Porque cuando player esta ready, ya este nodo cargó
-@onready var dinero : Observable = player.dinero
+var dinero_prop := Observable.new(3000.0, 
+func(new_value, _old_value):
+	if multiplayer.is_server() and player_id != 1:
+		set_dinero.rpc_id(player_id, new_value)
+)
+var dinero: float:
+	get(): return dinero_prop.value
+	set(value): dinero_prop.value = value
 ## Modifica el dinero en el servidor y en el cliente especificado, si este no es el servidor mismo. No debe llamarse por rpc, porque el internamente lo hace y se corre el riesgo de desincronizacion si se llama primero en un cliente
-## Cliente no deberia ser siempre player_id?
 @rpc("authority")
-func modificar_dinero(cantidad: float): # , cliente: int = 1
-	dinero.value += cantidad
-	if multiplayer.is_server() and player_id != 1: # cliente
-		modificar_dinero.rpc_id(player_id, cantidad)
+func set_dinero(cantidad: float): # , cliente: int = 1
+	dinero_prop.value = cantidad
+	#if multiplayer.is_server() and player_id != 1: # cliente
+		#modificar_dinero.rpc_id(player_id, cantidad)
 
 signal not_enough_money
 
@@ -126,12 +132,31 @@ func set_weapon_item(new_item: Item, old_item):
 
 ## Añade un item al inventario del player, colocandolo en la primera posicion vacia de la mochila
 func add_new_item_to_bag(item: Item) -> bool:
-	for slot in bolsillo_seguro:
-		if not slot.item:
-			server_add_item(item.to_dto(), slot.slot_id)
-			return true
-	for slot in mochila:
-		if not slot.item:
-			server_add_item(item.to_dto(), slot.slot_id)
-			return true
+	if multiplayer.is_server():
+		for slot in bolsillo_seguro:
+			if not slot.item:
+				server_add_item(item.to_dto(), slot.slot_id)
+				return true
+		for slot in mochila:
+			if not slot.item:
+				server_add_item(item.to_dto(), slot.slot_id)
+				return true
 	return false
+
+
+@rpc("any_peer", "call_local")
+func drop_item(slot_id, cantidad: int):
+	if multiplayer.is_server():
+		if has_slot(slot_id):
+			var item = get_slot(slot_id).item
+			if item and item.cantidad >= cantidad:
+				server_take_item(slot_id, cantidad)
+				var item_dto = item.to_dto()
+				item_dto.cantidad = cantidad
+				ItemManager.add_world_item.rpc(item_dto, player.get_path(), player.position, false)
+			else:
+				printerr("No hay suficientes items en slot: ", slot_id)
+		else:
+			printerr("drop_item: Slot invalido: ", slot_id)
+	else:
+		printerr("drop_item solo puede ser llamada por el servidor")

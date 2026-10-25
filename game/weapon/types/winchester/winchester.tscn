@@ -4,6 +4,7 @@
 [ext_resource type="Texture2D" uid="uid://uw04we5hwepk" path="res://game/weapon/types/winchester/Winchester.png" id="2_7bpyk"]
 
 [node name="fire_weapon" unique_id=693644199 instance=ExtResource("1_jeu3i")]
+damage = 75.0
 
 [node name="sprite" parent="." index="0" unique_id=1448784083]
 position = Vector2(18, -3)

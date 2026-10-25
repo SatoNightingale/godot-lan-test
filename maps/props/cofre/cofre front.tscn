@@ -1,0 +1,40 @@
+[gd_scene format=3 uid="uid://p1yyightrqrd"]
+
+[ext_resource type="Script" uid="uid://cpjut1iyv03r6" path="res://maps/props/cofre/cofre_front.gd" id="1_a655a"]
+
+[node name="cofre_front" type="PanelContainer" unique_id=631915555]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -15.5
+offset_top = -31.5
+offset_right = 15.5
+offset_bottom = 31.5
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_a655a")
+
+[node name="MarginContainer" type="MarginContainer" parent="." unique_id=1157565191]
+layout_mode = 2
+size_flags_vertical = 4
+theme_override_constants/margin_left = 15
+theme_override_constants/margin_top = 15
+theme_override_constants/margin_right = 15
+theme_override_constants/margin_bottom = 15
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer" unique_id=840130383]
+layout_mode = 2
+size_flags_vertical = 4
+theme_override_constants/separation = 10
+
+[node name="name" type="Label" parent="MarginContainer/VBoxContainer" unique_id=1275344121]
+unique_name_in_owner = true
+layout_mode = 2
+horizontal_alignment = 1
+
+[node name="container" type="GridContainer" parent="MarginContainer/VBoxContainer" unique_id=408702537]
+unique_name_in_owner = true
+layout_mode = 2
+columns = 3

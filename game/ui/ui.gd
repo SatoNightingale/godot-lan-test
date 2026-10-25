@@ -1,10 +1,10 @@
-extends CanvasLayer
+class_name HUD extends CanvasLayer
 
 
-#@onready var controlador: ControladorVirtual = %virtual_controls
+@onready var controlador: ControladorVirtual = %virtual_controls
 @onready var anunciador: Anunciador = %label_anuncios
-#@onready var menu_pausa: MenuPausa = %menu_pausa
-#@onready var overlay_inventario: InventoryUI = %Inventario
+@onready var menu_pausa: MenuPausa = %menu_pausa
+@onready var overlay_inventario: InventoryUI = %Inventario
 
 var player_data: Dictionary
 

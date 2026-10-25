@@ -21,6 +21,17 @@ func new_item_dto(path: String) -> Dictionary:
 	return {}
 
 
+func new_from_dto(item_dto: Dictionary) -> Item:
+	if multiplayer.is_server():
+		var default_dto = get_item_type(item_dto.type_id).to_dto()
+		var item = Item.new_from_dto(item_dto.merged(default_dto))
+		registrar_item(item)
+		return item
+	else:
+		printerr("new_from_dto solo puede ser llamado por el servidor")
+		return null
+
+
 # Toda vez que se cree un item, debe registrarse en el servidor llamando a esta funcion, y el id devuelto debe pasarse a todos los peers
 #@rpc("any_peer", "call_local")
 func registrar_item(item: Item) -> int:
@@ -63,38 +74,49 @@ func get_item_type(path: String) -> Item:
 
 
 func _ready() -> void:
-	_build_item_type_index()
+	_build_item_type_index("res://")
 
 
-func _build_item_type_index():
+func _build_item_type_index(dir_path: String):
+	#var dir = DirAccess.open(dir_path)
+	#if dir:
+		## uff, ojo a lo que dicen los docs de get_files()
+		#var files = dir.get_files()
+		#var directories = dir.get_directories()
+		## escanear todos los archivos
+		#for file in files:
+			#var file_name = file.get_basename()
+	
 	const item_dir = "res://items/types"
 	var dir = DirAccess.open(item_dir)
 	if dir:
 		dir.list_dir_begin()
 		var file_name = dir.get_next()
 		while not file_name.is_empty():
-			#print(file_name)
 			if file_name.ends_with("_item.tres") or file_name.ends_with("_item.res") or file_name.ends_with("_item.tres.remap"):
 				if file_name.ends_with(".remap"):
 					file_name = file_name.get_basename()
 				var path = item_dir.path_join(file_name)
 				# Luego cada valor de path se carga y se asigna a medida que se van utilizando
 				_item_type_index[path] = null
-				#print(path)
 			file_name = dir.get_next()
 	else:
 		printerr("No se pudo cargar el caché de items")
 
 #region Items de mundo (dropeados en el mapa)
-# Si un item esta tirado en el suelo en un cliente cualquiera, ¿cómo le digo al servidor por rpc que pickee ese item para un player? Debe haber una manera general de buscar items por su id
+## La lista de items tirados en el piso en el mapa. Debe ser publica, tener el mismo contenido para todos los peers, por la siguiente razon: si un player va a tomar un item del piso, el codigo de tocar el item y demas interaccion visual se ejecuta en su maquina; el player que representa a su peer_id tambien esta en su maquina, y para validar hace falta este player y el item en cuestion sacado de esta lista.
+## Tambien se le podria enviar al servidor el id del player...
+## Supongo que no importa mucho si esta lista es publica o privada. Un peer hackeado podria ver la ubicacion de todos los world_items directo en el arbol de escenas, asi que...
 #var _item_db: Dictionary[int, Item]
 var _world_items: Dictionary[int, NodePath]
+
+# necesitamos una manera de definir una instancia de item, con datos de instancia, de modo que la podamos usar como recurso para inicializar items que no empiecen "de cero" como en new_item_dto
 
 func register_world_items(node_to_scan: Node):
 	if multiplayer.is_server():
 		for child in node_to_scan.get_children():
 			if child is WorldItem:
-				registrar_item(child.item)
+				child.item = new_from_dto(child.instance_data)
 				register_world_item(child)
 			if child.get_child_count() > 0:
 				register_world_items(child)
@@ -102,17 +124,19 @@ func register_world_items(node_to_scan: Node):
 func register_world_item(world_item: WorldItem):
 	_world_items[world_item.item.id] = world_item.get_path()
 
+
+# esto en la practica funciona como un multiplayer spawner... excepto que el spawner colocaria los items en una ruta fija, y esto permite una flexibilidad que podria dar muchos problemas...
 @rpc("authority", "call_local")
-func add_world_item(item_dto: Dictionary, ref_node: Node, pos: Vector2, as_child := true):
+func add_world_item(item_dto: Dictionary, ref_node: NodePath, pos: Vector2, as_child := true):
 	var world_item = preload("res://items/world_item.tscn").instantiate()
 	world_item.item = Item.new_from_dto(item_dto)
 	world_item.position = pos
+	world_item.ready.connect(register_world_item.bind(world_item))
+	var parent = get_node(ref_node)
 	if as_child:
-		ref_node.add_child(world_item, true)
+		parent.add_child(world_item, true)
 	else:
-		ref_node.add_sibling(world_item, true)
-	world_item.ready.connect(register_world_item.bind(world_item),
-		CONNECT_ONE_SHOT)
+		parent.call_deferred("add_sibling", world_item, true)
 
 @rpc("authority", "call_local")
 func remove_world_item(item_path: NodePath):
