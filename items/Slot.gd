@@ -20,6 +20,8 @@ var slot_id: int
 
 var item: Item:
 	set(value):
+		if validar_tipo(value) == false:
+			printerr("el tipo del item pasado es incorrecto")
 		item_prop.value = value
 	get():
 		return item_prop.value
@@ -39,3 +41,19 @@ func validar_tipo(item_type) -> bool:
 	else:
 		printerr("Tipo invalido de item_type")
 		return false
+
+
+func inicializar_server():
+	if init_item_type != null:
+		item = ItemManager.new_from_dto(instance_data.merged({
+			"type_id": init_item_type.item_type_path
+		}))
+		#print(slot_id, ": ", instance_data, ": ", item.cantidad)
+
+func inicializar_client(id: int):
+	if init_item_type != null:
+		var default_dto = ItemManager.get_item_type(
+			init_item_type.item_type_path).to_dto()
+		item = Item.new_from_dto(instance_data.merged(
+			default_dto.merged({"id": id}, true)
+		))

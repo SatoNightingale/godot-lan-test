@@ -7,23 +7,18 @@
 
 [sub_resource type="Resource" id="Resource_wxhpg"]
 script = ExtResource("4_sham1")
-visibility = 1
 
 [sub_resource type="Resource" id="Resource_moblb"]
 script = ExtResource("4_sham1")
-visibility = 1
 
 [sub_resource type="Resource" id="Resource_sham1"]
 script = ExtResource("4_sham1")
-visibility = 1
 
 [sub_resource type="Resource" id="Resource_ylbcw"]
 script = ExtResource("4_sham1")
-visibility = 1
 
 [sub_resource type="Resource" id="Resource_5r2pa"]
 script = ExtResource("4_sham1")
-visibility = 1
 
 [node name="overlay" type="ColorRect" unique_id=254352712]
 anchors_preset = 15

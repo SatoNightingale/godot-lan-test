@@ -131,7 +131,7 @@ func set_weapon_item(new_item: Item, old_item):
 		old_item.object.slot_municion = null
 
 ## Añade un item al inventario del player, colocandolo en la primera posicion vacia de la mochila
-func add_new_item_to_bag(item: Item) -> bool:
+func append_item(item: Item) -> bool:
 	if multiplayer.is_server():
 		for slot in bolsillo_seguro:
 			if not slot.item:

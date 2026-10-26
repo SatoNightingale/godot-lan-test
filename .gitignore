@@ -8,3 +8,4 @@ addons/virtual_joystick/tests/
 build/
 PAT_token
 .github/workflows/release.old.yaml
+addons/better-tile-editor/

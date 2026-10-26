@@ -75,7 +75,7 @@ func server_add_item(item_dto: Dictionary, slot_id):
 						[item_dto, slot_id], slot)
 				else:
 					printerr("El tipo del objeto pasado es invalido: ", item_dto.type_id, " vs ", slot.tipo.resource_path)
-		else: printerr("Slot invalido: ", slot_id)
+		else: printerr("server_add_item: no existe el slot: ", slot_id)
 
 
 func server_take_item(slot_id: int, cantidad: int):
@@ -91,7 +91,7 @@ func server_take_item(slot_id: int, cantidad: int):
 			else:
 				printerr("No hay item en slot ", slot_id)
 		else:
-			printerr("Slot invalido: ", slot_id)
+			printerr("server_take_item: No existe el slot ", slot_id)
 
 
 func server_take_item_id(item_id: int, cantidad: int):
@@ -145,7 +145,7 @@ func mover_item_local(from_slot_id: int, to_slot_id: int, cantidad: int):
 
 # Aqui podria hacerse que, al llamar a la funcion en el servidor, esta retorne un bool que lleve en si la validacion; y si ese bool es verdadero, se llame tambien en el cliente
 # Problema, porque por rpc no hay callv, o sea, pasar un array con todos los argumentos hace que la funcion remota reciba como argumento solo el array, no su contenido como argumentos separados
-# podria hacerse que el rpc que se llame sea una funcion extra que luego llame al callable pasado y le pase los argumentos como callv. El callable se pasaria al rpc como StringName (obteniendo su nombre con Callable.get_method) y se llamaria en el remoto mediante call()
+# podria hacerse que el rpc que se llame sea una funcion extra que luego llame al callable pasado y le pase los argumentos como callv. El callable se pasaria al rpc como StringName (obteniendo su nombre con Callable.get_method) y se llamaria en el remoto mediante call(). La unica pega es que no funciona con lambdas
 # De lo contrario, hay que dejarlo asi, descomponiendo el arreglo y llamandolo con sus elementos individuales, pero entonces los metodos llamados tienen que tener un numero fijo de argumentos
 func _call_visibility(callable: Callable, args: Array, slot: Slot, call_on_server: bool = true):
 	if multiplayer.is_server():
@@ -224,7 +224,7 @@ func enviar_item(_inv_dest: Inventario, src_slot: int, cantidad: int) -> Diction
 				server_take_item(src_slot, cantidad)
 				return ret
 			else: printerr("No hay suficientes items en el slot")
-		else: printerr("Slot invalido: ", src_slot)
+		else: printerr("enviar_item: no existe el slot o este no contiene un item: ", src_slot)
 	else: printerr("enviar_item solo puede llamarse en el servidor")
 	return {}
 

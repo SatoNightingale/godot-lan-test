@@ -25,7 +25,6 @@ func initialize():
 
 func interactuar(inventario_externo: Inventario):
 	# no podria haber un metodo para dejar cargado el ultimo inventario abierto, de forma que no se tenga que reiniciar si se cierra y se abre el mismo inventario varias veces?
-	# Y las sesiones? Como validamos las sesiones?
 	%ext_inventory_container.remove_child(actual_front)
 	if actual_front != tienda:
 		actual_front.queue_free()
@@ -50,7 +49,7 @@ func cerrar():
 
 func _gui_input(event: InputEvent) -> void:
 	if event is InputEventMouseButton or \
-	event is InputEventScreenTouch and event.pressed:
+	event is InputEventScreenTouch:
 		if event.is_pressed():
 			close.emit()
 
@@ -64,6 +63,10 @@ func _drop_data(_at_position: Vector2, data: Variant) -> void:
 func _on_open() -> void:
 	opened = true
 	show()
+	# Para que, inmediatamente al abrir esta pantalla, no se mande a cerrar enseguida si el click esta puesto sobre el ColorRect
+	mouse_filter = Control.MOUSE_FILTER_IGNORE
+	await get_tree().process_frame
+	mouse_filter = Control.MOUSE_FILTER_STOP
 
 func _on_close() -> void:
 	opened = false

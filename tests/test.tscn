@@ -8,6 +8,21 @@
 [ext_resource type="Resource" uid="uid://br1s8k7iav28o" path="res://items/types/bullet_item.tres" id="4_uofsi"]
 [ext_resource type="Resource" uid="uid://d3ei2ayqf5fsl" path="res://items/types/money_item.tres" id="7_jenrn"]
 [ext_resource type="PackedScene" uid="uid://n3hqp88go28g" path="res://maps/props/cofre/cofre.tscn" id="8_mm0ke"]
+[ext_resource type="Script" uid="uid://bh372h2ut8rcm" path="res://items/inventario.gd" id="9_ymr3d"]
+[ext_resource type="Script" uid="uid://4j88xjqvskwd" path="res://items/Slot.gd" id="10_5fw7c"]
+
+[sub_resource type="Resource" id="Resource_7y2ik"]
+script = ExtResource("10_5fw7c")
+init_item_type = ExtResource("3_dsb46")
+metadata/_custom_type_script = "uid://4j88xjqvskwd"
+
+[sub_resource type="Resource" id="Resource_vxaqg"]
+script = ExtResource("10_5fw7c")
+init_item_type = ExtResource("4_uofsi")
+instance_data = Dictionary[StringName, Variant]({
+&"cantidad": 30
+})
+metadata/_custom_type_script = "uid://4j88xjqvskwd"
 
 [node name="tests" type="Node2D" unique_id=310234000]
 y_sort_enabled = true
@@ -45,6 +60,15 @@ instance_data = Dictionary[String, Variant]({
 "type_id": "res://items/types/money_item.tres"
 })
 
-[node name="cofre" parent="." unique_id=2116780314 instance=ExtResource("8_mm0ke")]
+[node name="cofre" parent="." unique_id=2116780314 node_paths=PackedStringArray("inventario") instance=ExtResource("8_mm0ke")]
 position = Vector2(334.8421, 246.4737)
+inventario = NodePath("Inventario")
 cantidad_slots = 9
+
+[node name="Inventario" type="Node" parent="cofre" unique_id=1414444090]
+script = ExtResource("9_ymr3d")
+_slots = Dictionary[int, ExtResource("10_5fw7c")]({
+0: SubResource("Resource_7y2ik"),
+1: SubResource("Resource_vxaqg")
+})
+metadata/_custom_type_script = "uid://bh372h2ut8rcm"

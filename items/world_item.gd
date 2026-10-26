@@ -32,7 +32,7 @@ func interact_with_player():
 				player.inventario.dinero += item.cantidad
 				ItemManager.remove_world_item.rpc(get_path())
 				return true
-			else: if player.inventario.add_new_item_to_bag(item):
+			else: if player.inventario.append_item(item):
 				ItemManager.remove_world_item.rpc(get_path())
 				return true
 			else:
