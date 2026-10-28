@@ -41,10 +41,10 @@ func _ready():
 
 func server_initialize():
 	if multiplayer.is_server():
-		_ready_semaphore.setup(_on_every_player_ready, player_data.size())
+		#_ready_semaphore.setup(_on_every_player_ready, player_data.size())
 		ItemManager.register_world_items(get_node(world_items_root))
 		var starting_positions = %start_points.get_children()
-		var player_number = 0
+		#var player_number = 0
 		for id in player_data:
 			var marker = starting_positions.pick_random()
 			starting_positions.erase(marker)
@@ -52,9 +52,9 @@ func server_initialize():
 				"id": id,
 				"name": player_data[id]["name"],
 				"start_pos": marker.position,
-				"number": player_number
+				"sprite_index": player_data[id]["character_variant"]
 			})
-			player_number += 1
+			#player_number += 1
 
 # Esto va a ser llamado en cada peer por PlayerSpawner
 func spawn_player(data) -> Node:
@@ -71,7 +71,7 @@ func spawn_player(data) -> Node:
 	# asignarle su posicion inicial
 	player.position = data["start_pos"]
 	# asignarle su numero de indice
-	player.player_number = data["number"]
+	player.sprite_index = data["sprite_index"]
 	# conectar señales del juego
 	if multiplayer.is_server(): # solo se ejecutan en el servidor
 		player.weapon_prop.connect_init(_on_player_weapon_changed)
@@ -89,16 +89,16 @@ func spawn_player(data) -> Node:
 	return player
 
 
-func _on_every_player_ready():
-	#%UI.overlay_inventario.tienda.init_inventarios(players)
-	# Hay que darle a cada player un arma con su id unico registrado en el servidor. Como el servidor debe ser el que dé el id (y no el player que se lo pida) debe estar fuera del spawner, y como setear el arma de un jugador es una operación pública que deben conocer todos los clientes, hay que esperar hasta que todos los clientes estén cargados, para evitar condiciones de carrera
-	if multiplayer.is_server():
-		for id in players:
-			players[id].inventario.server_add_item(
-				ItemManager.new_item_dto(ResourceUID.uid_to_path(
-					arma_inicial_path)), 
-				InventarioPlayer.MAIN_WEAPON
-			)
+#func _on_every_player_ready():
+	##%UI.overlay_inventario.tienda.init_inventarios(players)
+	## Hay que darle a cada player un arma con su id unico registrado en el servidor. Como el servidor debe ser el que dé el id (y no el player que se lo pida) debe estar fuera del spawner, y como setear el arma de un jugador es una operación pública que deben conocer todos los clientes, hay que esperar hasta que todos los clientes estén cargados, para evitar condiciones de carrera
+	#if multiplayer.is_server():
+		#for id in players:
+			#players[id].inventario.server_add_item(
+				#ItemManager.new_item_dto(ResourceUID.uid_to_path(
+					#arma_inicial_path)), 
+				#InventarioPlayer.MAIN_WEAPON
+			#)
 
 #endregion
 

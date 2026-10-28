@@ -1,6 +1,8 @@
 class_name Cofre extends Node2D
 
 
+@export var container_name := "Cofre"
+
 @export var inventario: Inventario
 
 @export var front_scene = preload("res://maps/props/cofre/cofre front.tscn")
@@ -51,7 +53,7 @@ func enviar_ids_items_inicializados(slot_ids: Dictionary):
 func front_builder():
 	if inventario:
 		var front = front_scene.instantiate()
-		front.initialize(inventario, "Cofre")
+		front.initialize(inventario, container_name)
 		return front
 	return null
 

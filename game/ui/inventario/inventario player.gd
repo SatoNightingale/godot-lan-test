@@ -43,7 +43,7 @@ func call_not_enough_money():
 
 
 const MAIN_WEAPON = 0 ## Arma principal del player
-	#_PRIVATE_ROLE_MARK, ## esto solo es para marcar a partir de dónde empiezan los roles privados y no debe ser utilizado como rol de ningun slot o item en ningun caso
+#_PRIVATE_ROLE_MARK, ## esto solo es para marcar a partir de dónde empiezan los roles privados y no debe ser utilizado como rol de ningun slot o item en ningun caso
 const SECONDARY_WEAPON = 1 ## Arma secundaria del player
 const EXTRA_WEAPON = 2 ## Arma extra del player
 const MAIN_AMMO = 3 ## Municion del arma principal del player

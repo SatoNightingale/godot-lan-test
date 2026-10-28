@@ -4,13 +4,6 @@ class_name Player extends CharacterBody2D
 signal dead(killer_id: int)
 signal revived
 
-const player_colors = {
-	0: Color.BLUE,
-	1: Color.RED,
-	2: Color.GREEN,
-	3: Color.YELLOW
-}
-
 var weapon: Weapon:
 	set(new_weapon):
 		weapon_prop.value = new_weapon
@@ -67,10 +60,10 @@ func(value, _old_value):
 
 var player_id: int
 var player_name: String
-var player_number: int
 var local_player: bool
 
 var speed := base_speed
+
 var vida := vida_max:
 	set(value):
 		vida = value
@@ -80,9 +73,22 @@ var vida := vida_max:
 		%lifebar.modulate = _lifebar_gradient.sample(vida_scaled)
 
 @onready var dinero := inventario.dinero
+
 var direction: Vector2
+
 var alive := true
+
 var shape_radius_approx: float ## Radio aproximado del hitbox. Usado para calculos de precision en las colisiones
+
+var sprite_index: int
+
+const player_colors = {
+	0: Color.BURLYWOOD,
+	1: Color.ROYAL_BLUE,
+	2: Color.VIOLET,
+	3: Color.CRIMSON,
+	4: Color.LIME_GREEN
+}
 
 
 func _enter_tree() -> void:
@@ -94,6 +100,7 @@ func _enter_tree() -> void:
 
 func _ready():
 	initialize(position)
+	$sprite.animation = $sprite.sprite_frames.get_animation_names()[sprite_index]
 	var shape_size = $hitbox/shape.shape.get_rect().size
 	# (shape_size.x + shape_size.y) / 4
 	shape_radius_approx = max(shape_size.x, shape_size.y) / 2
@@ -166,13 +173,14 @@ func _physics_process(_delta):
 	if local_player:
 		camera_dir = Input.get_vector("look_left", "look_right", "look_up", "look_down")
 		move_dir = Input.get_vector("move_left", "move_right", "move_up", "move_down")
-		
+		##Aunque el cliente no tiene autoridad para determinar la posicion del player, es conveniente simular la velocidad y que el mismo actualice su posicion entre actualizaciones de red para que su movimiento parezca fluido y no se corte con la latencia de la conexion
+		##Aunque en verdad, esto no resuelve nada. Sigue viendose mucho mas fluido en el servidor que en el cliente
+		#control_movement()
 		control_camera()
-		
 		if Input.is_action_just_pressed("aim"):
 			glance_mode.value = !glance_mode.value
-	
-	if multiplayer.is_server():
+		#move_and_slide()
+	if multiplayer.is_server(): # and not local_player
 		control_movement()
 		move_and_slide()
 
@@ -221,4 +229,4 @@ func _on_hitbox_body_entered(body: Node2D):
 
 func get_colored_player_name() -> String:
 	return "[color={0}]{1}[/color]" \
-		.format([player_colors[player_number].to_html(), player_name])
+		.format([player_colors[sprite_index].to_html(), player_name])

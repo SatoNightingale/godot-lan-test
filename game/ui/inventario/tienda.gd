@@ -20,12 +20,10 @@ func _ready() -> void:
 func get_front() -> Node:
 	return self
 
-# el precio debe multiplicarse por la cantidad?
-# aqui en la tienda no, aqui nosotros ponemos el precio y la cantidad
-# otra cosa es para vender...
+
 # el precio de venta no se debe tomar de los items, sino de los propios slots de la tienda. Porque el precio de venta del tipo de item, vamos a establecerlo asi, es de la unidad de ese item, no de un stack con un numero arbitrario de elementos. Asi se puede comprar el item al precio de la tienda y venderlo al precio del tipo multiplicado por la cantidad (TODO)
 
-#@rpc("any_peer", "call_local")
+
 func request_compra(item_path: String, transaction_inventory: InventarioPlayer, cantidad: int) -> Dictionary:
 	if multiplayer.is_server():
 		if ItemManager.item_type_exists(item_path):

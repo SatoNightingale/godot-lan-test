@@ -96,17 +96,16 @@ func on_hosted():
 
 func on_connected(address: String):
 	waiting_room.server_address = address
-	# no se cambia la escena, porque eso se lo dejamos a la señal
-	# connected_to_server
+	# no se cambia la escena, porque eso se lo dejamos a la señal connected_to_server
 
 
 @rpc("any_peer", "call_local")
-func _register_player(nombre: String):
+func _register_player(data: Dictionary):
 	var id = multiplayer.get_remote_sender_id()
 	if id not in player_data:
-		print(Configurations.player_name, "> Peer conectado: ", id, " -> ", nombre)
-		player_data[id] = {"name": nombre}
-		player_data_updated.emit(id, player_data[id])
+		player_data[id] = data
+		print(Configurations.player_name, "> Peer conectado: ", id, " -> ", data.name)
+		player_data_updated.emit(id, data)
 
 
 func change_scene(scene: Node):
@@ -126,11 +125,11 @@ func change_scene(scene: Node):
 func _on_connected_to_server():
 	init_player_data()
 	change_scene(waiting_room)
-	_register_player.rpc(Configurations.player_name)
+	_register_player.rpc(player_data[multiplayer.get_unique_id()])
 
 
 func _on_peer_connected(id: int):
-	_register_player.rpc_id(id, Configurations.player_name)
+	_register_player.rpc_id(id, player_data[multiplayer.get_unique_id()])
 
 
 func _on_peer_disconnected(id: int):

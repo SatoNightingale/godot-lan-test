@@ -23,12 +23,38 @@ instance_data = Dictionary[StringName, Variant]({
 })
 metadata/_custom_type_script = "uid://4j88xjqvskwd"
 
-[sub_resource type="Resource" id="Resource_7y2ik"]
+[sub_resource type="Resource" id="Resource_3vho3"]
 script = ExtResource("7_3vho3")
 init_item_type = ExtResource("8_qf6n1")
 metadata/_custom_type_script = "uid://4j88xjqvskwd"
 
-[sub_resource type="Resource" id="Resource_vxaqg"]
+[sub_resource type="Resource" id="Resource_qf6n1"]
+script = ExtResource("7_3vho3")
+init_item_type = ExtResource("9_vsp63")
+instance_data = Dictionary[StringName, Variant]({
+&"cantidad": 30
+})
+metadata/_custom_type_script = "uid://4j88xjqvskwd"
+
+[sub_resource type="Resource" id="Resource_vsp63"]
+script = ExtResource("7_3vho3")
+init_item_type = ExtResource("8_qf6n1")
+metadata/_custom_type_script = "uid://4j88xjqvskwd"
+
+[sub_resource type="Resource" id="Resource_b686c"]
+script = ExtResource("7_3vho3")
+init_item_type = ExtResource("9_vsp63")
+instance_data = Dictionary[StringName, Variant]({
+&"cantidad": 30
+})
+metadata/_custom_type_script = "uid://4j88xjqvskwd"
+
+[sub_resource type="Resource" id="Resource_hb504"]
+script = ExtResource("7_3vho3")
+init_item_type = ExtResource("8_qf6n1")
+metadata/_custom_type_script = "uid://4j88xjqvskwd"
+
+[sub_resource type="Resource" id="Resource_ee6o4"]
 script = ExtResource("7_3vho3")
 init_item_type = ExtResource("9_vsp63")
 instance_data = Dictionary[StringName, Variant]({
@@ -81,6 +107,7 @@ spawn_path = NodePath("..")
 
 [node name="cofre" parent="." unique_id=1003589841 node_paths=PackedStringArray("inventario") instance=ExtResource("5_l8g03")]
 position = Vector2(1033.3123, 425.55237)
+container_name = "Cofre de inicio"
 inventario = NodePath("Inventario")
 cantidad_slots = 9
 
@@ -94,13 +121,42 @@ metadata/_custom_type_script = "uid://bh372h2ut8rcm"
 
 [node name="cofre2" parent="." unique_id=1608601028 node_paths=PackedStringArray("inventario") instance=ExtResource("5_l8g03")]
 position = Vector2(1195, 1350)
+container_name = "Cofre de inicio"
 inventario = NodePath("Inventario")
 cantidad_slots = 9
 
 [node name="Inventario" type="Node" parent="cofre2" unique_id=1835510231]
 script = ExtResource("6_j8tme")
 _slots = Dictionary[int, ExtResource("7_3vho3")]({
-0: SubResource("Resource_7y2ik"),
-1: SubResource("Resource_vxaqg")
+0: SubResource("Resource_3vho3"),
+1: SubResource("Resource_qf6n1")
+})
+metadata/_custom_type_script = "uid://bh372h2ut8rcm"
+
+[node name="cofre3" parent="." unique_id=1349512191 node_paths=PackedStringArray("inventario") instance=ExtResource("5_l8g03")]
+position = Vector2(-318, 1977)
+container_name = "Cofre de inicio"
+inventario = NodePath("Inventario")
+cantidad_slots = 9
+
+[node name="Inventario" type="Node" parent="cofre3" unique_id=1544676845]
+script = ExtResource("6_j8tme")
+_slots = Dictionary[int, ExtResource("7_3vho3")]({
+0: SubResource("Resource_vsp63"),
+1: SubResource("Resource_b686c")
+})
+metadata/_custom_type_script = "uid://bh372h2ut8rcm"
+
+[node name="cofre4" parent="." unique_id=784663488 node_paths=PackedStringArray("inventario") instance=ExtResource("5_l8g03")]
+position = Vector2(-453, 992)
+container_name = "Cofre de inicio"
+inventario = NodePath("Inventario")
+cantidad_slots = 9
+
+[node name="Inventario" type="Node" parent="cofre4" unique_id=243196952]
+script = ExtResource("6_j8tme")
+_slots = Dictionary[int, ExtResource("7_3vho3")]({
+0: SubResource("Resource_hb504"),
+1: SubResource("Resource_ee6o4")
 })
 metadata/_custom_type_script = "uid://bh372h2ut8rcm"

@@ -1,5 +1,6 @@
 class_name ControladorVirtual extends Control
 
+# TODO propiedad para deshabilitar esta talla por favor, especialmente los joysticks
 
 var player: Player:
 	set(_player):

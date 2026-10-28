@@ -48,7 +48,6 @@ func inicializar_server():
 		item = ItemManager.new_from_dto(instance_data.merged({
 			"type_id": init_item_type.item_type_path
 		}))
-		#print(slot_id, ": ", instance_data, ": ", item.cantidad)
 
 func inicializar_client(id: int):
 	if init_item_type != null:

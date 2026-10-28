@@ -38,7 +38,6 @@ func registrar_item(item: Item) -> int:
 	if multiplayer.is_server(): # item.id == 0:
 		max_id += 1
 		item.id = max_id
-		#_item_db[max_id] = item
 		return max_id
 	return 0
 
@@ -107,7 +106,6 @@ func _build_item_type_index(dir_path: String):
 ## La lista de items tirados en el piso en el mapa. Debe ser publica, tener el mismo contenido para todos los peers, por la siguiente razon: si un player va a tomar un item del piso, el codigo de tocar el item y demas interaccion visual se ejecuta en su maquina; el player que representa a su peer_id tambien esta en su maquina, y para validar hace falta este player y el item en cuestion sacado de esta lista.
 ## Tambien se le podria enviar al servidor el id del player...
 ## Supongo que no importa mucho si esta lista es publica o privada. Un peer hackeado podria ver la ubicacion de todos los world_items directo en el arbol de escenas, asi que...
-#var _item_db: Dictionary[int, Item]
 var _world_items: Dictionary[int, NodePath]
 
 # necesitamos una manera de definir una instancia de item, con datos de instancia, de modo que la podamos usar como recurso para inicializar items que no empiecen "de cero" como en new_item_dto
