@@ -13,10 +13,6 @@ var player : Player
 var respawn_timer: Timer
 
 
-func _ready() -> void:
-	ConsoleLogger.set_console(%console)
-
-
 func initialize():
 	%virtual_controls.player = player
 	respawn_timer = player.respawn_timer
@@ -77,7 +73,3 @@ func _on_defeated_screen_gui_input(_event: InputEvent) -> void:
 	#if event is InputEventMouseButton:
 		#event.pressed
 	pass
-
-
-func _on_toggle_console_toggled(toggled_on: bool) -> void:
-	%console.visible = toggled_on

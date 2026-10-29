@@ -204,16 +204,19 @@ func die(killer_id: int):
 		inventario.dinero -= 700
 	if multiplayer.is_server():
 		dead.emit(killer_id)
-		drop_money_on_death()
+		drop_on_death()
 	%AnimationPlayer.play(["die_forward", "die_backwards"]
 		.pick_random())
 
 
-func drop_money_on_death():
+func drop_on_death():
 	var dinero_item_dto = ItemManager.new_item_dto("res://items/types/money_item.tres")
 	dinero_item_dto.cantidad = 400
 	ItemManager.add_world_item.rpc(dinero_item_dto, get_path(), position, false)
-	## y ya que estamos, sacarle tambien todo lo que tiene en la mochila, pero eso quedara para la proxima aventura
+	# Botar todo lo que tiene en la mochila (InventarioPlayer.CARRY_INSECURE)
+	for slot in inventario.mochila:
+		if slot.item:
+			inventario.drop_item(slot.slot_id)
 
 
 @rpc("authority", "call_local")

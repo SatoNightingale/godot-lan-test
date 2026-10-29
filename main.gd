@@ -16,6 +16,10 @@ func _ready() -> void:
 	menu_scene.main = self
 	menu_scene.error_popup.connect(error_popup)
 	Network.error.connect(error_popup.bind("Error de conexion"))
+	Configurations.mostrar_consola_prop.conectar(func(value, _old_value):
+		%console.visible = value
+	)
+	ConsoleLogger.set_console(%console)
 
 
 func change_to_game(data):

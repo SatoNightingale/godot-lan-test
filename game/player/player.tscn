@@ -757,7 +757,7 @@ metadata/_edit_group_ = true
 texture_filter = 1
 scale = Vector2(1.5, 1.5)
 sprite_frames = SubResource("SpriteFrames_n270p")
-animation = &"verde"
+animation = &"amarillo"
 offset = Vector2(0, -22)
 
 [node name="shape" type="CollisionShape2D" parent="." unique_id=715889227]

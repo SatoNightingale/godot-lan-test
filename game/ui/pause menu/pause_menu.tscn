@@ -70,6 +70,7 @@ grow_vertical = 2
 color = Color(0.2509804, 0.2509804, 0.2509804, 0.5019608)
 
 [node name="menu" type="PanelContainer" parent="menu_screen" unique_id=2061426780]
+unique_name_in_owner = true
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -77,9 +78,9 @@ anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
 offset_left = -81.5
-offset_top = -87.0
+offset_top = -104.5
 offset_right = 81.5
-offset_bottom = 87.0
+offset_bottom = 104.5
 grow_horizontal = 2
 grow_vertical = 2
 
@@ -90,35 +91,39 @@ theme_override_constants/margin_top = 15
 theme_override_constants/margin_right = 15
 theme_override_constants/margin_bottom = 15
 
-[node name="VBoxContainer" type="VBoxContainer" parent="menu_screen/menu/MarginContainer" unique_id=1765951144]
+[node name="VBoxContainer" type="VBoxContainer" parent="menu_screen/menu/MarginContainer" unique_id=1249321615]
 layout_mode = 2
 
-[node name="Label" type="Label" parent="menu_screen/menu/MarginContainer/VBoxContainer" unique_id=824272436]
+[node name="Label" type="Label" parent="menu_screen/menu/MarginContainer/VBoxContainer" unique_id=149148928]
 layout_mode = 2
 text = "Menú"
 horizontal_alignment = 1
 
-[node name="HSeparator" type="HSeparator" parent="menu_screen/menu/MarginContainer/VBoxContainer" unique_id=809932193]
+[node name="HSeparator" type="HSeparator" parent="menu_screen/menu/MarginContainer/VBoxContainer" unique_id=569567035]
 layout_mode = 2
 theme_override_constants/separation = 12
 theme_override_styles/separator = SubResource("StyleBoxEmpty_eogtg")
 
-[node name="btn_serverpause" type="Button" parent="menu_screen/menu/MarginContainer/VBoxContainer" unique_id=383364250]
+[node name="btn_serverpause" type="Button" parent="menu_screen/menu/MarginContainer/VBoxContainer" unique_id=426414541]
 unique_name_in_owner = true
 layout_mode = 2
 disabled = true
 text = "Detener juego"
 
-[node name="btn_disconnect" type="Button" parent="menu_screen/menu/MarginContainer/VBoxContainer" unique_id=1778114550]
+[node name="btn_settings" type="Button" parent="menu_screen/menu/MarginContainer/VBoxContainer" unique_id=657718116]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Configuraciones"
+
+[node name="btn_disconnect" type="Button" parent="menu_screen/menu/MarginContainer/VBoxContainer" unique_id=1728402419]
 unique_name_in_owner = true
 layout_mode = 2
 text = "Desconectar"
 
-[node name="btn_resumir" type="Button" parent="menu_screen/menu/MarginContainer/VBoxContainer" unique_id=1544126034]
+[node name="btn_resumir" type="Button" parent="menu_screen/menu/MarginContainer/VBoxContainer" unique_id=1664139200]
 unique_name_in_owner = true
 layout_mode = 2
 text = "Continuar"
 
 [connection signal="gui_input" from="menu_screen" to="." method="_on_menu_screen_gui_input"]
 [connection signal="visibility_changed" from="menu_screen" to="." method="_on_menu_screen_visibility_changed"]
-[connection signal="pressed" from="menu_screen/menu/MarginContainer/VBoxContainer/btn_serverpause" to="." method="_on_btn_serverpause_pressed"]

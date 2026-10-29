@@ -30,10 +30,8 @@ var dinero: float:
 	set(value): dinero_prop.value = value
 ## Modifica el dinero en el servidor y en el cliente especificado, si este no es el servidor mismo. No debe llamarse por rpc, porque el internamente lo hace y se corre el riesgo de desincronizacion si se llama primero en un cliente
 @rpc("authority")
-func set_dinero(cantidad: float): # , cliente: int = 1
-	dinero_prop.value = cantidad
-	#if multiplayer.is_server() and player_id != 1: # cliente
-		#modificar_dinero.rpc_id(player_id, cantidad)
+func set_dinero(cantidad: float):
+	dinero = cantidad
 
 signal not_enough_money
 
@@ -145,18 +143,19 @@ func append_item(item: Item) -> bool:
 
 
 @rpc("any_peer", "call_local")
-func drop_item(slot_id, cantidad: int):
-	if multiplayer.is_server():
+func drop_item(slot_id, cantidad: int = -1):
+	if multiplayer.is_server() and multiplayer.get_remote_sender_id() == player_id:
 		if has_slot(slot_id):
 			var item = get_slot(slot_id).item
-			if item and item.cantidad >= cantidad:
-				server_take_item(slot_id, cantidad)
-				var item_dto = item.to_dto()
-				item_dto.cantidad = cantidad
-				ItemManager.add_world_item.rpc(item_dto, player.get_path(), player.position, false)
-			else:
-				printerr("No hay suficientes items en slot: ", slot_id)
-		else:
-			printerr("drop_item: Slot invalido: ", slot_id)
-	else:
-		printerr("drop_item solo puede ser llamada por el servidor")
+			if cantidad == -1: ## si cantidad es -1, dropear todo el item
+				cantidad = item.cantidad
+			if cantidad > 0:
+				if item and item.cantidad >= cantidad:
+					server_take_item(slot_id, cantidad)
+					var item_dto = item.to_dto()
+					item_dto.cantidad = cantidad
+					ItemManager.add_world_item.rpc(item_dto, player.get_path(), player.position, false)
+				else: printerr("No hay suficientes items en slot: ", slot_id)
+			else: printerr("drop_item: la cantidad debe ser mayor que 0")
+		else: printerr("drop_item: Slot invalido: ", slot_id)
+	else: printerr("drop_item solo puede ser llamada al servidor y por el peer que controla el inventario")

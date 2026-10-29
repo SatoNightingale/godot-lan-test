@@ -1,9 +1,9 @@
 extends Control
 
-## Cuando un jugador se conecta, se llama a _on_connected_to_server,
-## que llama a _register_player como rpc en todos los pares conectados.
-## Estos a su vez responden a su conexion con _on_peer_connected
-## y se registran con _register_player en l id del jugador recien conectado
+## Cuando un jugador se conecta, se llama a _on_connected_to_server, que a su vez llama a _register_player como rpc pasandole su nombre para inicializarlo en todos los peers (el incluido).
+## Mientras tanto (puede ser antes o despues) el servidor, respondiendo a peer_connected, le manda player_data al peer recien conectado, con los datos de todos los peers. Si el peer se registro primero en el servidor le llega un player_data con sus propios datos, lo cual no importa demasiado
+## De este modo, todos los peers reciben los datos del peer entrante y el peer entrante recibe de una vez los datos de todos los peers. Queda el mismo player_data sincronizado
+## El unico problema que veo por ahora, antes de probar nada, es que connected_to_server puede no emitirse en esta escena, porque se emite antes de estar conectada a nuestra funcion. En este caso habria que correr el contenido de la funcion (que es simplemente llamar a _register_player) para initialize
 
 signal game_start
 
@@ -19,20 +19,23 @@ var local_id: int
 
 var selected_sprite_index = 0
 
+@export var _ready_icon: Texture2D = preload("res://menus/waiting room/ic_action_accept.png")
+
 func _ready() -> void:
+	#multiplayer.connected_to_server.connect(_on_connected_to_server)
+	multiplayer.peer_connected.connect(_on_peer_connected)
 	multiplayer.peer_disconnected.connect(_on_peer_disconnected)
 
 
 ## Para código que debe ejecutarse cada vez que esta se vuelva la escena actual. _ready() solo se ejecuta una vez
 func initialize():
 	local_id = multiplayer.get_unique_id()
-	%start.disabled = not multiplayer.is_server()
+	%start.disabled = true
 	%player_list.clear()
 	selected_sprite_index = 0
 	%sprite.animation = sprite_variants[selected_sprite_index]
 	%sprite.play()
-	for id in player_data:
-		on_player_data_updated(id, player_data[id])
+	_register_player.rpc(Configurations.player_name)
 	if multiplayer.is_server():
 		%ip_list.clear()
 		var idx = 0
@@ -50,15 +53,43 @@ func initialize():
 		%ip.show()
 
 
-func on_player_data_updated(id: int, data):
-	_player_items[id] = {
-		"name": data.name,
-		"idx": %player_list.add_item(data.name),
-	}
-	# data ya debe venir con su campo character_variant
-	#player_data[id]["character_variant"] = -1
-	%start.disabled = true
-	_update_sprite_index(selected_sprite_index) ## temporal
+func _on_peer_connected(id: int):
+	if multiplayer.is_server():
+		_get_player_data.rpc_id(id, player_data)
+		%start.disabled = true
+
+
+func _on_peer_disconnected(id: int):
+	player_data.erase(id)
+	%player_list.remove_item(_player_items[id]["idx"])
+	_player_items.erase(id)
+	%start.disabled = not _everyone_ready()
+
+
+@rpc("authority", "call_remote")
+func _get_player_data(data: Dictionary):
+	for id in data:
+		player_data[id] = data[id]
+		_player_items[id] = {
+			"name": data[id].name,
+			"idx": %player_list.add_item(data[id].name),
+		}
+		_select_sprite_variant_client(id, player_data[id].character_variant)
+
+# Se supone que el player que se registra es un nuevo peer recien conectado; por tanto, los datos que este nuevo peer envia son minimos, exclusivamente los que dependen de el
+@rpc("any_peer", "call_local")
+func _register_player(nombre: String):
+	var id = multiplayer.get_remote_sender_id()
+	if id not in player_data:
+		player_data[id] = {
+			"name": nombre,
+			"character_variant": -1
+		}
+		print(Configurations.player_name, "> Peer conectado: ", id, " -> ", nombre)
+		_player_items[id] = {
+			"name": nombre,
+			"idx": %player_list.add_item(nombre),
+		}
 
 
 func _on_previous_sprite_pressed() -> void:
@@ -79,8 +110,8 @@ func _update_select_sprite_button(owner_id: int):
 	if %owner_name.visible:
 		%owner_name.text = player_data[owner_id].name
 	%select_sprite.text = "Seleccionar" if \
-		player_data[local_id].character_variant != selected_sprite_index \
-		else "Deseleccionar"
+		player_data[local_id].character_variant != selected_sprite_index else "Deseleccionar"
+
 
 func _get_sprite_variant_owner(index: int) -> int:
 	for player_id in player_data:
@@ -88,11 +119,12 @@ func _get_sprite_variant_owner(index: int) -> int:
 			return player_id
 	return -1
 
+
 func _on_select_sprite_pressed() -> void:
 	var index = selected_sprite_index if \
-		player_data[local_id].character_variant != selected_sprite_index \
-		else -1
+		player_data[local_id].character_variant != selected_sprite_index else -1
 	_select_sprite_variant.rpc_id(1, index)
+
 
 @rpc("any_peer", "call_local")
 func _select_sprite_variant(index: int):
@@ -110,6 +142,8 @@ func _select_sprite_variant(index: int):
 func _select_sprite_variant_client(player_id: int, index: int):
 	var previously_selected = player_data[player_id].character_variant
 	player_data[player_id].character_variant = index
+	%player_list.set_item_icon(_player_items[player_id].idx,
+		_ready_icon if index != -1 else null)
 	# si index es -1, nunca va a ser igual a selected_sprite_index
 	# sin embargo, en ese caso, la posicion en previously selected fue liberada y hay que actualizar el boton
 	if index == selected_sprite_index or previously_selected == selected_sprite_index:
@@ -125,18 +159,14 @@ func _everyone_ready():
 	return true
 
 
-func _on_peer_disconnected(id: int):
-	%player_list.remove_item(_player_items[id]["idx"])
+func _on_start_pressed() -> void:
+	if multiplayer.is_server() and _everyone_ready():
+		call_game_start.rpc()
 
 
 @rpc("call_local")
 func call_game_start():
 	game_start.emit()
-
-
-func _on_start_pressed() -> void:
-	if multiplayer.is_server() and _everyone_ready():
-		call_game_start.rpc()
 
 
 ## Esto NO se llama cuando se inicia el juego, sino cuando esta escena en el menu es depuesta por otra

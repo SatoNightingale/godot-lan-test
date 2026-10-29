@@ -65,16 +65,13 @@ func server_add_item(item_dto: Dictionary, slot_id):
 						# solo modificar la cantidad, porque un item del mismo tipo ya esta en el slot
 						_call_visibility(_modificar_cantidad, 
 							[slot_id, item_dto.cantidad], slot)
-					else:
-						push_error("No puede sobrepasarse el max_stack de item: ", slot.item.nombre, " en slot ", slot_id, " (", item_dto.cantidad, " + ", slot.item.cantidad, " > ", slot.item.max_stack, ")")
-				else:
-					push_error("No se puede sobreescribir item de tipo ", slot.item.item_type_path, " en slot ", slot_id, " con un item de tipo ", item_dto.type_id)
+					else: push_error("No puede sobrepasarse el max_stack de item: ", slot.item.nombre, " en slot ", slot_id, " (", item_dto.cantidad, " + ", slot.item.cantidad, " > ", slot.item.max_stack, ")")
+				else: push_error("No se puede sobreescribir item de tipo ", slot.item.item_type_path, " en slot ", slot_id, " con un item de tipo ", item_dto.type_id)
 			else: # añadir nuevo item
 				if slot.validar_tipo(item_dto.type_id):
 					_call_visibility(_add_item_client,
 						[item_dto, slot_id], slot)
-				else:
-					printerr("El tipo del objeto pasado es invalido: ", item_dto.type_id, " vs ", slot.tipo.resource_path)
+				else: printerr("El tipo del objeto pasado es invalido: ", item_dto.type_id, " vs ", slot.tipo.resource_path)
 		else: printerr("server_add_item: no existe el slot: ", slot_id)
 
 
@@ -83,15 +80,14 @@ func server_take_item(slot_id: int, cantidad: int):
 		if has_slot(slot_id):
 			var slot = _slots[slot_id]
 			if slot.item:
-				if slot.item.cantidad >= cantidad:
-					_call_visibility(_modificar_cantidad,
-						[slot_id, -cantidad], slot)
-				else:
-					printerr("Cantidad de retiro mayor que la cantidad del item en slot: ", slot_id)
-			else:
-				printerr("No hay item en slot ", slot_id)
-		else:
-			printerr("server_take_item: No existe el slot ", slot_id)
+				if cantidad > 0:
+					if slot.item.cantidad >= cantidad:
+						_call_visibility(_modificar_cantidad,
+							[slot_id, -cantidad], slot)
+					else: printerr("Cantidad de retiro mayor que la cantidad del item en slot: ", slot_id)
+				else: printerr("La cantidad debe ser mayor que 0")
+			else: printerr("No hay item en slot ", slot_id)
+		else: printerr("server_take_item: No existe el slot ", slot_id)
 
 
 func server_take_item_id(item_id: int, cantidad: int):

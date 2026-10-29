@@ -1,6 +1,6 @@
 extends Control
 
-signal player_data_updated(id: int, new_data)
+#signal player_data_updated(id: int, new_data)
 signal error_popup(message: String, title: String)
 
 var main: Main
@@ -25,8 +25,8 @@ func _ready() -> void:
 	Network.server_created.connect(on_hosted)
 	Network.client_created.connect(on_connected)
 	multiplayer.connected_to_server.connect(_on_connected_to_server)
-	multiplayer.peer_connected.connect(_on_peer_connected)
-	multiplayer.peer_disconnected.connect(_on_peer_disconnected)
+	#multiplayer.peer_connected.connect(_on_peer_connected)
+	#multiplayer.peer_disconnected.connect(_on_peer_disconnected)
 	multiplayer.server_disconnected.connect(_on_server_disconnected)
 	multiplayer.connection_failed.connect(error_popup.emit.bind("Error al conectar al servidor.\nRevise la direccion IP", "Error de conexion"))
 	# inicializar escenas
@@ -57,7 +57,7 @@ func init_scenes():
 	connect_menu.error.connect(error_popup.emit.bind("Error"))
 	# waiting_room
 	waiting_room.player_data = player_data
-	player_data_updated.connect(waiting_room.on_player_data_updated)
+	#player_data_updated.connect(waiting_room.on_player_data_updated)
 	waiting_room.game_start.connect(func():
 		if multiplayer.is_server():
 			main.change_to_game(player_data.duplicate())
@@ -84,28 +84,19 @@ func debug_tasks():
 			#$"waiting room"._on_start_pressed()
 
 
-func init_player_data():
-	player_data[multiplayer.get_unique_id()] = {
-		"name": Configurations.player_name
-	}
+#func init_player_data():
+	#player_data[multiplayer.get_unique_id()] = {
+		#"name": Configurations.player_name
+	#}
 
 
 func on_hosted():
-	init_player_data()
+	#init_player_data()
 	change_scene(waiting_room)
 
 func on_connected(address: String):
 	waiting_room.server_address = address
 	# no se cambia la escena, porque eso se lo dejamos a la señal connected_to_server
-
-
-@rpc("any_peer", "call_local")
-func _register_player(data: Dictionary):
-	var id = multiplayer.get_remote_sender_id()
-	if id not in player_data:
-		player_data[id] = data
-		print(Configurations.player_name, "> Peer conectado: ", id, " -> ", data.name)
-		player_data_updated.emit(id, data)
 
 
 func change_scene(scene: Node):
@@ -123,17 +114,17 @@ func change_scene(scene: Node):
 
 
 func _on_connected_to_server():
-	init_player_data()
+	#init_player_data()
 	change_scene(waiting_room)
-	_register_player.rpc(player_data[multiplayer.get_unique_id()])
+	#_register_player.rpc(player_data[multiplayer.get_unique_id()])
+#
+#
+#func _on_peer_connected(id: int):
+	#_register_player.rpc_id(id, player_data[multiplayer.get_unique_id()])
 
 
-func _on_peer_connected(id: int):
-	_register_player.rpc_id(id, player_data[multiplayer.get_unique_id()])
-
-
-func _on_peer_disconnected(id: int):
-	player_data.erase(id)
+#func _on_peer_disconnected(id: int):
+	#player_data.erase(id)
 
 
 func _on_server_disconnected():
