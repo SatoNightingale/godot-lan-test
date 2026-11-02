@@ -17,6 +17,11 @@ class_name ShopSlot extends UISlot
 		if shop_cantidad != 1: cantidad().text = str(shop_cantidad)
 		else: cantidad().text = ""
 
+@export var shop_precio: float:
+	set(value):
+		shop_precio = value
+		%precio.text = str(int(shop_precio))
+
 
 func set_slot(value: Slot):
 	slot = value
@@ -36,7 +41,7 @@ func observar_item(new_item: Item, _old_item: Item):
 		textura().texture = load(new_item.icon_path)
 		cantidad().show()
 		%nombre.text = new_item.nombre
-		%precio.text = str(int(new_item.precio))
+		%precio.text = str(int(shop_precio))
 	else:
 		textura().texture = null
 		cantidad().hide()
@@ -73,6 +78,6 @@ func _can_drop_data(_at_position: Vector2, data: Variant) -> bool:
 func _drop_data(_at_position: Vector2, data: Variant) -> void:
 	## vender
 	if data.source_inventory != inventario and data.source_inventory is InventarioPlayer:
-		inventario.intercambio.rpc_id(1, \
+		inventario.intercambio.rpc_id(1,
 			data.source_inventory.get_path(), data.src_slot_id,
 			data.cantidad, slot.slot_id)

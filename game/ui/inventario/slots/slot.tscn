@@ -13,12 +13,16 @@ theme_override_styles/panel = ExtResource("1_2tqek")
 
 [node name="margin" type="MarginContainer" parent="." unique_id=1906989065]
 layout_mode = 2
+theme_override_constants/margin_left = 3
+theme_override_constants/margin_top = 3
+theme_override_constants/margin_right = 3
 theme_override_constants/margin_bottom = 10
 
 [node name="textura" type="TextureRect" parent="margin" unique_id=1238227759]
 unique_name_in_owner = true
 texture_filter = 1
 layout_mode = 2
+expand_mode = 2
 stretch_mode = 5
 
 [node name="Control" type="Control" parent="." unique_id=1496271032]

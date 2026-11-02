@@ -17,7 +17,7 @@ class_name Item extends Resource
 @export var item_type_path: String = resource_path
 ## Nombre del item que se mostrara en el inventario
 @export var nombre: String
-## Precio del item para operaciones de venta
+## Precio de la unidad del item para operaciones de venta. En ventas del inventario del jugador, se multiplica este precio por la cantidad de items vendidos
 @export var precio: float
 ## Máximo que se puede stackear el item. Con 0 puede stackear infinitamente
 @export var max_stack: int = 1
@@ -80,6 +80,9 @@ func _validate_object(_object):
 
 func duplicar_object() -> Object:
 	return _generate_object(self, to_dto())
+
+func validar_slot(_slot: Slot) -> bool:
+	return true
 
 #endregion
 

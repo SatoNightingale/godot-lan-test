@@ -4,6 +4,7 @@
 
 [resource]
 script = ExtResource("1_lougq")
+clase_municion_path = "res://items/types/balas ametralladora_item.tres"
 max_ammo = 30
 automatica = true
 desviacion = 10.0

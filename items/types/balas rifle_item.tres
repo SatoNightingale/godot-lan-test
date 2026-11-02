@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="BulletItem" format=3 uid="uid://cmlyyr1gfqg07"]
+
+[ext_resource type="Script" uid="uid://brit2p74vn2li" path="res://game/bullet/bullet item.gd" id="1_t7qsb"]
+
+[resource]
+script = ExtResource("1_t7qsb")
+base_damage = 100
+item_type_path = "res://items/types/balas rifle_item.tres"
+nombre = "Munición de rifle de precisión"
+precio = 25.0
+max_stack = 20
+icon_path = "uid://cu21u0scu6qih"
+item_scene_path = "uid://b16301nsg01q4"
+tooltip_text = "pafff pafff pafff
+
+(Atentamente, para mi Valentine)"
+metadata/_custom_type_script = "uid://brit2p74vn2li"

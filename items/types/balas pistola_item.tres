@@ -1,17 +1,17 @@
 [gd_resource type="Resource" script_class="BulletItem" format=3 uid="uid://br1s8k7iav28o"]
 
-[ext_resource type="Script" uid="uid://brit2p74vn2li" path="res://game/bullet/bullet item.gd" id="1_2ggpp"]
+[ext_resource type="Script" uid="uid://brit2p74vn2li" path="res://game/bullet/bullet item.gd" id="1_bavkb"]
 
 [resource]
-script = ExtResource("1_2ggpp")
+script = ExtResource("1_bavkb")
 base_damage = 100
-item_type_path = "res://items/types/bullet_item.tres"
-nombre = "Balas"
-precio = 300.0
+item_type_path = "res://items/types/balas pistola_item.tres"
+nombre = "Munición de pistola"
+precio = 20.0
 max_stack = 30
 icon_path = "uid://4sgyr42w4h4t"
 item_scene_path = "uid://b16301nsg01q4"
-tooltip_text = "Balas genericas, para testear
+tooltip_text = "pao pao pao pao
 
 (Atentamente, para mi Valentine)"
 metadata/_custom_type_script = "uid://brit2p74vn2li"

@@ -1,9 +1,5 @@
 class_name InventarioPlayer extends Inventario
 
-# Si los SlotRole son simplemente alias para los id de slots, entonces cada role debe estar asociado a un slot y solo a uno, para que set_slot funcione. Ademas, hay que tener bien fijado el entero asociado a cada role en la enumeracion.
-# Normalmente no bastaran las constantes definidas en SlotRole para poblar todos los slots del inventario, por lo que habra que crear el diccionario de slots con mas ids que los definidos ahi. Declararlos por el inspector como diccionario exportado es muy incomodo, ademas de que, si los indices son valores de enum, probablemente haya que repetir un mismo valor varias veces.
-# Todo eso indica que lo mas sensato seria llenar el diccionario de slots por codigo. 
-
 
 @export var player: Player
 
@@ -39,7 +35,7 @@ signal not_enough_money
 func call_not_enough_money():
 	not_enough_money.emit()
 
-
+# Estos son los rangos de id's de los slot roles, a partir de donde empiezan los id's de cada rol
 const MAIN_WEAPON = 0 ## Arma principal del player
 #_PRIVATE_ROLE_MARK, ## esto solo es para marcar a partir de dónde empiezan los roles privados y no debe ser utilizado como rol de ningun slot o item en ningun caso
 const SECONDARY_WEAPON = 1 ## Arma secundaria del player
@@ -54,7 +50,7 @@ var slot_roles: Dictionary = {
 	MAIN_WEAPON: {
 		"tipo": preload("res://game/weapon/weapon/weapon item.gd"),
 		"visibilidad": Slot.Visibility.PUBLIC_SLOT,
-		"func_observadora": set_weapon_item
+		"func_observadora": set_weapon_item,
 	},
 	SECONDARY_WEAPON: {
 		"tipo": preload("res://game/weapon/weapon/weapon item.gd"),
@@ -116,11 +112,14 @@ func _ready() -> void:
 func set_weapon_item(new_item: Item, old_item):
 	if new_item:
 		if new_item.object and new_item is WeaponItem:
-			player.weapon = new_item.object
 			if new_item is FireWeaponItem:
-				new_item.object.slot_municion = _slots[MAIN_AMMO]
-				_slots[MAIN_AMMO].tipo = \
-					load(new_item.clase_municion_path)
+				var ammo_slot = _slots[MAIN_AMMO]
+				new_item.object.ammo_slot = ammo_slot
+				#ammo_slot.tipo = new_item.clase_municion_path
+				#if ammo_slot.item and \
+				#not ammo_slot.validar_item(ammo_slot.item):
+					#new_item.object.wrong_ammo.emit()
+			player.weapon = new_item.object
 		else:
 			printerr("El item pasado como weapon_item no contiene una Weapon: ", new_item.object)
 	else:
@@ -147,15 +146,17 @@ func drop_item(slot_id, cantidad: int = -1):
 	if multiplayer.is_server() and multiplayer.get_remote_sender_id() == player_id:
 		if has_slot(slot_id):
 			var item = get_slot(slot_id).item
-			if cantidad == -1: ## si cantidad es -1, dropear todo el item
-				cantidad = item.cantidad
-			if cantidad > 0:
-				if item and item.cantidad >= cantidad:
-					server_take_item(slot_id, cantidad)
-					var item_dto = item.to_dto()
-					item_dto.cantidad = cantidad
-					ItemManager.add_world_item.rpc(item_dto, player.get_path(), player.position, false)
-				else: printerr("No hay suficientes items en slot: ", slot_id)
-			else: printerr("drop_item: la cantidad debe ser mayor que 0")
+			if item:
+				if cantidad == -1: ## dropear todo el item
+					cantidad = item.cantidad
+				if cantidad > 0:
+					if item.cantidad >= cantidad:
+						server_take_item(slot_id, cantidad)
+						var item_dto = item.to_dto()
+						item_dto.cantidad = cantidad
+						ItemManager.add_world_item.rpc(item_dto, player.get_path(), player.position, false)
+					else: printerr("No hay suficientes items en slot: ", slot_id)
+				else: printerr("drop_item: la cantidad debe ser mayor que 0")
+			else: printerr("El slot ", slot_id, " esta vacio")
 		else: printerr("drop_item: Slot invalido: ", slot_id)
 	else: printerr("drop_item solo puede ser llamada al servidor y por el peer que controla el inventario")

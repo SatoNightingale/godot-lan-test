@@ -4,6 +4,7 @@
 
 [resource]
 script = ExtResource("1_sww1a")
+clase_municion_path = "res://items/types/balas subfusil_item.tres"
 max_ammo = 20
 automatica = true
 alcance = 500

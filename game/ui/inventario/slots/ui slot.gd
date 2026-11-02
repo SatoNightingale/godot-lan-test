@@ -78,7 +78,8 @@ func _get_drag_data(_at_position: Vector2) -> Variant:
 
 
 func _can_drop_data(_at_position: Vector2, data: Variant) -> bool:
-	return data is ItemDTO and slot.validar_tipo(data.item.item_type_path)
+	return data is ItemDTO and \
+		slot.validar_item(data.item.item_type_path) and data.item.validar_slot(slot)
 
 
 func _drop_data(_at_position: Vector2, data: Variant) -> void:

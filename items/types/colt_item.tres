@@ -4,6 +4,7 @@
 
 [resource]
 script = ExtResource("1_8arga")
+clase_municion_path = "res://items/types/balas pistola_item.tres"
 max_ammo = 6
 damage = 80.0
 after_wield_slowdown_time = 0.33

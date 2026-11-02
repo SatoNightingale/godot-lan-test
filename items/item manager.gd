@@ -3,6 +3,7 @@ extends Node
 var max_id = 0
 
 ## Aqui se referencian los modelos de items, recursos guardados en el disco (en res://items/classes/) que funcionan como "clases" para instanciar los items usados en el juego a partir de ellos. No deben ser modificadas, cada instancia generada a partir de ellos debe crearse con duplicate_deep()
+## Se podria hacer mas rapido si en vez de la ruta utilizamos como clave el ResourceUID, ya que internamente guarda una cache de todos los recursos. Quizas nuestra propia cache no haga falta
 var _item_type_index : Dictionary[String, Item]
 
 var _cache_max_length = 20

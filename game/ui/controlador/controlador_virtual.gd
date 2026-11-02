@@ -17,14 +17,18 @@ func _on_player_weapon_changed(weapon: Weapon, old_weapon: Weapon):
 	if weapon:
 		if weapon is FireWeapon:
 			%reload_button.setup(weapon.reload_cooldown, weapon.reloading)
+			weapon.ammo_slot.item_prop.connect_init(
+				_weapon_check_ammo.bind(weapon))
 			weapon.update_ammo.connect(_on_update_ammo)
 			_on_update_ammo(weapon.ammo, weapon.total_ammo)
 			weapon.no_ammo.connect(_no_ammo_warning)
 	if old_weapon:
 		%reload_button.desetup()
-		old_weapon.update_ammo.disconnect(_on_update_ammo)
 		if old_weapon is FireWeapon:
+			old_weapon.update_ammo.disconnect(_on_update_ammo)
 			old_weapon.no_ammo.disconnect(_no_ammo_warning)
+			old_weapon.ammo_slot.item_prop.desconectar(
+				_weapon_check_ammo)
 
 
 func _on_player_glance_mode_changed(value: bool, _old_value):
@@ -33,6 +37,16 @@ func _on_player_glance_mode_changed(value: bool, _old_value):
 	var aux_texture = %aim_button.texture_normal
 	%aim_button.texture_normal = %aim_button.texture_pressed
 	%aim_button.texture_pressed = aux_texture
+
+## Se llama cuando cambia el item en el slot de municion
+func _weapon_check_ammo(new_item: Item, _old_item, weapon: FireWeapon):
+	if new_item:
+		if new_item.item_type_path != weapon.clase_municion_path:
+			%AmmoLabel.text = "Munición incorrecta"
+		#new_item.cantidad_prop.connect_init(func(new_cantidad, _old_cantidad):
+			#%AmmoLabel.text = "{0} / {1}".format([
+				#str(weapon.ammo), str(new_cantidad)])
+		#)
 
 
 func _on_update_ammo(loaded_ammo: int, total_ammo: int):

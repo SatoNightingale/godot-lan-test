@@ -40,7 +40,7 @@ func validar_sesion(peer_id) -> bool:
 @rpc("authority", "call_remote")
 func set_slot(slot_id, item: Item):
 	if slot_id in _slots:
-		if _slots[slot_id].validar_tipo(item):
+		if _slots[slot_id].validar_item(item):
 			_slots[slot_id].item = item
 		else: printerr("Tipo de item invalido para el slot ", slot_id)
 	else: printerr("Slot no existe: ", slot_id)
@@ -68,7 +68,7 @@ func server_add_item(item_dto: Dictionary, slot_id):
 					else: push_error("No puede sobrepasarse el max_stack de item: ", slot.item.nombre, " en slot ", slot_id, " (", item_dto.cantidad, " + ", slot.item.cantidad, " > ", slot.item.max_stack, ")")
 				else: push_error("No se puede sobreescribir item de tipo ", slot.item.item_type_path, " en slot ", slot_id, " con un item de tipo ", item_dto.type_id)
 			else: # añadir nuevo item
-				if slot.validar_tipo(item_dto.type_id):
+				if slot.validar_item(item_dto.type_id):
 					_call_visibility(_add_item_client,
 						[item_dto, slot_id], slot)
 				else: printerr("El tipo del objeto pasado es invalido: ", item_dto.type_id, " vs ", slot.tipo.resource_path)
@@ -110,7 +110,7 @@ func mover_item_local(from_slot_id: int, to_slot_id: int, cantidad: int):
 				printerr("Intentando tomar mas items de los que hay en el slot")
 				return
 			# Validar tipos del item 
-			if from_slot.validar_tipo(to_slot.item) and to_slot.validar_tipo(from_slot.item) and \
+			if from_slot.validar_item(to_slot.item) and to_slot.validar_item(from_slot.item) and \
 			(not to_slot.item or from_slot.item.cantidad == cantidad or \
 			(to_slot.item.item_type_path == from_slot.item.item_type_path \
 			and to_slot.item.stack_size_valido(to_slot.item.cantidad + cantidad))):

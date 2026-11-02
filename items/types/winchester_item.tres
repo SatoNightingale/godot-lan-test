@@ -4,6 +4,7 @@
 
 [resource]
 script = ExtResource("1_jak1u")
+clase_municion_path = "res://items/types/balas rifle_item.tres"
 max_ammo = 10
 alcance = 1200
 desviacion = 2.0
