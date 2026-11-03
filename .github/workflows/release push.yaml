@@ -1,13 +1,12 @@
-name: Release automático en creacion de tag
+name: Release automático en push
 
-on: [create]
+on: [push]
 
 permissions:
   contents: write
 
 jobs:
   export_game:
-    if: github.ref_type == 'tag'
     runs-on: ubuntu-latest
     name: Exportar y crear release
     
@@ -35,7 +34,7 @@ jobs:
       #     overwrite: true
 
       - name: Crear release
-        uses: ncipollo/release-action@v1.18.0
+        uses: ncipollo/release-action@v1.21.0
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           generateReleaseNotes: true
