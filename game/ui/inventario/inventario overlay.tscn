@@ -20,6 +20,15 @@ script = ExtResource("4_sham1")
 [sub_resource type="Resource" id="Resource_5r2pa"]
 script = ExtResource("4_sham1")
 
+[sub_resource type="Resource" id="Resource_bipvj"]
+script = ExtResource("4_sham1")
+
+[sub_resource type="Resource" id="Resource_7rnbm"]
+script = ExtResource("4_sham1")
+
+[sub_resource type="Resource" id="Resource_gkds7"]
+script = ExtResource("4_sham1")
+
 [node name="overlay" type="ColorRect" unique_id=254352712]
 anchors_preset = 15
 anchor_right = 1.0
@@ -53,14 +62,19 @@ unique_name_in_owner = true
 layout_mode = 1
 anchors_preset = 11
 anchor_left = 1.0
+anchor_right = 1.0
 offset_left = -345.0
+offset_right = 0.0
 grow_horizontal = 0
 _slots = Dictionary[int, ExtResource("4_sham1")]({
 0: SubResource("Resource_wxhpg"),
 1: SubResource("Resource_moblb"),
 2: SubResource("Resource_sham1"),
 3: SubResource("Resource_ylbcw"),
-4: SubResource("Resource_5r2pa")
+4: SubResource("Resource_5r2pa"),
+5: SubResource("Resource_bipvj"),
+6: SubResource("Resource_7rnbm"),
+7: SubResource("Resource_gkds7")
 })
 
 [connection signal="close" from="." to="." method="_on_close"]
