@@ -22,7 +22,7 @@ jobs:
           godot_export_templates_download_url: https://github.com/godotengine/godot/releases/download/4.6.1-stable/Godot_v4.6.1-stable_export_templates.tpz
           relative_project_path: ./
           export_debug: true
-          archive_output: true
+          # archive_output: true
           cache: true
 
       # - name: Crear artefacto
@@ -39,4 +39,4 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           generateReleaseNotes: true
           tag: ${{ github.ref_name }}
-          artifacts: ${{ steps.export.outputs.builds }}/*
+          artifacts: ${{ steps.export.outputs.build_directory }}/*
