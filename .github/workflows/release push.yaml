@@ -22,7 +22,7 @@ jobs:
           godot_export_templates_download_url: https://github.com/godotengine/godot/releases/download/4.6.1-stable/Godot_v4.6.1-stable_export_templates.tpz
           relative_project_path: ./
           export_debug: true
-          archive_output: true
+          # archive_output: true
           cache: true
       
       - name: Obtener último tag y calcular nueva versión
@@ -36,14 +36,6 @@ jobs:
           tag_prefix: v
           # Si quieres tags beta: v1.0.1-beta.1
           # prerelease_suffix: beta
-      
-      # - name: Crear artefacto
-      #   uses: actions/upload-artifact@v7.0.1
-      #   with:
-      #     name: resultados-${{ github.run_number }}
-      #     path: ./build/*
-      #     retention-days: 0
-      #     overwrite: true
 
       - name: Crear release
         uses: ncipollo/release-action@v1.21.0
@@ -51,4 +43,4 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           tag: ${{ steps.version.outputs.new_tag }}
           generateReleaseNotes: true
-          artifacts: ${{ steps.export.outputs.archive_directory }}/*
+          artifacts: ${{ steps.export.outputs.build_directory }}/Android/*,${{ steps.export.outputs.build_directory }}/Linux/*
