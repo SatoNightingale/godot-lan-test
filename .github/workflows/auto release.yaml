@@ -37,7 +37,7 @@ jobs:
           # Si quieres tags beta: v1.0.1-beta.1
           default_prerelease_bump: beta
 
-      - name: Crear archivo override.cfg
+      - name: Crear archivo override.cfg y exportar parche
         id: create_override
         run: |
           for exec in /home/runner/.local/share/godot/godot_executable/Godot*.x86_64; do godot=$exec; break; done;
