@@ -35,32 +35,11 @@ jobs:
 
       - name: Actualizar version y crear archivo override.cfg
         id: create_override
-        run: |
-          # for exec in /home/runner/.local/share/godot/godot_executable/Godot*.x86_64; do godot=$exec; break; done;
-          # cd ${{ github.workspace }}
-          godot --headless --quit --script "res://ci_tools/override_version.gd" -- ${{ steps.version.outputs.new_version }}
+        run: godot --headless --quit --script "ci_tools/override_version.gd" -- ${{ steps.version.outputs.new_version }}
 
       - name: Exportar presets
         id: export
-        run:
-          # Obtener presets como nombre\truta
-          PRESETS=$(godot --headless --no-header --quit --script "res://ci_tools/get_export_presets.gd" 2>/dev/null)
-          # Tipo de exportacion: --export-debug si es prerelease (development) y --export-release si es release (master)
-          if [ ${{ steps.version.outputs.prerelease }} = "true" ]; then
-            export_type="debug"
-          else
-            export_type="release"
-          fi
-          echo "$PRESETS" | while IFS=$'\t' read -r NAME EXPORT_PATH; do
-            if [ -n "$NAME" ]; then
-              echo "Exportando preset $NAME -> $EXPORT_PATH"
-              godot --headless --export-$export_type "$NAME" "$EXPORT_PATH"
-            fi
-          done
-          # Exportar parche
-          mkdir -p patch
-          godot --headless --export-pack "Android (universal)" ./patch/patch-${{ steps.version.outputs.new_tag }}.pck
-          # echo "patch_file=${{ github.workspace }}/patch/patch-${{ steps.version.outputs.new_tag }}.pck" >> "$GITHUB_OUTPUT"
+        run: bash ci_tools/export_presets.sh "${{ steps.version.outputs.prerelease }}" "${{ steps.version.outputs.new_tag }}"
 
       # - name: Exportar presets
       #   id: export
