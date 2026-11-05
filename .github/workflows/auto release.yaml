@@ -1,9 +1,6 @@
 name: Pre-release en push a development
 
-on:
-  push:
-    branches:
-      - development
+on: [push]
 
 permissions:
   contents: write
@@ -45,7 +42,7 @@ jobs:
         run: |
           for exec in /home/runner/.local/share/godot/godot_executable/Godot*.x86_64; do godot=$exec; break; done;
           cd ${{ github.workspace }}
-          $godot --headless -s "res://generate override.gd"
+          $godot --headless --quit --script "res://generate override.gd"
           mkdir -p patch
           $godot --headless --export-pack "Android (universal)" ./patch/patch-${{ steps.version.outputs.new_tag }}.pck
 
