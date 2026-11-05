@@ -1,4 +1,4 @@
-name: Pre-release en push a development
+name: Release automático en push
 
 on: [push]
 
@@ -14,6 +14,28 @@ jobs:
       - name: checkout
         uses: actions/checkout@v5
       
+      - name: Obtener último tag y calcular nueva versión
+        id: version
+        uses: mathieudutour/github-tag-action@v6.2
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          # Conventional commits: fix -> patch, feat -> minor, BREAKING CHANGE -> major
+          default_bump: patch
+          release_branches: master
+          pre_release_branches: development
+          tag_prefix: v
+          append_to_pre_release_tag: beta
+
+      - name: Crear archivo override.cfg y exportar parche
+        id: create_override
+        run: |
+          for exec in /home/runner/.local/share/godot/godot_executable/Godot*.x86_64; do godot=$exec; break; done;
+          cd ${{ github.workspace }}
+          $godot --headless --quit --script "res://generate override.gd" -- ${{ steps.version.outputs.new_version }}
+          mkdir -p patch
+          $godot --headless --export-pack "Android (universal)" ./patch/patch-${{ steps.version.outputs.new_tag }}.pck
+          echo "patch_file=${{ github.workspace }}/patch/patch-${{ steps.version.outputs.new_tag }}.pck" >> "$GITHUB_OUTPUT"
+
       - name: Exportar presets
         id: export
         uses: firebelley/godot-export@v8.0.0
@@ -25,34 +47,13 @@ jobs:
           export_debug: true
           # archive_output: true
           cache: true
-      
-      - name: Obtener último tag y calcular nueva versión
-        id: version
-        uses: mathieudutour/github-tag-action@v6.2
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          # Conventional commits: fix -> patch, feat -> minor, BREAKING CHANGE -> major
-          default_bump: patch
-          release_branches: master
-          pre_release_branches: development
-          tag_prefix: v
-          # Si quieres tags beta: v1.0.1-beta.1
-          # default_prerelease_bump: beta
-          append_to_pre_release_tag: beta
-
-      - name: Crear archivo override.cfg y exportar parche
-        id: create_override
-        run: |
-          for exec in /home/runner/.local/share/godot/godot_executable/Godot*.x86_64; do godot=$exec; break; done;
-          cd ${{ github.workspace }}
-          $godot --headless --quit --script "res://generate override.gd"
-          mkdir -p patch
-          $godot --headless --export-pack "Android (universal)" ./patch/patch-${{ steps.version.outputs.new_tag }}.pck
 
       - name: Crear release
         uses: ncipollo/release-action@v1.21.0
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           tag: ${{ steps.version.outputs.new_tag }}
-          generateReleaseNotes: true
-          artifacts: ${{ github.workspace }}/build/Android/*.apk, ${{ github.workspace }}/build/Linux/*.x86_64, ${{ github.workspace }}/patch/*.pck
+          prerelease: ${{ steps.version.outputs.prerelease == 'true' }}
+          # generateReleaseNotes: true
+          body: ${{ steps.version.outputs.changelog }}
+          artifacts: ${{ github.workspace }}/build/android/*.apk, ${{ github.workspace }}/build/linux/*.x86_64, ${{ steps.create_override.outputs.patch_file }}
