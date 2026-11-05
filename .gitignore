@@ -5,6 +5,7 @@ addons/godot-git-plugin/
 addons/virtual_joystick/previews/
 addons/virtual_joystick/tests/
 .export/
+.vscode/
 build/
 PAT_token
 .github/workflows/release.old.yaml
