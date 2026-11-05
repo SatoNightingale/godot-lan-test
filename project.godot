@@ -11,7 +11,7 @@ config_version=5
 [application]
 
 config/name="Prueba LAN"
-config/version="0.5.0-test.1"
+config/version="0.5.0"
 run/main_scene="uid://7c5qi7ecxocq"
 config/project_settings_override="user://override.cfg"
 config/features=PackedStringArray("4.6", "Forward Plus")

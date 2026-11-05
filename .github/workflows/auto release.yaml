@@ -1,6 +1,9 @@
-name: Release automático en push
+name: Pre-release en push a development
 
-on: [push]
+on:
+  push:
+    branches:
+      - development
 
 permissions:
   contents: write
@@ -20,7 +23,7 @@ jobs:
         with:
           godot_executable_download_url: https://github.com/godotengine/godot/releases/download/4.6.1-stable/Godot_v4.6.1-stable_linux.x86_64.zip
           godot_export_templates_download_url: https://github.com/godotengine/godot/releases/download/4.6.1-stable/Godot_v4.6.1-stable_export_templates.tpz
-          relative_project_path: ./
+          use_preset_export_path: true
           export_debug: true
           # archive_output: true
           cache: true
@@ -32,18 +35,19 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           # Conventional commits: fix -> patch, feat -> minor, BREAKING CHANGE -> major
           default_bump: patch
-          release_branches: main
+          release_branches: master
           tag_prefix: v
           # Si quieres tags beta: v1.0.1-beta.1
-          prerelease_suffix: beta
+          default_prerelease_bump: beta
 
       - name: Crear archivo override.cfg
         id: create_override
         run: |
+          for exec in /home/runner/.local/share/godot/godot_executable/Godot*.x86_64; do godot=$exec; break; done;
           cd ${{ github.workspace }}
-          godot --headless -s "res://generate override.gd"
+          $godot --headless -s "res://generate override.gd"
           mkdir -p patch
-          godot --headless --export-pack "Android (universal)" ./patch/patch-${{ steps.version.outputs.new_tag }}.pck
+          $godot --headless --export-pack "Android (universal)" ./patch/patch-${{ steps.version.outputs.new_tag }}.pck
 
       # - name: Crear parche
       #   id: create_patch
