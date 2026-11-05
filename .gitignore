@@ -10,3 +10,4 @@ build/
 PAT_token
 .github/workflows/release.old.yaml
 addons/better-tile-editor/
+.directory
