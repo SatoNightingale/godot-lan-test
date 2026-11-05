@@ -37,7 +37,7 @@ jobs:
           pre_release_branches: development
           tag_prefix: v
           # Si quieres tags beta: v1.0.1-beta.1
-          default_prerelease_bump: beta
+          # default_prerelease_bump: beta
           append_to_pre_release_tag: beta
 
       - name: Crear archivo override.cfg y exportar parche
