@@ -20,6 +20,7 @@ jobs:
         with:
           godot_executable_download_url: https://github.com/godotengine/godot/releases/download/4.6.1-stable/Godot_v4.6.1-stable_linux.x86_64.zip
           godot_export_templates_download_url: https://github.com/godotengine/godot/releases/download/4.6.1-stable/Godot_v4.6.1-stable_export_templates.tpz
+          relative_project_path: ./
           use_preset_export_path: true
           export_debug: true
           # archive_output: true
@@ -33,9 +34,11 @@ jobs:
           # Conventional commits: fix -> patch, feat -> minor, BREAKING CHANGE -> major
           default_bump: patch
           release_branches: master
+          pre_release_branches: development
           tag_prefix: v
           # Si quieres tags beta: v1.0.1-beta.1
           default_prerelease_bump: beta
+          append_to_pre_release_tag: beta
 
       - name: Crear archivo override.cfg y exportar parche
         id: create_override
