@@ -1,7 +1,7 @@
 #!/usr/bin/env -S godot -s
 extends MainLoop
 
-func _initialize() -> void:
+func _init() -> void:
 	var args = OS.get_cmdline_user_args()
 	if not args.is_empty():
 		var new_ver = args[0]

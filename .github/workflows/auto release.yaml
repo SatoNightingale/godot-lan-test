@@ -26,27 +26,53 @@ jobs:
           tag_prefix: v
           append_to_pre_release_tag: beta
 
-      - name: Crear archivo override.cfg y exportar parche
+      - name: Instalar Godot
+        uses: chickensoft-games/setup-godot@v2
+        with:
+          version: "4.6.1"
+          use-dotnet: false
+          include-templates: true
+
+      - name: Actualizar version y crear archivo override.cfg
         id: create_override
         run: |
-          for exec in /home/runner/.local/share/godot/godot_executable/Godot*.x86_64; do godot=$exec; break; done;
-          cd ${{ github.workspace }}
-          $godot --headless --quit --script "res://generate override.gd" -- ${{ steps.version.outputs.new_version }}
-          mkdir -p patch
-          $godot --headless --export-pack "Android (universal)" ./patch/patch-${{ steps.version.outputs.new_tag }}.pck
-          echo "patch_file=${{ github.workspace }}/patch/patch-${{ steps.version.outputs.new_tag }}.pck" >> "$GITHUB_OUTPUT"
+          # for exec in /home/runner/.local/share/godot/godot_executable/Godot*.x86_64; do godot=$exec; break; done;
+          # cd ${{ github.workspace }}
+          godot --headless --quit --script "res://ci_tools/override_version.gd" -- ${{ steps.version.outputs.new_version }}
 
       - name: Exportar presets
         id: export
-        uses: firebelley/godot-export@v8.0.0
-        with:
-          godot_executable_download_url: https://github.com/godotengine/godot/releases/download/4.6.1-stable/Godot_v4.6.1-stable_linux.x86_64.zip
-          godot_export_templates_download_url: https://github.com/godotengine/godot/releases/download/4.6.1-stable/Godot_v4.6.1-stable_export_templates.tpz
-          relative_project_path: ./
-          use_preset_export_path: true
-          export_debug: true
-          # archive_output: true
-          cache: true
+        run:
+          # Obtener presets como nombre\truta
+          PRESETS=$(godot --headless --no-header --quit --script "res://ci_tools/get_export_presets.gd" 2>/dev/null)
+          # Tipo de exportacion: --export-debug si es prerelease (development) y --export-release si es release (master)
+          if [ ${{ steps.version.outputs.prerelease }} ]; then
+            export_type="debug"
+          else
+            export_type="release"
+          fi
+          echo "$PRESETS" | while IFS=$'\t' read -r NAME PATH; do
+            if [ -n "$NAME" ]; then
+              echo "Exportando preset: $NAME -> $PATH"
+              godot --headless --export-$export_type "$NAME" "$PATH"
+            fi
+          done
+          # Exportar parche
+          mkdir -p patch
+          godot --headless --export-pack "Android (universal)" ./patch/patch-${{ steps.version.outputs.new_tag }}.pck
+          # echo "patch_file=${{ github.workspace }}/patch/patch-${{ steps.version.outputs.new_tag }}.pck" >> "$GITHUB_OUTPUT"
+
+      # - name: Exportar presets
+      #   id: export
+      #   uses: firebelley/godot-export@v8.0.0
+      #   with:
+      #     godot_executable_download_url: https://github.com/godotengine/godot/releases/download/4.6.1-stable/Godot_v4.6.1-stable_linux.x86_64.zip
+      #     godot_export_templates_download_url: https://github.com/godotengine/godot/releases/download/4.6.1-stable/Godot_v4.6.1-stable_export_templates.tpz
+      #     relative_project_path: ./
+      #     use_preset_export_path: true
+      #     export_debug: true
+      #     # archive_output: true
+      #     cache: true
 
       - name: Crear release
         uses: ncipollo/release-action@v1.21.0
@@ -56,4 +82,4 @@ jobs:
           prerelease: ${{ steps.version.outputs.prerelease == 'true' }}
           # generateReleaseNotes: true
           body: ${{ steps.version.outputs.changelog }}
-          artifacts: ${{ github.workspace }}/build/android/*.apk, ${{ github.workspace }}/build/linux/*.x86_64, ${{ steps.create_override.outputs.patch_file }}
+          artifacts: ${{ github.workspace }}/build/android/*.apk, ${{ github.workspace }}/build/linux/*.x86_64, ${{ github.workspace }}/patch/*.pck
