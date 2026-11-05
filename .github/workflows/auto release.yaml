@@ -1,9 +1,6 @@
 name: Pre-release en push a development
 
-on:
-  push:
-    branches:
-      - development
+on: [push]
 
 permissions:
   contents: write
