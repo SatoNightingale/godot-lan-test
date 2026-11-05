@@ -34,10 +34,16 @@ func _ready() -> void:
 	# version
 	%version_label.text = ProjectSettings.get_setting("application/config/version")
 	# sistema de parcheo
+	#%boton_parche.pressed.connect(PatchSystem.open_patch_finder)
 	%boton_parche.pressed.connect(%patch_finder.popup_file_dialog)
 	%patch_finder.file_selected.connect(func(path):
-		if PatchSystem.copiar_parche(path) == OK:
+		var err = PatchSystem.cargar_parche(path)
+		printerr("Error de parcheo: ", err)
+		if err.is_empty():
 			%dlg_patch_restart.popup_centered_clamped()
+		else:
+			%dlg_patch_failed.popup_centered_clamped()
+			%dlg_patch_failed.dialog_text = "La carga del parche ha fallado:\n{0}".format([err])
 	)
 	%dlg_patch_restart.confirmed.connect(func():
 		OS.set_restart_on_exit(true)
@@ -57,7 +63,6 @@ func init_scenes():
 	connect_menu.error.connect(error_popup.emit.bind("Error"))
 	# waiting_room
 	waiting_room.player_data = player_data
-	#player_data_updated.connect(waiting_room.on_player_data_updated)
 	waiting_room.game_start.connect(func():
 		if multiplayer.is_server():
 			main.change_to_game(player_data.duplicate())
