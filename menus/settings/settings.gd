@@ -4,7 +4,6 @@ signal done
 
 
 func _ready() -> void:
-	print("Settings.ready")
 	%nombre.text = Configurations.player_name
 	%puerto.text = str(Configurations.default_port)
 	%mostrar_consola.button_pressed = Configurations.mostrar_consola

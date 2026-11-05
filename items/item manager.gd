@@ -74,34 +74,24 @@ func get_item_type(path: String) -> Item:
 
 
 func _ready() -> void:
-	_build_item_type_index("res://")
+	print("Registrando items...")
+	_build_item_type_index("res://items/types")
+	print("Todos los items registrados")
 
 
 func _build_item_type_index(dir_path: String):
-	#var dir = DirAccess.open(dir_path)
-	#if dir:
-		## uff, ojo a lo que dicen los docs de get_files()
-		#var files = dir.get_files()
-		#var directories = dir.get_directories()
-		## escanear todos los archivos
-		#for file in files:
-			#var file_name = file.get_basename()
-	
-	const item_dir = "res://items/types"
-	var dir = DirAccess.open(item_dir)
-	if dir:
-		dir.list_dir_begin()
-		var file_name = dir.get_next()
-		while not file_name.is_empty():
+	var files = ResourceLoader.list_directory(dir_path)
+	for file_name in files:
+		if not file_name.ends_with("/"):
 			if file_name.ends_with("_item.tres") or file_name.ends_with("_item.res") or file_name.ends_with("_item.tres.remap"):
 				if file_name.ends_with(".remap"):
 					file_name = file_name.get_basename()
-				var path = item_dir.path_join(file_name)
+				var path = dir_path.path_join(file_name)
 				# Luego cada valor de path se carga y se asigna a medida que se van utilizando
 				_item_type_index[path] = null
-			file_name = dir.get_next()
-	else:
-		printerr("No se pudo cargar el caché de items")
+				print("Item registrado: ", path)
+		else: # directorio
+			_build_item_type_index(dir_path.path_join(file_name))
 
 #region Items de mundo (dropeados en el mapa)
 ## La lista de items tirados en el piso en el mapa. Debe ser publica, tener el mismo contenido para todos los peers, por la siguiente razon: si un player va a tomar un item del piso, el codigo de tocar el item y demas interaccion visual se ejecuta en su maquina; el player que representa a su peer_id tambien esta en su maquina, y para validar hace falta este player y el item en cuestion sacado de esta lista.
