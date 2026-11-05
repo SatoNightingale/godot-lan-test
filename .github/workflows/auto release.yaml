@@ -46,15 +46,15 @@ jobs:
           # Obtener presets como nombre\truta
           PRESETS=$(godot --headless --no-header --quit --script "res://ci_tools/get_export_presets.gd" 2>/dev/null)
           # Tipo de exportacion: --export-debug si es prerelease (development) y --export-release si es release (master)
-          if [ ${{ steps.version.outputs.prerelease }} ]; then
+          if [ ${{ steps.version.outputs.prerelease }} = "true" ]; then
             export_type="debug"
           else
             export_type="release"
           fi
-          echo "$PRESETS" | while IFS=$'\t' read -r NAME PATH; do
+          echo "$PRESETS" | while IFS=$'\t' read -r NAME EXPORT_PATH; do
             if [ -n "$NAME" ]; then
-              echo "Exportando preset: $NAME -> $PATH"
-              godot --headless --export-$export_type "$NAME" "$PATH"
+              echo "Exportando preset: $NAME -> $EXPORT_PATH"
+              godot --headless --export-$export_type "$NAME" "$EXPORT_PATH"
             fi
           done
           # Exportar parche
