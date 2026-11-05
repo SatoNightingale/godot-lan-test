@@ -18,6 +18,7 @@ fi
 echo "$PRESETS" | while IFS=$'\t' read -r NAME EXPORT_PATH; do
   if [ -n "$NAME" ]; then
     echo "Exportando preset: $NAME -> $EXPORT_PATH"
+    mkdir -p "$(dirname "$EXPORT_PATH")"
     godot --headless --export-$export_type "$NAME" "$EXPORT_PATH"
   fi
 done
