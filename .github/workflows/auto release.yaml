@@ -52,4 +52,4 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           tag: ${{ steps.version.outputs.new_tag }}
           generateReleaseNotes: true
-          artifacts: ${{ steps.export.outputs.build_directory }}/Android/*.apk, ${{ steps.export.outputs.build_directory }}/Linux/*.x86_64, ${{ github.workspace }}/patch/*.pck
+          artifacts: ${{ steps.export.outputs.build_directory }}/Android*/*.apk, ${{ steps.export.outputs.build_directory }}/Linux/*.x86_64, ${{ github.workspace }}/patch/*.pck
