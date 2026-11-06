@@ -39,7 +39,7 @@ jobs:
 
       - name: Exportar presets
         id: export
-        run: bash ci_tools/export_presets.sh "${{ steps.version.outputs.prerelease }}" "${{ steps.version.outputs.new_tag }}"
+        run: bash ci_tools/export_presets.sh "${{ steps.version.outputs.prerelease }}" "${{ steps.version.outputs.new_tag }}" "${{ secrets.RELEASE_KEYSTORE_B64 }}" "${{ secrets.RELEASE_KEYSTORE_USER }}" "${{ secrets.RELEASE_KEYSTORE_PASSWORD }}"
 
       # - name: Exportar presets
       #   id: export
