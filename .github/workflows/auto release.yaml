@@ -39,7 +39,13 @@ jobs:
 
       - name: Exportar presets
         id: export
-        run: bash ci_tools/export_presets.sh "${{ steps.version.outputs.prerelease }}" "${{ steps.version.outputs.new_tag }}" "${{ secrets.RELEASE_KEYSTORE_B64 }}" "${{ secrets.RELEASE_KEYSTORE_USER }}" "${{ secrets.RELEASE_KEYSTORE_PASSWORD }}"
+        env:
+          PRERELEASE: "${{ steps.version.outputs.prerelease }}"
+          VERSION_TAG: "${{ steps.version.outputs.new_tag }}"
+          KEYSTORE_B64: "${{ secrets.RELEASE_KEYSTORE_B64 }}"
+          GODOT_ANDROID_KEYSTORE_RELEASE_USER: "${{ secrets.RELEASE_KEYSTORE_USER }}"
+          GODOT_ANDROID_KEYSTORE_RELEASE_PASSWORD: "${{ secrets.RELEASE_KEYSTORE_PASSWORD }}"
+        run: bash ci_tools/export_presets.sh
 
       # - name: Exportar presets
       #   id: export
@@ -58,7 +64,7 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           tag: ${{ steps.version.outputs.new_tag }}
-          prerelease: ${{ steps.version.outputs.prerelease == 'true' }}
+          prerelease: ${{ steps.tag_version.outputs.prerelease == 'true' }}
           # generateReleaseNotes: true
           body: ${{ steps.version.outputs.changelog }}
           artifacts: ${{ github.workspace }}/build/android/*.apk, ${{ github.workspace }}/build/linux/*.x86_64, ${{ github.workspace }}/patch/*.pck
