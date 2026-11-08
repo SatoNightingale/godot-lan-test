@@ -37,11 +37,11 @@ func _ready() -> void:
 	#%boton_parche.pressed.connect(PatchSystem.open_patch_finder)
 	%boton_parche.pressed.connect(%patch_finder.popup_file_dialog)
 	%patch_finder.file_selected.connect(func(path):
-		var err = PatchSystem.cargar_parche(path)
-		printerr("Error de parcheo: ", err)
+		var err = main.cargar_parche(path)
 		if err.is_empty():
 			%dlg_patch_restart.popup_centered_clamped()
 		else:
+			printerr("Error de parcheo: ", err)
 			%dlg_patch_failed.popup_centered_clamped()
 			%dlg_patch_failed.dialog_text = "La carga del parche ha fallado:\n{0}".format([err])
 	)

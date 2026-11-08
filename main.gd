@@ -20,6 +20,8 @@ func _ready() -> void:
 		%console.visible = value
 	)
 	ConsoleLogger.set_console(%console)
+	# ERROR: Cannot reload script while instances exist.
+	#print("Recargando script de PathSystem: ", PatchSystem.get_script().reload())
 
 
 func change_to_game(data):
@@ -72,3 +74,42 @@ func parse_arguments() -> Dictionary:
 			# with the value set to an empty string.
 			arguments[argument.trim_prefix("--")] = ""
 	return arguments
+
+
+func cargar_parche(path: String) -> String:
+	var err
+	if path.ends_with(".pck"):
+		limpiar_parches()
+		if DirAccess.copy_absolute(
+			ProjectSettings.globalize_path(path),
+			"user://patches/".path_join(path.get_file())
+		) == OK:
+			if ProjectSettings.load_resource_pack(path):
+				var override_src = FileAccess.open("res://override.cfg", FileAccess.READ)
+				var override_dest = FileAccess.open("user://override.cfg", FileAccess.WRITE)
+				if override_src != null and override_dest != null:
+					if override_dest.store_string(
+					override_src.get_as_text()):
+						override_src.close()
+						override_dest.close()
+						return ""
+					else:
+						err = "No se pudo escribir el archivo de configuraciones"
+				else: if not override_src:
+					err = "Archivo de configuraciones no encontrado"
+				else:
+					err = "No se pudo crear el archivo de configuraciones"
+			else:
+				err = "Error al cargar recursos"
+		else:
+			err = "Error al copiar el archivo"
+	else:
+		err = "Archivo incorrecto: no tiene la extensión .pck"
+	return err
+
+
+func limpiar_parches():
+	var files = DirAccess.get_files_at("user://patches")
+	for f in files:
+		if f.ends_with(".pck"):
+			DirAccess.remove_absolute("user://patches".path_join(f))

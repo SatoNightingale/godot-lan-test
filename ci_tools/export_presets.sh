@@ -1,21 +1,11 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-PRERELEASE="$1"
-VERSION_TAG="$2"
-
 # Obtener presets como nombre\truta
 PRESETS=$(godot --headless --no-header --quit --script "res://ci_tools/get_export_presets.gd" 2>/dev/null)
 
-
-# Obtener datos de keystore en Android
-KEYSTORE_B64="$3"
-
 echo "$KEYSTORE_B64" | base64 --decode > "/tmp/release.keystore"
-
 export GODOT_ANDROID_KEYSTORE_RELEASE_PATH="/tmp/release.keystore"
-export GODOT_ANDROID_KEYSTORE_RELEASE_USER="$4"
-export GODOT_ANDROID_KEYSTORE_RELEASE_PASSWORD="$5"
 
 export GODOT_ANDROID_KEYSTORE_DEBUG_PATH="./ci_tools/debug.keystore"
 export GODOT_ANDROID_KEYSTORE_DEBUG_USER="android"
@@ -25,7 +15,7 @@ export GODOT_ANDROID_KEYSTORE_DEBUG_PASSWORD="android"
 # Actualizar version y crear archivo override.cfg
 
 VERSION_CLEAN="${VERSION_TAG#v}"
-VERSION_CLEAN="${VERSION_TAG%%-*}"
+VERSION_CLEAN="${VERSION_CLEAN%%-*}"
 godot --headless --quit --script "ci_tools/override_version.gd" -- "$VERSION_CLEAN"
 
 
@@ -39,7 +29,7 @@ fi
 # Exportar
 echo "$PRESETS" | while IFS=$'\t' read -r NAME EXPORT_PATH; do
   if [ -n "$NAME" ]; then
-    echo "Exportando preset: $NAME -> $EXPORT_PATH como $export_type"
+    echo "::notice::Exportando preset: $NAME -> $EXPORT_PATH como $export_type"
     mkdir -p "$(dirname "$EXPORT_PATH")"
     godot --headless --export-$export_type "$NAME" "$EXPORT_PATH"
   fi
