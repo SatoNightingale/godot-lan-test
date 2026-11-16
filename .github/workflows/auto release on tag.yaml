@@ -4,15 +4,13 @@ on:
   push:
     tags:
       - "v*"
-      branches:
-        - master
-
 
 permissions:
   contents: write
 
 jobs:
   export_game:
+    if: ${{ github.ref == 'refs/heads/master' }}
     runs-on: ubuntu-latest
     name: Exportar y crear release
     
