@@ -1,0 +1,63 @@
+name: Release automático en tag a master
+
+on:
+  push:
+    tags:
+      - "v*"
+      branches:
+        - master
+
+
+permissions:
+  contents: write
+
+jobs:
+  export_game:
+    runs-on: ubuntu-latest
+    name: Exportar y crear release
+    
+    steps:
+      - name: checkout
+        uses: actions/checkout@v5
+      
+      # - name: Obtener último tag y calcular nueva versión
+      #   id: version
+      #   uses: mathieudutour/github-tag-action@v6.2
+      #   with:
+      #     github_token: ${{ secrets.GITHUB_TOKEN }}
+      #     # Conventional commits: fix -> patch, feat -> minor, BREAKING CHANGE -> major
+      #     default_bump: patch
+      #     release_branches: master
+      #     pre_release_branches: development
+      #     tag_prefix: v
+      #     append_to_pre_release_tag: beta
+
+      - name: Instalar Godot
+        uses: chickensoft-games/setup-godot@v2
+        with:
+          version: "4.6.1"
+          use-dotnet: false
+          include-templates: true
+
+      - name: Actualizar version y crear archivo override.cfg
+        id: create_override
+        run: godot --headless --quit --script "ci_tools/override_version.gd" -- ${{ github.ref_name }}
+
+      - name: Exportar presets
+        id: export
+        env:
+          PRERELEASE: "false"
+          VERSION_TAG: "${{ github.ref_name }}"
+          KEYSTORE_B64: "${{ secrets.RELEASE_KEYSTORE_B64 }}"
+          GODOT_ANDROID_KEYSTORE_RELEASE_USER: "${{ secrets.RELEASE_KEYSTORE_USER }}"
+          GODOT_ANDROID_KEYSTORE_RELEASE_PASSWORD: "${{ secrets.RELEASE_KEYSTORE_PASSWORD }}"
+        run: bash ci_tools/export_presets.sh
+
+      - name: Crear release
+        uses: ncipollo/release-action@v1.21.0
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          tag: ${{ github.ref_name }}
+          # generateReleaseNotes: true
+          body: ${{ github.event.head_commit.message }}
+          artifacts: ${{ github.workspace }}/build/android/*.apk, ${{ github.workspace }}/build/linux/*.x86_64, ${{ github.workspace }}/patch/*.pck

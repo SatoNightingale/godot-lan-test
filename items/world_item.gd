@@ -12,9 +12,12 @@ class_name WorldItem extends Node2D
 
 @export var instance_data: Dictionary[String, Variant]:
 	get():
-		return instance_data.merged({
-			"type_id": item.item_type_path
-		}, true)
+		if item:
+			return instance_data.merged({
+				"type_id": item.item_type_path
+			}, true)
+		printerr("world_item sin item")
+		return {}
 
 func is_on_interact_area(player: Player) -> bool:
 	return %pick_area.overlaps_body(player)

@@ -118,10 +118,11 @@ func shoot():
 
 @rpc("authority", "call_local")
 func shoot_local():
-	if player.local_player and player.player_id != 1:
-		shoot_semaphore.adquirir_timer($shoot_timer)
-		$shoot_timer.start()
-		ammo -= 1
+	if player.local_player:
+		if player.player_id != 1:
+			shoot_semaphore.adquirir_timer($shoot_timer)
+			$shoot_timer.start()
+			ammo -= 1
 		update_ammo.emit(ammo, total_ammo)
 
 @rpc("authority", "call_local")

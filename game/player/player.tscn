@@ -4,7 +4,7 @@
 [ext_resource type="Texture2D" uid="uid://b0d10wx1a20k8" path="res://game/player/Shooter Sato/CamAmarillo.png" id="2_4ste8"]
 [ext_resource type="Texture2D" uid="uid://dirf1ymuslbxa" path="res://game/player/Shooter Sato/CamAzul.png" id="3_5ghna"]
 [ext_resource type="Texture2D" uid="uid://bw5lsrvrx8acq" path="res://game/player/lifebar.png" id="3_a4w0n"]
-[ext_resource type="Script" uid="uid://degk6ymu3mgxv" path="res://game/player/lifebar.gd" id="4_5fytw"]
+[ext_resource type="Script" path="res://game/player/lifebar.gd" id="4_5fytw"]
 [ext_resource type="Texture2D" uid="uid://di6cksp3j0v36" path="res://game/player/Shooter Sato/CamMorado.png" id="4_j0mij"]
 [ext_resource type="Texture2D" uid="uid://ledihprpopnw" path="res://game/player/Shooter Sato/CamRojo.png" id="5_gb4gm"]
 [ext_resource type="Texture2D" uid="uid://bbmq3anamm2q" path="res://game/player/Shooter Sato/CamVerde.png" id="6_uv2nh"]

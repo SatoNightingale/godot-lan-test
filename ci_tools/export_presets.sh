@@ -38,4 +38,3 @@ done
 # Exportar parche
 mkdir -p patch
 godot --headless --export-pack "Android (universal)" ./patch/patch-"$VERSION_CLEAN".pck
-# echo "patch_file=${{ github.workspace }}/patch/patch-${{ steps.version.outputs.new_tag }}.pck" >> "$GITHUB_OUTPUT"
